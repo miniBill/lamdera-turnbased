@@ -13,7 +13,7 @@ module View exposing
 -}
 
 import Browser
-import Element.WithContext as Element exposing (Element, fill, height, width)
+import Element.WithContext as Element exposing (fill, height, width)
 import Route exposing (Route)
 import Shared.Model
 import Theme exposing (Element)

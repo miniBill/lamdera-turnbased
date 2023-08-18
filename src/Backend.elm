@@ -1,4 +1,4 @@
-module Backend exposing (..)
+module Backend exposing (app)
 
 import Bridge exposing (ToBackend(..), ToFrontend(..), ToFrontendPage(..))
 import Dict

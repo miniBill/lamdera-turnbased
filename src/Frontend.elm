@@ -1,7 +1,7 @@
-module Frontend exposing (app, updateFromBackend)
+module Frontend exposing (app)
 
 import Bridge exposing (ToBackend(..), ToFrontend(..))
-import Browser exposing (UrlRequest(..))
+import Browser exposing (UrlRequest)
 import Browser.Navigation as Nav
 import Json.Encode
 import Lamdera

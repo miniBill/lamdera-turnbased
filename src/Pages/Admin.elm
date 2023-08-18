@@ -1,9 +1,6 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
-import Base64
-import BigInt
 import Bridge exposing (ToFrontendPage(..))
-import Bytes exposing (Bytes)
 import Diceware
 import Dict
 import Effect exposing (Effect)
@@ -12,11 +9,10 @@ import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import FNV1a
-import Hex
-import Lamdera exposing (ClientId, SessionId)
+import Lamdera exposing (SessionId)
 import Page exposing (Page)
 import Route exposing (Route)
-import Route.Path as Path exposing (Path)
+import Route.Path as Path
 import Set
 import Shared
 import Theme exposing (Element)

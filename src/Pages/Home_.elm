@@ -4,8 +4,6 @@ import Bridge exposing (ToFrontendPage(..))
 import Dict
 import Effect exposing (..)
 import Element.WithContext as Element
-import Html exposing (..)
-import Html.Attributes exposing (..)
 import Page exposing (Page)
 import Route exposing (Route)
 import Route.Path
