@@ -1,4 +1,4 @@
-module Shared.Model exposing (Model)
+module Shared.Model exposing (Context, Model)
 
 {-| -}
 
@@ -11,4 +11,8 @@ own file, so they can be imported by `Effect.elm`
 
 -}
 type alias Model =
-    { smashedLikes : Int }
+    { context : Context }
+
+
+type alias Context =
+    {}

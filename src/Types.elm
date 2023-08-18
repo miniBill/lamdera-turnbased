@@ -1,11 +1,18 @@
-module Types exposing (..)
+module Types exposing
+    ( BackendModel
+    , BackendMsg(..)
+    , FrontendModel
+    , FrontendMsg
+    , InnerBackendMsg(..)
+    , ToBackend
+    , ToFrontend
+    )
 
 import Bridge
-import Browser exposing (UrlRequest)
-import Browser.Navigation exposing (Key)
 import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
-import Url exposing (Url)
+import Time
+import Types.SessionDict exposing (SessionDict)
 
 
 type alias FrontendModel =
@@ -13,7 +20,7 @@ type alias FrontendModel =
 
 
 type alias BackendModel =
-    { smashedLikes : Int
+    { sessions : SessionDict
     }
 
 
@@ -25,9 +32,17 @@ type alias ToBackend =
     Bridge.ToBackend
 
 
+type alias ToFrontend =
+    Bridge.ToFrontend
+
+
 type BackendMsg
+    = WithoutTime InnerBackendMsg
+    | WithTime InnerBackendMsg Time.Posix
+
+
+type InnerBackendMsg
     = OnConnect SessionId ClientId
-
-
-type ToFrontend
-    = NewSmashedLikes Int
+    | OnDisconnect SessionId ClientId
+    | FromFrontend SessionId ClientId ToBackend
+    | ShouldPing

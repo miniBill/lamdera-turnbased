@@ -1,0 +1,80 @@
+module Pages.Id_ exposing (Model, Msg, page, updateFromBackend)
+
+import Bridge exposing (ToBackend(..), ToFrontendPage(..))
+import Effect exposing (Effect)
+import Element.WithContext as Element
+import Lamdera
+import Page exposing (Page)
+import Route exposing (Route)
+import Shared
+import Types.GameId exposing (GameId(..))
+import View exposing (View)
+
+
+page : Shared.Model -> Route { id : String } -> Page Model Msg
+page _ route =
+    Page.new
+        { init = init { id = GameId route.params.id }
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
+
+-- INIT
+
+
+type Model
+    = Joining
+
+
+init : { id : GameId } -> () -> ( Model, Effect Msg )
+init { id } () =
+    ( Joining
+    , Effect.sendCmd <| Lamdera.sendToBackend <| TBJoin id
+    )
+
+
+
+-- UPDATE
+
+
+type Msg
+    = ExampleMsgReplaceMe
+
+
+update : Msg -> Model -> ( Model, Effect Msg )
+update msg model =
+    case msg of
+        ExampleMsgReplaceMe ->
+            ( model
+            , Effect.none
+            )
+
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    Sub.none
+
+
+
+-- VIEW
+
+
+view : Model -> View Msg
+view _ =
+    { title = "Pages.Id_"
+    , body = Element.text "/:id"
+    }
+
+
+updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
+updateFromBackend msg model =
+    case msg of
+        TFSessions _ ->
+            ( model, Cmd.none )
