@@ -86,7 +86,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view model =
-    { title = "Fate Core - Admin"
+    { title = "Wanderhome Online - Admin"
     , body = viewSessions model.sessions
     }
 

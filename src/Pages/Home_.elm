@@ -4,7 +4,7 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (..)
-import Element.WithContext as Element exposing (centerX, centerY, el, link, rgb255, text)
+import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
@@ -83,14 +83,21 @@ subscriptions _ =
 
 view : Shared.Model -> Model -> View Msg
 view _ model =
-    { title = "Fate Core"
+    { title = "Wanderhome Online"
     , body =
         Theme.column
             [ centerX
-            , centerY
+            , height fill
             ]
-            [ Input.text [ Font.center ]
-                { label = Input.labelAbove [ centerX ] <| text "Join game"
+            [ Theme.title
+            , Input.text
+                [ Font.center, centerY ]
+                { label =
+                    Input.labelAbove [ centerX ] <|
+                        paragraph
+                            [ Font.family [ Theme.fonts.luminari ]
+                            ]
+                            [ text "Game name" ]
                 , onChange = Input
                 , text = model.input
                 , placeholder =
@@ -106,6 +113,7 @@ view _ model =
                     , Border.width 1
                     , Theme.padding
                     , Border.rounded Theme.rythm
+                    , Font.family [ Theme.fonts.luminari ]
                     ]
                     { url =
                         Route.toString
@@ -113,7 +121,7 @@ view _ model =
                             , query = Dict.empty
                             , hash = Nothing
                             }
-                    , label = text "Play"
+                    , label = text "Join game"
                     }
 
               else

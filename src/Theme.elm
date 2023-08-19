@@ -1,6 +1,7 @@
-module Theme exposing (Attribute, Element, column, padding, row, rythm, spacing, wrappedRow)
+module Theme exposing (Attribute, Element, column, fonts, padding, row, rythm, spacing, title, wrappedRow)
 
-import Element.WithContext as Element exposing (Attribute, Element)
+import Element.WithContext as Element exposing (Attribute, Element, el)
+import Element.WithContext.Font as Font
 import Shared.Model exposing (Context)
 
 
@@ -40,3 +41,41 @@ padding =
 rythm : number
 rythm =
     10
+
+
+title : Element msg
+title =
+    Element.row
+        [ Font.size 70
+        , Element.below <|
+            el
+                [ Font.family [ fonts.arnoPro ]
+                , Font.size 30
+                , Element.moveRight 150
+                , Element.moveUp 30
+                ]
+                (Element.text "Independent Content")
+        , Element.paddingEach { top = 28, left = 26, bottom = 26, right = 6 }
+        ]
+        [ el
+            [ Font.family [ fonts.ruritania ]
+            , Element.moveDown 10
+            ]
+            (Element.text "W")
+        , el
+            [ Font.family [ fonts.luminari ]
+            ]
+            (Element.text "anderhome Online")
+        ]
+
+
+fonts :
+    { arnoPro : Font.Font
+    , luminari : Font.Font
+    , ruritania : Font.Font
+    }
+fonts =
+    { arnoPro = Font.typeface "Arno Pro"
+    , luminari = Font.typeface "Luminari"
+    , ruritania = Font.typeface "Ruritania"
+    }

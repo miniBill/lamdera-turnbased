@@ -68,7 +68,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view _ =
-    { title = "Pages.Id_"
+    { title = "Wanderhome Online"
     , body = Element.text "/:id"
     }
 
