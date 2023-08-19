@@ -4,7 +4,7 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext exposing (Color, alignTop, el, rgb255, text)
+import Element.WithContext as Element exposing (Color, alignTop, el, rgb255, text)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -86,7 +86,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view model =
-    { title = "Pages.Admin"
+    { title = "Fate Core - Admin"
     , body = viewSessions model.sessions
     }
 
@@ -109,7 +109,14 @@ viewSession ( sessionId, session ) =
         , alignTop
         , Border.width 1
         ]
-        [ viewId sessionId
+        [ Theme.row []
+            [ viewId sessionId
+            , if session.isAdmin then
+                text <| "(admin)"
+
+              else
+                Element.none
+            ]
         , Theme.wrappedRow [] (List.map viewId <| Set.toList session.clients)
         ]
 
