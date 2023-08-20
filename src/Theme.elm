@@ -46,26 +46,40 @@ rythm =
 wanderhomeOnlineTitle : Element msg
 wanderhomeOnlineTitle =
     Element.row
-        [ Font.size 70
-        , Element.below <|
-            el
-                [ fonts.arnoPro
-                , Font.size 30
-                , Element.moveRight 150
-                , Element.moveUp 30
-                ]
-                (Element.text "Independent Content")
+        [ fonts.luminari
+        , Font.size 70
         , Element.paddingEach { top = 28, left = 26, bottom = 26, right = 6 }
         ]
         [ el
             [ fonts.ruritania
             , Element.moveDown 10
             ]
-            (Element.text "W")
+            (Element.text "O")
+        , Element.text "nline "
         , el
-            [ fonts.luminari
+            [ fonts.ruritania
+            , Element.moveDown 10
             ]
-            (Element.text "anderhome Online")
+            (Element.text " W")
+        , el
+            [ Element.below <|
+                Element.row
+                    [ fonts.arnoPro
+                    , Font.size 30
+                    , Element.moveRight 5
+                    , Element.moveUp 10
+                    ]
+                    [ Element.text "Independent Content "
+                    , image
+                        [ width <| px 30
+                        , Element.moveUp 2
+                        ]
+                        { src = "/wanderhome-flower.png"
+                        , description = "A flowery glyph"
+                        }
+                    ]
+            ]
+            (Element.text "anderhome")
         ]
 
 

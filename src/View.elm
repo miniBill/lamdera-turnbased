@@ -138,7 +138,7 @@ wanderhomeFooter =
             , label = text "Possum Creek Games Inc."
             }
       ]
-    , [ text "Wanderhome Online is an independent production by Leonardo Taglialegne and is not affiliated with Possum Creek Games Inc. It is published under the "
+    , [ text "Online Wanderhome is an independent production by Leonardo Taglialegne and is not affiliated with Possum Creek Games Inc. It is published under the "
       , link [ Font.underline ]
             { url = "https://possumcreekgames.com/pages/wanderhome-3rd-party-license"
             , label = text "Wanderhome Third Party License"
