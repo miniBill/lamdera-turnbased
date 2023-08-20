@@ -86,7 +86,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view model =
-    { kind = View.Home
+    { kind = View.Admin
     , body = viewSessions model.sessions
     }
 

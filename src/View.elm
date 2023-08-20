@@ -33,6 +33,7 @@ type ViewKind
     = Home
     | Wanderhome
     | FateCore
+    | Admin
 
 
 {-| Used internally by Elm Land to create your application
@@ -55,6 +56,14 @@ toBrowserDocument { shared, view } =
             }
         data =
             case view.kind of
+                Admin ->
+                    { title = "TurnBased - Admin"
+                    , font = Font.family [ Font.sansSerif ]
+                    , background = rgb255 0xFF 0xFF 0xFF
+                    , color = rgb255 0 0 0
+                    , footer = []
+                    }
+
                 Home ->
                     { title = "TurnBased"
                     , font = Font.family [ Font.sansSerif ]
@@ -164,6 +173,9 @@ fontsCss viewKind =
         fonts : List Font
         fonts =
             case viewKind of
+                Admin ->
+                    []
+
                 Wanderhome ->
                     wanderhomeFonts
 
