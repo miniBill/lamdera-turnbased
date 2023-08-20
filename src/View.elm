@@ -67,8 +67,8 @@ toBrowserDocument { shared, view } =
                 Home ->
                     { title = "TurnBased"
                     , font = Font.family [ Font.sansSerif ]
-                    , background = rgb255 0xFF 0xFF 0xFF
-                    , color = rgb255 0 0 0
+                    , background = rgb255 0xAD 0xD7 0xF6
+                    , color = rgb255 0x28 0x12 0x2B
                     , footer =
                         footer Theme.fonts.arnoPro wanderhomeFooter
                             ++ el [] (text " ")
@@ -110,6 +110,7 @@ toBrowserDocument { shared, view } =
                 , Theme.column
                     [ alignBottom
                     , Font.size 14
+                    , Theme.padding
                     ]
                     data.footer
                 ]

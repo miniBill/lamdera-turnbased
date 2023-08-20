@@ -4,7 +4,7 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
+import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, text)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
