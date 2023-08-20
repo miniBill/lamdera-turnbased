@@ -2,8 +2,13 @@ module Backend exposing (app)
 
 import Bridge exposing (ToBackend(..), ToFrontend(..), ToFrontendPage(..))
 import Dict
+import Email.Html
+import EmailAddress
 import Env
 import Lamdera exposing (ClientId, SessionId)
+import List.Nonempty
+import SendGrid
+import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
@@ -70,6 +75,16 @@ update msg model =
                     |> Cmd.batch
                 )
 
+        SendResult (Ok ()) ->
+            ( model, Cmd.none )
+
+        SendResult (Err e) ->
+            let
+                _ =
+                    Debug.log "Error sending email" e
+            in
+            ( model, Cmd.none )
+
 
 innerUpdate : Time.Posix -> InnerBackendMsg -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 innerUpdate now submsg model =
@@ -104,9 +119,9 @@ innerUpdateFromFrontend :
     Time.Posix
     -> SessionId
     -> ClientId
-    -> ToBackend
+    -> Bridge.ToBackend
     -> BackendModel
-    -> ( BackendModel, Cmd msg )
+    -> ( BackendModel, Cmd BackendMsg )
 innerUpdateFromFrontend _ sid _ msg model =
     case msg of
         TBJoin _ ->
@@ -122,6 +137,37 @@ innerUpdateFromFrontend _ sid _ msg model =
         TBLoginAsAdmin key ->
             if key == Env.adminKey then
                 ( { model | sessions = SessionDict.toAdmin sid model.sessions }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
+
+        TBSendTestEmail ->
+            if SessionDict.isAdmin sid model.sessions then
+                case
+                    ( EmailAddress.fromString "leonardo@taglialegne.it"
+                    , EmailAddress.fromString "cmt.miniBill@gmail.com"
+                    )
+                of
+                    ( Just sender, Just recipient ) ->
+                        ( model
+                        , SendGrid.sendEmail
+                            SendResult
+                            (SendGrid.apiKey Env.sendGridKey)
+                            (SendGrid.htmlEmail
+                                { subject = NonemptyString 'S' "ubject"
+                                , to = List.Nonempty.fromElement recipient
+                                , content =
+                                    Email.Html.div
+                                        []
+                                        [ Email.Html.text "Hi!" ]
+                                , nameOfSender = "Leonardo Taglialegne"
+                                , emailAddressOfSender = sender
+                                }
+                            )
+                        )
+
+                    _ ->
+                        ( model, Cmd.none )
 
             else
                 ( model, Cmd.none )

@@ -1,6 +1,6 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToFrontendPage(..))
+import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (Effect)
@@ -8,6 +8,7 @@ import Element.WithContext as Element exposing (Color, alignTop, el, rgb255, tex
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
 import FNV1a
 import Lamdera exposing (SessionId)
 import Page exposing (Page)
@@ -60,6 +61,7 @@ init route () =
 
 type Msg
     = NoOp
+    | SendTestEmail
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -68,6 +70,11 @@ update msg model =
         NoOp ->
             ( model
             , Effect.none
+            )
+
+        SendTestEmail ->
+            ( model
+            , Effect.sendCmd <| Lamdera.sendToBackend TBSendTestEmail
             )
 
 
@@ -87,7 +94,14 @@ subscriptions _ =
 view : Model -> View Msg
 view model =
     { kind = View.Admin
-    , body = viewSessions model.sessions
+    , body =
+        Theme.column []
+            [ viewSessions model.sessions
+            , Input.button []
+                { onPress = Just SendTestEmail
+                , label = text "Send test email"
+                }
+            ]
     }
 
 

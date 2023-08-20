@@ -27,5 +27,4 @@ gameIdDictFile =
                     |> Elm.withType Annotation.string
         }
         |> GenericDict.withTypeName "GameIdDict"
-        |> GenericDict.useElmFastDict
         |> GenericDict.generateFile

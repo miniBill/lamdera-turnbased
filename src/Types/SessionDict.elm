@@ -1,17 +1,25 @@
-module Types.SessionDict exposing (Client, Session, SessionDict, cleanup, clients, disconnected, empty, getSession, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Session, SessionDict, cleanup, clients, disconnected, empty, getSession, isAdmin, seen, sessions, toAdmin)
 
 import Dict exposing (Dict)
 import Env
 import Lamdera exposing (ClientId, SessionId)
 import Set exposing (Set)
 import Time
+import Types.GameId exposing (GameId)
+import Types.GameIdDict as GameIdDict exposing (GameIdDict)
 
 
 type SessionDict
     = SessionDict
         { sessions : Dict SessionId Session
         , clients : Dict ClientId Client
+        , games : GameIdDict Game
         }
+
+
+type alias Game =
+    { users : Set SessionId
+    }
 
 
 type alias Session =
@@ -30,6 +38,7 @@ emptySession =
 type alias Client =
     { session : SessionId
     , lastSeen : Time.Posix
+    , playing : Maybe GameId
     }
 
 
@@ -38,6 +47,7 @@ empty =
     SessionDict
         { sessions = Dict.empty
         , clients = Dict.empty
+        , games = GameIdDict.empty
         }
 
 
@@ -73,10 +83,12 @@ seen now sessionId clientId (SessionDict dict) =
                         Nothing ->
                             { session = sessionId
                             , lastSeen = now
+                            , playing = Nothing
                             }
                                 |> Just
                 )
                 dict.clients
+        , games = dict.games
         }
 
 
@@ -91,15 +103,20 @@ disconnected sessionId clientId (SessionDict dict) =
         newSession : Session
         newSession =
             { session | clients = Set.filter (\c -> c /= clientId) session.clients }
+
+        isGone : Bool
+        isGone =
+            Set.isEmpty newSession.clients
     in
     SessionDict
         { sessions =
-            if Set.isEmpty newSession.clients then
+            if isGone then
                 Dict.remove sessionId dict.sessions
 
             else
                 Dict.insert sessionId newSession dict.sessions
         , clients = Dict.remove clientId dict.clients
+        , games = dict.games
         }
 
 
@@ -150,3 +167,10 @@ cleanup now dict =
                 elapsed > Env.pingTime * 3 // 2
             )
         |> List.foldl (\( clientId, { session } ) -> disconnected session clientId) dict
+
+
+isAdmin : SessionId -> SessionDict -> Bool
+isAdmin sessionId dict =
+    getSession sessionId dict
+        |> Maybe.map .isAdmin
+        |> Maybe.withDefault False

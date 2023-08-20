@@ -1,4 +1,9 @@
-module Env exposing (adminKey, isDev, pingTime)
+module Env exposing (adminKey, isDev, pingTime, sendGridKey)
+
+
+sendGridKey : String
+sendGridKey =
+    ""
 
 
 isDev : Bool

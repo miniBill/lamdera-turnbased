@@ -1,4 +1,4 @@
-module Types.GameIdDict exposing (GameIdDict, empty, filter, foldl, foldr, fromList, get, getMax, getMaxKey, getMin, getMinKey, insert, isEmpty, keys, map, member, partition, popMax, popMin, remove, singleton, size, toList, update, values)
+module Types.GameIdDict exposing (GameIdDict, empty, filter, foldl, foldr, fromList, get, insert, isEmpty, keys, map, member, partition, remove, singleton, size, toList, update, values)
 
 {-| 
 ## Build
@@ -13,10 +13,6 @@ module Types.GameIdDict exposing (GameIdDict, empty, filter, foldl, foldr, fromL
 
 @docs keys, values, toList, fromList
 
-## Min / Max
-
-@docs getMinKey, getMin, popMin, getMaxKey, getMax, popMax
-
 ## Query
 
 @docs isEmpty, member, get, size
@@ -27,22 +23,22 @@ module Types.GameIdDict exposing (GameIdDict, empty, filter, foldl, foldr, fromL
 -}
 
 
-import FastDict
+import Dict
 import Types.GameId
 
 
 type GameIdDict v
-    = GameIdDict (FastDict.Dict String ( Types.GameId.GameId, v ))
+    = GameIdDict (Dict.Dict String ( Types.GameId.GameId, v ))
 
 
 empty : GameIdDict v
 empty =
-    GameIdDict FastDict.empty
+    GameIdDict Dict.empty
 
 
 singleton : Types.GameId.GameId -> v -> GameIdDict v
 singleton key value =
-    GameIdDict (FastDict.singleton (Types.GameId.toString key) ( key, value ))
+    GameIdDict (Dict.singleton (Types.GameId.toString key) ( key, value ))
 
 
 insert : Types.GameId.GameId -> v -> GameIdDict v -> GameIdDict v
@@ -50,8 +46,7 @@ insert key value d =
     case d of
         GameIdDict dict ->
             GameIdDict
-                (FastDict.insert (Types.GameId.toString key) ( key, value ) dict
-                )
+                (Dict.insert (Types.GameId.toString key) ( key, value ) dict)
 
 
 update :
@@ -60,7 +55,7 @@ update key f d =
     case d of
         GameIdDict dict ->
             GameIdDict
-                (FastDict.update
+                (Dict.update
                     (Types.GameId.toString key)
                     (\updateUnpack ->
                         Maybe.map
@@ -75,64 +70,62 @@ remove : Types.GameId.GameId -> GameIdDict v -> GameIdDict v
 remove key d =
     case d of
         GameIdDict dict ->
-            GameIdDict (FastDict.remove (Types.GameId.toString key) dict)
+            GameIdDict (Dict.remove (Types.GameId.toString key) dict)
 
 
 isEmpty : GameIdDict v -> Bool
 isEmpty d =
     case d of
         GameIdDict dict ->
-            FastDict.isEmpty dict
+            Dict.isEmpty dict
 
 
 member : Types.GameId.GameId -> GameIdDict v -> Bool
 member key d =
     case d of
         GameIdDict dict ->
-            FastDict.member (Types.GameId.toString key) dict
+            Dict.member (Types.GameId.toString key) dict
 
 
 get : Types.GameId.GameId -> GameIdDict b -> Maybe b
 get key d =
     case d of
         GameIdDict dict ->
-            Maybe.map
-                Tuple.second
-                (FastDict.get (Types.GameId.toString key) dict)
+            Maybe.map Tuple.second (Dict.get (Types.GameId.toString key) dict)
 
 
 size : GameIdDict v -> Int
 size d =
     case d of
         GameIdDict dict ->
-            FastDict.size dict
+            Dict.size dict
 
 
 keys : GameIdDict v -> List Types.GameId.GameId
 keys d =
     case d of
         GameIdDict dict ->
-            List.map Tuple.first (FastDict.values dict)
+            List.map Tuple.first (Dict.values dict)
 
 
 values : GameIdDict v -> List v
 values d =
     case d of
         GameIdDict dict ->
-            List.map Tuple.second (FastDict.values dict)
+            List.map Tuple.second (Dict.values dict)
 
 
 toList : GameIdDict v -> List ( Types.GameId.GameId, v )
 toList d =
     case d of
         GameIdDict dict ->
-            FastDict.values dict
+            Dict.values dict
 
 
 fromList : List ( Types.GameId.GameId, v ) -> GameIdDict v
 fromList l =
     GameIdDict
-        (FastDict.fromList
+        (Dict.fromList
             (List.map
                 (\e ->
                     case e of
@@ -149,7 +142,7 @@ map f d =
     case d of
         GameIdDict dict ->
             GameIdDict
-                (FastDict.map
+                (Dict.map
                     (\mapUnpack ->
                         \unpack ->
                             case unpack of
@@ -164,7 +157,7 @@ foldl : (Types.GameId.GameId -> v -> b -> b) -> b -> GameIdDict v -> b
 foldl f b0 d =
     case d of
         GameIdDict dict ->
-            FastDict.foldl
+            Dict.foldl
                 (\_ kv b ->
                     case kv of
                         ( k, v ) ->
@@ -178,7 +171,7 @@ foldr : (Types.GameId.GameId -> v -> b -> b) -> b -> GameIdDict v -> b
 foldr f b0 d =
     case d of
         GameIdDict dict ->
-            FastDict.foldr
+            Dict.foldr
                 (\_ kv b ->
                     case kv of
                         ( k, v ) ->
@@ -193,7 +186,7 @@ filter f d =
     GameIdDict
         (case d of
             GameIdDict dict ->
-                FastDict.filter
+                Dict.filter
                     (\filterUnpack ->
                         \unpack ->
                             case unpack of
@@ -214,7 +207,7 @@ partition f d =
             Tuple.mapBoth
                 GameIdDict
                 GameIdDict
-                (FastDict.partition
+                (Dict.partition
                     (\partitionUnpack ->
                         \unpack ->
                             case unpack of
@@ -223,49 +216,3 @@ partition f d =
                     )
                     dict
                 )
-
-
-getMinKey : GameIdDict v -> Maybe String
-getMinKey d =
-    case d of
-        GameIdDict dict ->
-            FastDict.getMinKey dict
-
-
-getMin : GameIdDict v -> Maybe ( String, ( Types.GameId.GameId, v ) )
-getMin d =
-    case d of
-        GameIdDict dict ->
-            FastDict.getMin dict
-
-
-popMin :
-    GameIdDict v
-    -> Maybe ( ( String, ( Types.GameId.GameId, v ) ), FastDict.Dict String ( Types.GameId.GameId, v ) )
-popMin d =
-    case d of
-        GameIdDict dict ->
-            FastDict.popMin dict
-
-
-getMaxKey : GameIdDict v -> Maybe String
-getMaxKey d =
-    case d of
-        GameIdDict dict ->
-            FastDict.getMaxKey dict
-
-
-getMax : GameIdDict v -> Maybe ( String, ( Types.GameId.GameId, v ) )
-getMax d =
-    case d of
-        GameIdDict dict ->
-            FastDict.getMax dict
-
-
-popMax :
-    GameIdDict v
-    -> Maybe ( ( String, ( Types.GameId.GameId, v ) ), FastDict.Dict String ( Types.GameId.GameId, v ) )
-popMax d =
-    case d of
-        GameIdDict dict ->
-            FastDict.popMax dict

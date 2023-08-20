@@ -11,6 +11,7 @@ module Types exposing
 import Bridge
 import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
+import SendGrid
 import Time
 import Types.SessionDict exposing (SessionDict)
 
@@ -39,6 +40,7 @@ type alias ToFrontend =
 type BackendMsg
     = WithoutTime InnerBackendMsg
     | WithTime InnerBackendMsg Time.Posix
+    | SendResult (Result SendGrid.Error ())
 
 
 type InnerBackendMsg
