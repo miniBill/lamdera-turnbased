@@ -128,7 +128,7 @@ view _ model =
                     el
                         [ Theme.padding
                         , Border.width 1
-                        , Border.color <| rgb255 255 255 255
+                        , Border.color Theme.colors.wanderhomeBackground
                         ]
                     <|
                         text " "
