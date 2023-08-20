@@ -1,7 +1,6 @@
 module Theme exposing (Attribute, Element, colors, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, el, rgb255)
-import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
 import Shared.Model exposing (Context)
 

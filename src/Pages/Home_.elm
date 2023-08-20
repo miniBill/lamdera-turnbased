@@ -1,16 +1,13 @@
 module Pages.Home_ exposing (Model, Msg(..), page, updateFromBackend)
 
 import Bridge exposing (ToFrontendPage(..))
-import Diceware
 import Dict
 import Effect exposing (..)
-import Element.WithContext as Element exposing (alignBottom, alignRight, centerX, centerY, el, fill, image, link, paddingEach, paragraph, px, rgb255, text, width)
+import Element.WithContext as Element exposing (alignRight, centerX, centerY, el, fill, image, link, px, rgb255, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
-import Html.Attributes
 import Page exposing (Page)
-import Random
 import Route exposing (Route)
 import Route.Path
 import Shared
@@ -33,20 +30,13 @@ page shared _ =
 
 
 type alias Model =
-    { input : String
-    , placeholder : Maybe String
-    }
+    {}
 
 
 init : () -> ( Model, Effect Msg )
 init _ =
-    ( { input = ""
-      , placeholder = Nothing
-      }
-    , Random.int Diceware.listLength (Diceware.listLength ^ 2 - 1)
-        |> Random.map Diceware.numberToWords
-        |> Random.generate Placeholder
-        |> Effect.sendCmd
+    ( {}
+    , Effect.none
     )
 
 
@@ -55,18 +45,14 @@ init _ =
 
 
 type Msg
-    = Input String
-    | Placeholder String
+    = NoOp
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
-        Input input ->
-            ( { model | input = input }, Effect.none )
-
-        Placeholder placeholder ->
-            ( { model | placeholder = Just placeholder }, Effect.none )
+        NoOp ->
+            ( model, Effect.none )
 
 
 
