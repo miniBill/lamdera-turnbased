@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    {
+      "count": 1,
+      "filePath": "src/Bridge.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Effect.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Pages/Admin.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Pages/Fate.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Pages/Fate/Id_.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Pages/Wanderhome/Id_.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Shared/Msg.elm"
+    },
+    {
+      "count": 1,
+      "filePath": "src/Types/GameId.elm"
+    }
+  ]
+}

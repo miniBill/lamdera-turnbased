@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "automatically created by": "elm-review suppress",
+  "learn more": "elm-review suppress --help",
+  "suppressions": [
+    { "count": 3, "filePath": "src/Effect.elm" },
+    { "count": 2, "filePath": "src/Types/SessionDict.elm" },
+    { "count": 1, "filePath": "src/Env.elm" },
+    { "count": 1, "filePath": "src/Theme.elm" },
+    { "count": 1, "filePath": "src/Types/GameId.elm" }
+  ]
+}
