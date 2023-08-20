@@ -90,48 +90,50 @@ view _ model =
             , height fill
             ]
             [ Theme.title
-            , Input.text
-                [ Font.center, centerY ]
-                { label =
-                    Input.labelAbove [ centerX ] <|
-                        paragraph
-                            [ Font.family [ Theme.fonts.luminari ]
-                            ]
-                            [ text "Game name" ]
-                , onChange = Input
-                , text = model.input
-                , placeholder =
-                    Maybe.map
-                        (\placeholder ->
-                            Input.placeholder [] <| text placeholder
-                        )
-                        model.placeholder
-                }
-            , if String.length model.input > 5 then
-                link
-                    [ centerX
-                    , Border.width 1
-                    , Theme.padding
-                    , Border.rounded Theme.rythm
-                    , Font.family [ Theme.fonts.luminari ]
-                    ]
-                    { url =
-                        Route.toString
-                            { path = Route.Path.Id_ { id = model.input }
-                            , query = Dict.empty
-                            , hash = Nothing
-                            }
-                    , label = text "Join game"
+            , Theme.column [ centerX, centerY ]
+                [ Input.text
+                    [ Font.center, centerY ]
+                    { label =
+                        Input.labelAbove [ centerX ] <|
+                            paragraph
+                                [ Font.family [ Theme.fonts.luminari ]
+                                ]
+                                [ text "Game name" ]
+                    , onChange = Input
+                    , text = model.input
+                    , placeholder =
+                        Maybe.map
+                            (\placeholder ->
+                                Input.placeholder [] <| text placeholder
+                            )
+                            model.placeholder
                     }
+                , if String.length model.input > 5 then
+                    link
+                        [ centerX
+                        , Border.width 1
+                        , Theme.padding
+                        , Border.rounded Theme.rythm
+                        , Font.family [ Theme.fonts.luminari ]
+                        ]
+                        { url =
+                            Route.toString
+                                { path = Route.Path.Id_ { id = model.input }
+                                , query = Dict.empty
+                                , hash = Nothing
+                                }
+                        , label = text "Join game"
+                        }
 
-              else
-                el
-                    [ Theme.padding
-                    , Border.width 1
-                    , Border.color <| rgb255 255 255 255
-                    ]
-                <|
-                    text " "
+                  else
+                    el
+                        [ Theme.padding
+                        , Border.width 1
+                        , Border.color <| rgb255 255 255 255
+                        ]
+                    <|
+                        text " "
+                ]
             ]
     }
 
