@@ -106,7 +106,7 @@ view _ _ =
                         , query = Dict.empty
                         , hash = Nothing
                         }
-                , label = Theme.fateCoreTitle { dark = True }
+                , label = Theme.fateCoreTitle
                 }
             ]
     }

@@ -4,7 +4,8 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext exposing (centerX, centerY, el, fill, height, image, link, paragraph, rgb255, text)
+import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
+import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
@@ -89,13 +90,14 @@ view _ model =
             [ centerX
             , height fill
             ]
-            [ image []
-                { src = "/public/powered-by-fate-light.png"
-                , description = "Powered by Fate logo"
-                }
+            [ Theme.fateCoreTitle
             , Theme.column [ centerX, centerY ]
                 [ Input.text
-                    [ Font.center, centerY ]
+                    [ Font.center
+                    , centerY
+                    , Background.color Theme.colors.fateCoreBackground
+                    , Border.color Theme.colors.fateCore
+                    ]
                     { label =
                         Input.labelAbove [ centerX ] <|
                             paragraph
@@ -106,7 +108,9 @@ view _ model =
                     , placeholder =
                         Maybe.map
                             (\placeholder ->
-                                Input.placeholder [] <| text placeholder
+                                Input.placeholder
+                                    [ Font.color <| rgb255 0xA8 0xAA 0xA5 ]
+                                    (text placeholder)
                             )
                             model.placeholder
                     }
@@ -131,10 +135,9 @@ view _ model =
                     el
                         [ Theme.padding
                         , Border.width 1
-                        , Border.color <| rgb255 255 255 255
+                        , Border.color Theme.colors.fateCoreBackground
                         ]
-                    <|
-                        text " "
+                        (text " ")
                 ]
             ]
     }

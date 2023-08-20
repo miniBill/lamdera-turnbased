@@ -14,7 +14,8 @@ module View exposing
 -}
 
 import Browser
-import Element.WithContext as Element exposing (alignBottom, el, fill, height, link, paragraph, text, width)
+import Element.WithContext as Element exposing (Color, alignBottom, el, fill, height, link, paragraph, rgb255, text, width)
+import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
 import Html
 import Route exposing (Route)
@@ -45,12 +46,20 @@ toBrowserDocument :
     -> Browser.Document msg
 toBrowserDocument { shared, view } =
     let
-        data : { title : String, font : Attribute msg, footer : List (Element msg) }
+        data :
+            { title : String
+            , font : Attribute msg
+            , background : Color
+            , color : Color
+            , footer : List (Element msg)
+            }
         data =
             case view.kind of
                 Home ->
                     { title = "TurnBased"
                     , font = Font.family [ Font.sansSerif ]
+                    , background = rgb255 0xFF 0xFF 0xFF
+                    , color = rgb255 0 0 0
                     , footer =
                         footer Theme.fonts.arnoPro wanderhomeFooter
                             ++ el [] (text " ")
@@ -60,12 +69,16 @@ toBrowserDocument { shared, view } =
                 Wanderhome ->
                     { title = "Wanderhome - TurnBased"
                     , font = Theme.fonts.arnoPro
+                    , background = Theme.colors.wanderhomeBackground
+                    , color = Theme.colors.wanderhome
                     , footer = footer Theme.fonts.arnoPro wanderhomeFooter
                     }
 
                 FateCore ->
                     { title = "Fate Core - TurnBased"
                     , font = Theme.fonts.garamond
+                    , background = Theme.colors.fateCoreBackground
+                    , color = Theme.colors.fateCore
                     , footer = footer Theme.fonts.garamond fateCoreFooter
                     }
     in
@@ -76,6 +89,8 @@ toBrowserDocument { shared, view } =
             [ width fill
             , height fill
             , data.font
+            , Font.color data.color
+            , Background.color data.background
             ]
             (Theme.column
                 [ width fill

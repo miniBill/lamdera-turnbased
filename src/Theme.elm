@@ -79,7 +79,7 @@ colors =
     { wanderhome = rgb255 0x1C 0x54 0x49
     , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
     , fateCore = rgb255 0xFF 0xFF 0xFF
-    , fateCoreBackground = rgb255 0x12 0x71 0xB9
+    , fateCoreBackground = rgb255 0 0x55 0x88
     }
 
 
@@ -99,25 +99,20 @@ fonts =
     }
 
 
-fateCoreTitle : { dark : Bool } -> Element msg
-fateCoreTitle { dark } =
+fateCoreTitle : Element msg
+fateCoreTitle =
     row [ width fill ]
         [ el
             [ fonts.gotham
             , Font.size 60
-            , Element.moveDown 12
+            , Element.moveDown 14
             ]
             (text "FATE ONLINE")
         , image
             [ width <| px 300
             , alignRight
             ]
-            { src =
-                if dark then
-                    "/powered-by-fate-dark.png"
-
-                else
-                    "/powered-by-fate-light.png"
+            { src = "/powered-by-fate-dark.png"
             , description = "Powered by Fate logo"
             }
         ]
