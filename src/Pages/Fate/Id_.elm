@@ -1,20 +1,18 @@
-module Pages.Id_ exposing (Model, Msg, page, updateFromBackend)
+module Pages.Fate.Id_ exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToBackend(..), ToFrontendPage(..))
+import Bridge exposing (ToFrontendPage(..))
 import Effect exposing (Effect)
-import Element.WithContext as Element
-import Lamdera
+import Element.WithContext exposing (text)
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
-import Types.GameId exposing (GameId(..))
-import View exposing (View)
+import View exposing (View, ViewKind(..))
 
 
 page : Shared.Model -> Route { id : String } -> Page Model Msg
-page _ route =
+page _ _ =
     Page.new
-        { init = init { id = GameId route.params.id }
+        { init = init
         , update = update
         , subscriptions = subscriptions
         , view = view
@@ -25,14 +23,14 @@ page _ route =
 -- INIT
 
 
-type Model
-    = Joining
+type alias Model =
+    {}
 
 
-init : { id : GameId } -> () -> ( Model, Effect Msg )
-init { id } () =
-    ( Joining
-    , Effect.sendCmd <| Lamdera.sendToBackend <| TBJoin id
+init : () -> ( Model, Effect Msg )
+init () =
+    ( {}
+    , Effect.none
     )
 
 
@@ -68,8 +66,8 @@ subscriptions _ =
 
 view : Model -> View Msg
 view _ =
-    { title = "Wanderhome Online"
-    , body = Element.text "/:id"
+    { kind = FateCore
+    , body = text "TODO"
     }
 
 

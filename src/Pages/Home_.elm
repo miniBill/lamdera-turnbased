@@ -4,10 +4,9 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (..)
-import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
+import Element.WithContext exposing (centerX, centerY, link)
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
-import Element.WithContext.Input as Input
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -82,58 +81,28 @@ subscriptions _ =
 
 
 view : Shared.Model -> Model -> View Msg
-view _ model =
-    { title = "Wanderhome Online"
+view _ _ =
+    { kind = View.Home
     , body =
         Theme.column
             [ centerX
-            , height fill
+            , centerY
             ]
-            [ Theme.title
-            , Theme.column [ centerX, centerY ]
-                [ Input.text
-                    [ Font.center, centerY ]
-                    { label =
-                        Input.labelAbove [ centerX ] <|
-                            paragraph
-                                [ Font.family [ Theme.fonts.luminari ]
-                                ]
-                                [ text "Game name" ]
-                    , onChange = Input
-                    , text = model.input
-                    , placeholder =
-                        Maybe.map
-                            (\placeholder ->
-                                Input.placeholder [] <| text placeholder
-                            )
-                            model.placeholder
-                    }
-                , if String.length model.input > 5 then
-                    link
-                        [ centerX
-                        , Border.width 1
-                        , Theme.padding
-                        , Border.rounded Theme.rythm
-                        , Font.family [ Theme.fonts.luminari ]
-                        ]
-                        { url =
-                            Route.toString
-                                { path = Route.Path.Id_ { id = model.input }
-                                , query = Dict.empty
-                                , hash = Nothing
-                                }
-                        , label = text "Join game"
-                        }
-
-                  else
-                    el
-                        [ Theme.padding
-                        , Border.width 1
-                        , Border.color <| rgb255 255 255 255
-                        ]
-                    <|
-                        text " "
+            [ link
+                [ centerX
+                , Border.width 1
+                , Theme.padding
+                , Border.rounded Theme.rythm
+                , Font.family [ Theme.fonts.luminari ]
                 ]
+                { url =
+                    Route.toString
+                        { path = Route.Path.Wanderhome
+                        , query = Dict.empty
+                        , hash = Nothing
+                        }
+                , label = Theme.wanderhomeOnlineTitle
+                }
             ]
     }
 

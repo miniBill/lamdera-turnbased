@@ -2,6 +2,7 @@ module View exposing
     ( View, map
     , none, fromString
     , toBrowserDocument
+    , ViewKind(..)
     )
 
 {-|
@@ -13,7 +14,7 @@ module View exposing
 -}
 
 import Browser
-import Element.WithContext as Element exposing (alignBottom, centerX, fill, height, link, paragraph, text, textColumn, width)
+import Element.WithContext as Element exposing (alignBottom, el, fill, height, link, paragraph, text, width)
 import Element.WithContext.Font as Font
 import Html
 import Route exposing (Route)
@@ -22,9 +23,15 @@ import Theme exposing (Element)
 
 
 type alias View msg =
-    { title : String
+    { kind : ViewKind
     , body : Element msg
     }
+
+
+type ViewKind
+    = Home
+    | Wanderhome
+    | FateCore
 
 
 {-| Used internally by Elm Land to create your application
@@ -37,54 +44,120 @@ toBrowserDocument :
     }
     -> Browser.Document msg
 toBrowserDocument { shared, view } =
-    { title = view.title
+    let
+        data : { title : String, font : Font.Font, footer : List (Element msg) }
+        data =
+            case view.kind of
+                Home ->
+                    { title = "TurnBased"
+                    , font = Font.sansSerif
+                    , footer =
+                        footer Theme.fonts.arnoPro wanderhomeFooter
+                            ++ el [] (text " ")
+                            :: footer Theme.fonts.garamond fateCoreFooter
+                    }
+
+                Wanderhome ->
+                    { title = "Wanderhome - TurnBased"
+                    , font = Theme.fonts.arnoPro
+                    , footer = footer Theme.fonts.arnoPro wanderhomeFooter
+                    }
+
+                FateCore ->
+                    { title = "Fate Core - TurnBased"
+                    , font = Theme.fonts.garamond
+                    , footer = footer Theme.fonts.garamond fateCoreFooter
+                    }
+    in
+    { title = data.title
     , body =
-        [ Html.node "style"
-            []
-            [ Html.text fontsCss ]
+        [ Html.node "style" [] [ Html.text (fontsCss view.kind) ]
         , Element.layout shared.context
             [ width fill
             , height fill
-            , Font.family [ Theme.fonts.arnoPro ]
+            , Font.family [ data.font ]
             ]
-          <|
-            Theme.column
+            (Theme.column
                 [ width fill
                 , height fill
                 , Theme.padding
                 ]
                 [ view.body
-                , textColumn
-                    [ centerX
-                    , alignBottom
+                , Theme.column
+                    [ alignBottom
+                    , Font.size 14
                     ]
-                    [ paragraph []
-                        [ link [ Font.underline ]
-                            { url = "https://possumcreekgames.com/pages/wanderhome"
-                            , label = text "Wanderhome"
-                            }
-                        , text " is copyright of "
-                        , link [ Font.underline ]
-                            { url = "https://possumcreekgames.com/"
-                            , label = text "Possum Creek Games Inc."
-                            }
-                        ]
-                    , paragraph []
-                        [ text "Wanderhome Online is an independent production by Leonardo Taglialegne and is not affiliated with Possum Creek Games Inc. It is published under the "
-                        , link [ Font.underline ]
-                            { url = "https://possumcreekgames.com/pages/wanderhome-3rd-party-license"
-                            , label = text "Wanderhome Third Party License"
-                            }
-                        , text "."
-                        ]
-                    ]
+                    data.footer
                 ]
+            )
         ]
     }
 
 
-fontsCss : String
-fontsCss =
+footer : Font.Font -> List (List (Element msg)) -> List (Element msg)
+footer font content =
+    [ Theme.column
+        [ Font.family [ font ] ]
+        (List.map (paragraph []) content)
+    ]
+
+
+wanderhomeFooter : List (List (Element msg))
+wanderhomeFooter =
+    [ [ link [ Font.underline ]
+            { url = "https://possumcreekgames.com/pages/wanderhome"
+            , label = text "Wanderhome"
+            }
+      , text " is copyright of "
+      , link [ Font.underline ]
+            { url = "https://possumcreekgames.com/"
+            , label = text "Possum Creek Games Inc."
+            }
+      ]
+    , [ text "Wanderhome Online is an independent production by Leonardo Taglialegne and is not affiliated with Possum Creek Games Inc. It is published under the "
+      , link [ Font.underline ]
+            { url = "https://possumcreekgames.com/pages/wanderhome-3rd-party-license"
+            , label = text "Wanderhome Third Party License"
+            }
+      , text "."
+      ]
+    ]
+
+
+fateCoreFooter : List (List (Element msg))
+fateCoreFooter =
+    [ [ text "This work is based on "
+      , link [ Font.underline ]
+            { label = text "Fate Core System"
+            , url = "http://www.faterpg.com/"
+            }
+      , text " and Fate Accelerated Edition, products of Evil Hat Productions, LLC, developed, authored, and edited by Leonard Balsera, Brian Engard, Jeremy Keller, Ryan Macklin, Mike Olson, Clark Valentine, Amanda Valentine, Fred Hicks, and Rob Donoghue, and licensed for our use under the "
+      , link [ Font.underline ]
+            { label = text "Creative Commons Attribution 3.0 Unported license"
+            , url = "http://creativecommons.org/licenses/by/3.0/"
+            }
+      , text "."
+      ]
+    , [ text "Fate™ is a trademark of Evil Hat Productions, LLC. The Powered by Fate logo is © Evil Hat Productions, LLC and is used with permission."
+      ]
+    ]
+
+
+fontsCss : ViewKind -> String
+fontsCss viewKind =
+    let
+        fonts : List Font
+        fonts =
+            case viewKind of
+                Wanderhome ->
+                    wanderhomeFonts
+
+                Home ->
+                    wanderhomeFonts ++ fateCoreFonts
+
+                FateCore ->
+                    fateCoreFonts
+    in
     fonts
         |> List.map
             (\{ url, name, fontStyle, fontWeight } ->
@@ -105,14 +178,31 @@ fontsCss =
         |> String.join "\n\n"
 
 
-fonts :
-    List
-        { url : String
-        , name : String
-        , fontStyle : String
-        , fontWeight : String
-        }
-fonts =
+type alias Font =
+    { url : String
+    , name : String
+    , fontStyle : String
+    , fontWeight : String
+    }
+
+
+fateCoreFonts : List Font
+fateCoreFonts =
+    [ { url = "/fonts/Garamond.ttf"
+      , name = "Garamond"
+      , fontStyle = "normal"
+      , fontWeight = "normal"
+      }
+    , { url = "/fonts/Gotham-Ultra.otf"
+      , name = "Gotham"
+      , fontStyle = "normal"
+      , fontWeight = "ultra"
+      }
+    ]
+
+
+wanderhomeFonts : List Font
+wanderhomeFonts =
     [ { url = "/fonts/ArnoPro.otf"
       , name = "Arno Pro"
       , fontStyle = "normal"
@@ -145,7 +235,7 @@ fonts =
 -}
 map : (msg1 -> msg2) -> View msg1 -> View msg2
 map fn view =
-    { title = view.title
+    { kind = view.kind
     , body = Element.map fn view.body
     }
 
@@ -155,7 +245,7 @@ authenticated pages.
 -}
 none : View msg
 none =
-    { title = "Wanderhome Online"
+    { kind = Home
     , body = Element.none
     }
 
@@ -169,6 +259,6 @@ the new page working in the web browser!
 -}
 fromString : String -> View msg
 fromString moduleName =
-    { title = moduleName
+    { kind = Home
     , body = Element.text moduleName
     }

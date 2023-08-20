@@ -9,8 +9,11 @@ import Main as ElmLand
 import Main.Pages.Model
 import Main.Pages.Msg
 import Pages.Admin
+import Pages.Fate
+import Pages.Fate.Id_
 import Pages.Home_
-import Pages.Id_
+import Pages.Wanderhome
+import Pages.Wanderhome.Id_
 import Types exposing (FrontendModel, FrontendMsg, ToFrontend)
 import Url
 
@@ -57,26 +60,47 @@ updateFromBackend msg model =
                     )
             in
             case model.page of
-                Main.Pages.Model.Home_ homeModel ->
+                Main.Pages.Model.Home_ innerModel ->
                     updatePageFromBackend
                         Pages.Home_.updateFromBackend
                         Main.Pages.Model.Home_
                         Main.Pages.Msg.Home_
-                        homeModel
+                        innerModel
 
-                Main.Pages.Model.Admin adminModel ->
+                Main.Pages.Model.Admin innerModel ->
                     updatePageFromBackend
                         Pages.Admin.updateFromBackend
                         Main.Pages.Model.Admin
                         Main.Pages.Msg.Admin
-                        adminModel
+                        innerModel
 
-                Main.Pages.Model.Id_ route idModel ->
+                Main.Pages.Model.Fate innerModel ->
                     updatePageFromBackend
-                        Pages.Id_.updateFromBackend
-                        (Main.Pages.Model.Id_ route)
-                        Main.Pages.Msg.Id_
-                        idModel
+                        Pages.Fate.updateFromBackend
+                        Main.Pages.Model.Fate
+                        Main.Pages.Msg.Fate
+                        innerModel
+
+                Main.Pages.Model.Fate_Id_ route innerModel ->
+                    updatePageFromBackend
+                        Pages.Fate.Id_.updateFromBackend
+                        (Main.Pages.Model.Fate_Id_ route)
+                        Main.Pages.Msg.Fate_Id_
+                        innerModel
+
+                Main.Pages.Model.Wanderhome innerModel ->
+                    updatePageFromBackend
+                        Pages.Wanderhome.updateFromBackend
+                        Main.Pages.Model.Wanderhome
+                        Main.Pages.Msg.Wanderhome
+                        innerModel
+
+                Main.Pages.Model.Wanderhome_Id_ route innerModel ->
+                    updatePageFromBackend
+                        Pages.Wanderhome.Id_.updateFromBackend
+                        (Main.Pages.Model.Wanderhome_Id_ route)
+                        Main.Pages.Msg.Wanderhome_Id_
+                        innerModel
 
                 Main.Pages.Model.NotFound_ notFoundModel ->
                     updatePageFromBackend

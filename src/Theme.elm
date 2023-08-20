@@ -1,7 +1,7 @@
-module Theme exposing (Attribute, Element, column, fonts, padding, row, rythm, spacing, title, wrappedRow)
+module Theme exposing (Attribute, Element, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Element, el)
-import Element.WithContext.Font as Font
+import Element.WithContext.Font as Font exposing (Font)
 import Shared.Model exposing (Context)
 
 
@@ -43,8 +43,8 @@ rythm =
     10
 
 
-title : Element msg
-title =
+wanderhomeOnlineTitle : Element msg
+wanderhomeOnlineTitle =
     Element.row
         [ Font.size 70
         , Element.below <|
@@ -70,12 +70,16 @@ title =
 
 
 fonts :
-    { arnoPro : Font.Font
-    , luminari : Font.Font
-    , ruritania : Font.Font
+    { arnoPro : Font
+    , luminari : Font
+    , ruritania : Font
+    , garamond : Font
+    , gotham : Font
     }
 fonts =
     { arnoPro = Font.typeface "Arno Pro"
     , luminari = Font.typeface "Luminari"
     , ruritania = Font.typeface "Ruritania"
+    , garamond = Font.typeface "Garamond"
+    , gotham = Font.typeface "Gotham"
     }

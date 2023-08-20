@@ -86,7 +86,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view model =
-    { title = "Wanderhome Online - Admin"
+    { kind = View.Home
     , body = viewSessions model.sessions
     }
 
