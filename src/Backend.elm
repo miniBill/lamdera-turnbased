@@ -86,6 +86,7 @@ innerUpdate now submsg model =
 
         FromFrontend sid cid tbmsg ->
             let
+                newSessions : SessionDict
                 newSessions =
                     SessionDict.seen now sid cid model.sessions
             in
@@ -106,7 +107,7 @@ innerUpdateFromFrontend :
     -> ToBackend
     -> BackendModel
     -> ( BackendModel, Cmd msg )
-innerUpdateFromFrontend now sid cid msg model =
+innerUpdateFromFrontend _ sid _ msg model =
     case msg of
         TBJoin _ ->
             let

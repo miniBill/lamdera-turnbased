@@ -1,9 +1,9 @@
-module Pages.Home_ exposing (Model, Msg(..), page, updateFromBackend)
+module Pages.Home_ exposing (Model, Msg, page, updateFromBackend)
 
 import Bridge exposing (ToFrontendPage(..))
 import Dict
-import Effect exposing (..)
-import Element.WithContext as Element exposing (alignRight, centerX, centerY, el, fill, image, link, px, rgb255, text, width)
+import Effect exposing (Effect)
+import Element.WithContext exposing (centerX, centerY, fill, link, rgb255, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -44,15 +44,13 @@ init _ =
 -- UPDATE
 
 
-type Msg
-    = NoOp
+type alias Msg =
+    {}
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
-    case msg of
-        NoOp ->
-            ( model, Effect.none )
+update _ model =
+    ( model, Effect.none )
 
 
 
@@ -108,22 +106,7 @@ view _ _ =
                         , query = Dict.empty
                         , hash = Nothing
                         }
-                , label =
-                    Theme.row [ width fill ]
-                        [ el
-                            [ Theme.fonts.gotham
-                            , Font.size 60
-                            , Element.moveDown 12
-                            ]
-                            (text " FATE ONLINE")
-                        , image
-                            [ width <| px 300
-                            , alignRight
-                            ]
-                            { src = "/powered-by-fate-dark.png"
-                            , description = "Powered by Fate"
-                            }
-                        ]
+                , label = Theme.fateCoreTitle { dark = True }
                 }
             ]
     }

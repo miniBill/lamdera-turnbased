@@ -133,6 +133,7 @@ toAdmin sessionId (SessionDict dict) =
 cleanup : Time.Posix -> SessionDict -> SessionDict
 cleanup now dict =
     let
+        nowMillis : Int
         nowMillis =
             Time.posixToMillis now
     in

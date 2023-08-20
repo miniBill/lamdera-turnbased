@@ -1,6 +1,6 @@
-module Theme exposing (Attribute, Element, colors, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, colors, column, fateCoreTitle, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
-import Element.WithContext as Element exposing (Attribute, Color, Element, el, rgb255)
+import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
 import Element.WithContext.Font as Font
 import Shared.Model exposing (Context)
 
@@ -97,3 +97,27 @@ fonts =
     , garamond = Font.family [ Font.typeface "Garamond" ]
     , gotham = Font.family [ Font.typeface "Gotham" ]
     }
+
+
+fateCoreTitle : { dark : Bool } -> Element msg
+fateCoreTitle { dark } =
+    row [ width fill ]
+        [ el
+            [ fonts.gotham
+            , Font.size 60
+            , Element.moveDown 12
+            ]
+            (text "FATE ONLINE")
+        , image
+            [ width <| px 300
+            , alignRight
+            ]
+            { src =
+                if dark then
+                    "/powered-by-fate-dark.png"
+
+                else
+                    "/powered-by-fate-light.png"
+            , description = "Powered by Fate logo"
+            }
+        ]
