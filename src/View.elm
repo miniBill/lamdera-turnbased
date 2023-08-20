@@ -19,7 +19,7 @@ import Element.WithContext.Font as Font
 import Html
 import Route exposing (Route)
 import Shared.Model
-import Theme exposing (Element)
+import Theme exposing (Attribute, Element)
 
 
 type alias View msg =
@@ -45,12 +45,12 @@ toBrowserDocument :
     -> Browser.Document msg
 toBrowserDocument { shared, view } =
     let
-        data : { title : String, font : Font.Font, footer : List (Element msg) }
+        data : { title : String, font : Attribute msg, footer : List (Element msg) }
         data =
             case view.kind of
                 Home ->
                     { title = "TurnBased"
-                    , font = Font.sansSerif
+                    , font = Font.family [ Font.sansSerif ]
                     , footer =
                         footer Theme.fonts.arnoPro wanderhomeFooter
                             ++ el [] (text " ")
@@ -75,7 +75,7 @@ toBrowserDocument { shared, view } =
         , Element.layout shared.context
             [ width fill
             , height fill
-            , Font.family [ data.font ]
+            , data.font
             ]
             (Theme.column
                 [ width fill
@@ -94,10 +94,10 @@ toBrowserDocument { shared, view } =
     }
 
 
-footer : Font.Font -> List (List (Element msg)) -> List (Element msg)
+footer : Attribute msg -> List (List (Element msg)) -> List (Element msg)
 footer font content =
     [ Theme.column
-        [ Font.family [ font ] ]
+        [ font ]
         (List.map (paragraph []) content)
     ]
 

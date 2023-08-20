@@ -4,9 +4,8 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (..)
-import Element.WithContext exposing (centerX, centerY, link)
+import Element.WithContext exposing (alignRight, centerX, centerY, fill, image, link, paragraph, text, width)
 import Element.WithContext.Border as Border
-import Element.WithContext.Font as Font
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -93,7 +92,6 @@ view _ _ =
                 , Border.width 1
                 , Theme.padding
                 , Border.rounded Theme.rythm
-                , Font.family [ Theme.fonts.luminari ]
                 ]
                 { url =
                     Route.toString
@@ -102,6 +100,28 @@ view _ _ =
                         , hash = Nothing
                         }
                 , label = Theme.wanderhomeOnlineTitle
+                }
+            , link
+                [ centerX
+                , Border.width 1
+                , Theme.padding
+                , Border.rounded Theme.rythm
+                , width fill
+                ]
+                { url =
+                    Route.toString
+                        { path = Route.Path.Fate
+                        , query = Dict.empty
+                        , hash = Nothing
+                        }
+                , label =
+                    Theme.row [ width fill ]
+                        [ paragraph [ Theme.fonts.garamond ] [ text "Fate Online" ]
+                        , image [ alignRight ]
+                            { src = "/powered-by-fate-light.png"
+                            , description = "Powered by Fate"
+                            }
+                        ]
                 }
             ]
     }

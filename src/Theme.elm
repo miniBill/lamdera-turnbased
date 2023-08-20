@@ -1,7 +1,7 @@
 module Theme exposing (Attribute, Element, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Element, el)
-import Element.WithContext.Font as Font exposing (Font)
+import Element.WithContext.Font as Font
 import Shared.Model exposing (Context)
 
 
@@ -49,7 +49,7 @@ wanderhomeOnlineTitle =
         [ Font.size 70
         , Element.below <|
             el
-                [ Font.family [ fonts.arnoPro ]
+                [ fonts.arnoPro
                 , Font.size 30
                 , Element.moveRight 150
                 , Element.moveUp 30
@@ -58,28 +58,28 @@ wanderhomeOnlineTitle =
         , Element.paddingEach { top = 28, left = 26, bottom = 26, right = 6 }
         ]
         [ el
-            [ Font.family [ fonts.ruritania ]
+            [ fonts.ruritania
             , Element.moveDown 10
             ]
             (Element.text "W")
         , el
-            [ Font.family [ fonts.luminari ]
+            [ fonts.luminari
             ]
             (Element.text "anderhome Online")
         ]
 
 
 fonts :
-    { arnoPro : Font
-    , luminari : Font
-    , ruritania : Font
-    , garamond : Font
-    , gotham : Font
+    { arnoPro : Attribute msg
+    , luminari : Attribute msg
+    , ruritania : Attribute msg
+    , garamond : Attribute msg
+    , gotham : Attribute msg
     }
 fonts =
-    { arnoPro = Font.typeface "Arno Pro"
-    , luminari = Font.typeface "Luminari"
-    , ruritania = Font.typeface "Ruritania"
-    , garamond = Font.typeface "Garamond"
-    , gotham = Font.typeface "Gotham"
+    { arnoPro = Font.family [ Font.typeface "Arno Pro" ]
+    , luminari = Font.family [ Font.typeface "Luminari" ]
+    , ruritania = Font.family [ Font.typeface "Ruritania" ]
+    , garamond = Font.family [ Font.typeface "Garamond" ]
+    , gotham = Font.family [ Font.typeface "Gotham" ]
     }

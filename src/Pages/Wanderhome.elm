@@ -96,8 +96,7 @@ view _ model =
                     { label =
                         Input.labelAbove [ centerX ] <|
                             paragraph
-                                [ Font.family [ Theme.fonts.luminari ]
-                                ]
+                                [ Theme.fonts.luminari ]
                                 [ text "Game name" ]
                     , onChange = Input
                     , text = model.input
@@ -114,7 +113,7 @@ view _ model =
                         , Border.width 1
                         , Theme.padding
                         , Border.rounded Theme.rythm
-                        , Font.family [ Theme.fonts.luminari ]
+                        , Theme.fonts.luminari
                         ]
                         { url =
                             Route.toString
