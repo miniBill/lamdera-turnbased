@@ -4,8 +4,11 @@ import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (..)
-import Element.WithContext exposing (alignRight, centerX, centerY, fill, image, link, paragraph, text, width)
+import Element.WithContext as Element exposing (alignBottom, alignRight, centerX, centerY, el, fill, image, link, paddingEach, paragraph, px, rgb255, text, width)
+import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
+import Html.Attributes
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -92,6 +95,8 @@ view _ _ =
                 , Border.width 1
                 , Theme.padding
                 , Border.rounded Theme.rythm
+                , Background.color Theme.colors.wanderhomeBackground
+                , Font.color Theme.colors.wanderhome
                 ]
                 { url =
                     Route.toString
@@ -107,6 +112,9 @@ view _ _ =
                 , Theme.padding
                 , Border.rounded Theme.rythm
                 , width fill
+                , Border.color <| rgb255 0 0 0
+                , Background.color Theme.colors.fateCoreBackground
+                , Font.color Theme.colors.fateCore
                 ]
                 { url =
                     Route.toString
@@ -116,9 +124,17 @@ view _ _ =
                         }
                 , label =
                     Theme.row [ width fill ]
-                        [ paragraph [ Theme.fonts.garamond ] [ text "Fate Online" ]
-                        , image [ alignRight ]
-                            { src = "/powered-by-fate-light.png"
+                        [ el
+                            [ Theme.fonts.gotham
+                            , Font.size 60
+                            , Element.moveDown 12
+                            ]
+                            (text " FATE ONLINE")
+                        , image
+                            [ width <| px 300
+                            , alignRight
+                            ]
+                            { src = "/powered-by-fate-dark.png"
                             , description = "Powered by Fate"
                             }
                         ]

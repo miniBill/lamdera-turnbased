@@ -1,6 +1,7 @@
-module Theme exposing (Attribute, Element, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, colors, column, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
-import Element.WithContext as Element exposing (Attribute, Element, el)
+import Element.WithContext as Element exposing (Attribute, Color, Element, el, rgb255)
+import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
 import Shared.Model exposing (Context)
 
@@ -67,6 +68,20 @@ wanderhomeOnlineTitle =
             ]
             (Element.text "anderhome Online")
         ]
+
+
+colors :
+    { wanderhome : Color
+    , wanderhomeBackground : Color
+    , fateCore : Color
+    , fateCoreBackground : Color
+    }
+colors =
+    { wanderhome = rgb255 0x1C 0x54 0x49
+    , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
+    , fateCore = rgb255 0xFF 0xFF 0xFF
+    , fateCoreBackground = rgb255 0x12 0x71 0xB9
+    }
 
 
 fonts :
