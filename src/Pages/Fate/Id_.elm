@@ -7,14 +7,14 @@ import Lamdera
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
-import Types.GameId exposing (GameId(..))
+import Types.GameId as GameId exposing (GameId)
 import View exposing (View, ViewKind(..))
 
 
 page : Shared.Model -> Route { id : String } -> Page Model Msg
 page _ route =
     Page.new
-        { init = init { id = GameId route.params.id }
+        { init = init { id = GameId.fromString route.params.id }
         , update = update
         , subscriptions = subscriptions
         , view = view

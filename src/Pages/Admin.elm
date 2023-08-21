@@ -1,13 +1,14 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
 import Bridge exposing (ToFrontendPage(..))
+import Color
+import Color.Oklch
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, el, rgb255, text)
+import Element.WithContext as Element exposing (Color, alignTop, el, fill, height, row, text)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
-import Element.WithContext.Font as Font
 import FNV1a
 import Lamdera exposing (SessionId)
 import Page exposing (Page)
@@ -16,7 +17,7 @@ import Route.Path as Path
 import Set
 import Shared
 import Theme exposing (Element)
-import Types.GameId exposing (GameId(..))
+import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.SessionDict as SessionDict exposing (Game, Session, SessionDict)
 import View exposing (View)
@@ -109,15 +110,15 @@ viewGames sessionsDict =
 
 
 viewGame : ( GameId, Game ) -> Element Msg
-viewGame ( GameId gameId, game ) =
+viewGame ( gameId, game ) =
     Theme.column
         [ Border.rounded Theme.rythm
         , Theme.padding
         , alignTop
         , Border.width 1
         ]
-        [ viewId gameId
-        , Theme.wrappedRow [] (List.map viewId <| Set.toList game.clients)
+        [ Theme.row [] [ text "Game", viewId <| GameId.toString gameId ]
+        , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList game.clients)
         ]
 
 
@@ -139,57 +140,97 @@ viewSession ( sessionId, session ) =
         , Border.width 1
         ]
         [ Theme.row []
-            [ viewId sessionId
+            [ text "Session"
+            , viewHashedId sessionId
             , if session.isAdmin then
-                text <| "(admin)"
+                text "(admin)"
 
               else
                 Element.none
             ]
-        , Theme.wrappedRow [] (List.map viewId <| Set.toList session.clients)
+        , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList session.clients)
         ]
+
+
+viewHashedId : String -> Element Msg
+viewHashedId id =
+    id
+        |> FNV1a.hash
+        |> modBy (Diceware.listLength ^ 3)
+        |> Diceware.numberToWords
+        |> viewId
 
 
 viewId : String -> Element Msg
 viewId id =
     let
-        niceId : String
-        niceId =
-            Diceware.numberToWords (modBy (Diceware.listLength ^ 3) hash)
+        pieces : List String
+        pieces =
+            String.split " " id
 
+        piecesCount : Int
+        piecesCount =
+            List.length pieces
+    in
+    pieces
+        |> List.indexedMap
+            (\index piece ->
+                el
+                    [ Theme.padding
+                    , Background.color <| stringToColor piece
+                    , height fill
+                    , if index == 0 then
+                        Border.width 1
+
+                      else
+                        Border.widthEach { top = 1, bottom = 1, left = 0, right = 1 }
+                    , if piecesCount == 1 then
+                        Border.rounded Theme.rythm
+
+                      else if index == 0 then
+                        Border.roundEach
+                            { topLeft = Theme.rythm
+                            , topRight = 0
+                            , bottomRight = 0
+                            , bottomLeft = Theme.rythm
+                            }
+
+                      else if index == piecesCount - 1 then
+                        Border.roundEach
+                            { topLeft = 0
+                            , topRight = Theme.rythm
+                            , bottomRight = Theme.rythm
+                            , bottomLeft = 0
+                            }
+
+                      else
+                        height fill
+                    ]
+                    (text piece)
+            )
+        |> row
+            []
+
+
+stringToColor : String -> Color
+stringToColor input =
+    let
         hash : Int
         hash =
-            FNV1a.hash id
+            FNV1a.hash input
 
-        r : Int
-        r =
-            modBy 256 (hash // 65536)
+        hue : Float
+        hue =
+            toFloat hash / (2 ^ 32)
 
-        g : Int
-        g =
-            modBy 256 (hash // 256)
-
-        b : Int
-        b =
-            modBy 256 (hash // 1)
-
-        foregroundColor : Color
-        foregroundColor =
-            if r + g + b <= 127 * 3 then
-                rgb255 0xFF 0xFF 0xFF
-
-            else
-                rgb255 0 0 0
+        backgroundColor : Color.Color
+        backgroundColor =
+            Color.Oklch.oklch 0.8 0.1 hue
+                |> Color.Oklch.toColor
     in
-    el
-        [ Theme.padding
-        , Background.color <| rgb255 r g b
-        , Font.color foregroundColor
-        , Border.color foregroundColor
-        , Border.width 1
-        ]
-    <|
-        text niceId
+    backgroundColor
+        |> Color.toRgba
+        |> (\{ red, green, blue, alpha } -> Element.rgba red green blue alpha)
 
 
 updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )

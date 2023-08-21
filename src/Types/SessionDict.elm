@@ -124,11 +124,21 @@ disconnected sessionId clientId (SessionDict dict) =
 
                 Just gameId ->
                     GameIdDict.update gameId
-                        (Maybe.map
+                        (Maybe.andThen
                             (\game ->
-                                { game
-                                    | clients = Set.remove clientId game.clients
-                                }
+                                let
+                                    newClients : Set ClientId
+                                    newClients =
+                                        Set.remove clientId game.clients
+                                in
+                                if Set.isEmpty newClients then
+                                    Nothing
+
+                                else
+                                    { game
+                                        | clients = newClients
+                                    }
+                                        |> Just
                             )
                         )
                         dict.games
@@ -203,6 +213,7 @@ join clientId gameId (SessionDict dict) =
                 GameIdDict.update gameId
                     (\maybeGame ->
                         let
+                            game : Game
                             game =
                                 Maybe.withDefault { clients = Set.empty } maybeGame
                         in
