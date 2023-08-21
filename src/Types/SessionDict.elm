@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Session, SessionDict, cleanup, clients, disconnected, empty, getSession, isAdmin, join, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Game, Session, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
 
 import Dict exposing (Dict)
 import Env
@@ -195,7 +195,11 @@ join : ClientId -> GameId -> SessionDict -> SessionDict
 join clientId gameId (SessionDict dict) =
     SessionDict
         { dict
-            | games =
+            | clients =
+                Dict.update clientId
+                    (Maybe.map (\client -> { client | playing = Just gameId }))
+                    dict.clients
+            , games =
                 GameIdDict.update gameId
                     (\maybeGame ->
                         let
@@ -206,3 +210,8 @@ join clientId gameId (SessionDict dict) =
                     )
                     dict.games
         }
+
+
+games : SessionDict -> GameIdDict Game
+games (SessionDict dict) =
+    dict.games

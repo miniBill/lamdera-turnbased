@@ -1,6 +1,6 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToBackend(..), ToFrontendPage(..))
+import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Dict
 import Effect exposing (Effect)
@@ -8,7 +8,6 @@ import Element.WithContext as Element exposing (Color, alignTop, el, rgb255, tex
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
-import Element.WithContext.Input as Input
 import FNV1a
 import Lamdera exposing (SessionId)
 import Page exposing (Page)
@@ -17,7 +16,9 @@ import Route.Path as Path
 import Set
 import Shared
 import Theme exposing (Element)
-import Types.SessionDict as SessionDict exposing (Session, SessionDict)
+import Types.GameId exposing (GameId(..))
+import Types.GameIdDict as GameIdDict
+import Types.SessionDict as SessionDict exposing (Game, Session, SessionDict)
 import View exposing (View)
 
 
@@ -61,7 +62,6 @@ init route () =
 
 type Msg
     = NoOp
-    | SendTestEmail
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -70,11 +70,6 @@ update msg model =
         NoOp ->
             ( model
             , Effect.none
-            )
-
-        SendTestEmail ->
-            ( model
-            , Effect.sendCmd <| Lamdera.sendToBackend TBSendTestEmail
             )
 
 
@@ -95,14 +90,35 @@ view : Model -> View Msg
 view model =
     { kind = View.Admin
     , body =
-        Theme.column []
-            [ viewSessions model.sessions
-            , Input.button []
-                { onPress = Just SendTestEmail
-                , label = text "Send test email"
-                }
+        Theme.column [ Theme.padding ]
+            [ text "Sessions"
+            , viewSessions model.sessions
+            , text "Games"
+            , viewGames model.sessions
             ]
     }
+
+
+viewGames : SessionDict -> Element Msg
+viewGames sessionsDict =
+    sessionsDict
+        |> SessionDict.games
+        |> GameIdDict.toList
+        |> List.map viewGame
+        |> Theme.wrappedRow []
+
+
+viewGame : ( GameId, Game ) -> Element Msg
+viewGame ( GameId gameId, game ) =
+    Theme.column
+        [ Border.rounded Theme.rythm
+        , Theme.padding
+        , alignTop
+        , Border.width 1
+        ]
+        [ viewId gameId
+        , Theme.wrappedRow [] (List.map viewId <| Set.toList game.clients)
+        ]
 
 
 viewSessions : SessionDict -> Element Msg
@@ -112,7 +128,6 @@ viewSessions sessionsDict =
         |> Dict.toList
         |> List.map viewSession
         |> Theme.wrappedRow []
-        |> el [ Theme.padding ]
 
 
 viewSession : ( SessionId, Session ) -> Element Msg
