@@ -146,5 +146,5 @@ view _ model =
 updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
 updateFromBackend msg model =
     case msg of
-        TFSessions _ ->
+        TFAdminPageData _ ->
             ( model, Cmd.none )

@@ -17,4 +17,7 @@ type ToFrontend
 
 
 type ToFrontendPage
-    = TFSessions SessionDict
+    = TFAdminPageData
+        { sessions : SessionDict
+        , errors : List String
+        }

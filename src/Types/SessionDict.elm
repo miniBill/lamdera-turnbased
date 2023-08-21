@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, Session, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
 
 import Dict exposing (Dict)
 import Env
@@ -10,7 +10,8 @@ import Types.Fate as Fate
 import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
-import Types.UserId as UserId exposing (UserId)
+import Types.Session as Session exposing (Session)
+import Types.UserId as UserId
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
 
 
@@ -37,12 +38,6 @@ type alias Game =
 
 type GameData
     = FateGameData Fate.GameData
-
-
-type alias Session =
-    { clients : Set ClientId
-    , loggedIn : Maybe UserId
-    }
 
 
 emptySession : Session
@@ -215,9 +210,12 @@ cleanup now dict =
 
 isAdmin : SessionId -> SessionDict -> Bool
 isAdmin sessionId dict =
-    getSession sessionId dict
-        |> Maybe.andThen .loggedIn
-        |> (==) (Just UserId.admin)
+    case getSession sessionId dict of
+        Just session ->
+            Session.isAdmin session
+
+        Nothing ->
+            False
 
 
 join : Game.Game -> ClientId -> GameId -> SessionDict -> SessionDict

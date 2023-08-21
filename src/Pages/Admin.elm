@@ -19,8 +19,8 @@ import Shared
 import Theme exposing (Element)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
-import Types.SessionDict as SessionDict exposing (Game, Session, SessionDict)
-import Types.UserId as UserId
+import Types.Session as Session exposing (Session)
+import Types.SessionDict as SessionDict exposing (Game, SessionDict)
 import View exposing (View)
 
 
@@ -149,7 +149,7 @@ viewSession ( sessionId, session ) =
         [ Theme.row []
             [ text "Session"
             , viewHashedId sessionId
-            , if session.loggedIn == Just UserId.admin then
+            , if Session.isAdmin session then
                 text "(admin)"
 
               else
@@ -252,7 +252,7 @@ stringToColor input =
 
 
 updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
-updateFromBackend msg model =
+updateFromBackend msg _ =
     case msg of
-        TFSessions sessions ->
-            ( { model | sessions = sessions }, Cmd.none )
+        TFAdminPageData data ->
+            ( data, Cmd.none )

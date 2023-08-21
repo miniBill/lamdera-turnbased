@@ -13,6 +13,7 @@ import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
 import Types.Game as Game
+import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
 import Types.UserId as UserId
 
@@ -60,21 +61,25 @@ update msg model =
             let
                 ( newModel, cmd ) =
                     innerUpdate now innerMsg model
-
-                newSessions : SessionDict
-                newSessions =
-                    newModel.sessions
             in
-            if newSessions == model.sessions then
+            if newModel.sessions == model.sessions then
                 ( newModel, cmd )
 
             else
                 ( newModel
-                , newSessions
+                , newModel.sessions
                     |> SessionDict.sessions
                     |> Dict.toList
-                    |> List.filter (\( _, { loggedIn } ) -> loggedIn == Just UserId.admin)
-                    |> List.map (\( sid, _ ) -> Lamdera.sendToFrontend sid <| TFPage <| TFSessions newSessions)
+                    |> List.filter (\( _, session ) -> Session.isAdmin session)
+                    |> List.map
+                        (\( sid, _ ) ->
+                            Lamdera.sendToFrontend sid <|
+                                TFPage <|
+                                    TFAdminPageData
+                                        { sessions = newModel.sessions
+                                        , errors = newModel.errors
+                                        }
+                        )
                     |> (::) cmd
                     |> Cmd.batch
                 )
