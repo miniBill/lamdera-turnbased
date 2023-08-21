@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Session, SessionDict, cleanup, clients, disconnected, empty, getSession, isAdmin, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Session, SessionDict, cleanup, clients, disconnected, empty, getSession, isAdmin, join, seen, sessions, toAdmin)
 
 import Dict exposing (Dict)
 import Env
@@ -18,7 +18,7 @@ type SessionDict
 
 
 type alias Game =
-    { users : Set SessionId
+    { clients : Set ClientId
     }
 
 
@@ -104,19 +104,34 @@ disconnected sessionId clientId (SessionDict dict) =
         newSession =
             { session | clients = Set.filter (\c -> c /= clientId) session.clients }
 
-        isGone : Bool
-        isGone =
-            Set.isEmpty newSession.clients
+        maybeGameId : Maybe GameId
+        maybeGameId =
+            Dict.get clientId dict.clients
+                |> Maybe.andThen .playing
     in
     SessionDict
         { sessions =
-            if isGone then
+            if Set.isEmpty newSession.clients then
                 Dict.remove sessionId dict.sessions
 
             else
                 Dict.insert sessionId newSession dict.sessions
         , clients = Dict.remove clientId dict.clients
-        , games = dict.games
+        , games =
+            case maybeGameId of
+                Nothing ->
+                    dict.games
+
+                Just gameId ->
+                    GameIdDict.update gameId
+                        (Maybe.map
+                            (\game ->
+                                { game
+                                    | clients = Set.remove clientId game.clients
+                                }
+                            )
+                        )
+                        dict.games
         }
 
 
@@ -174,3 +189,20 @@ isAdmin sessionId dict =
     getSession sessionId dict
         |> Maybe.map .isAdmin
         |> Maybe.withDefault False
+
+
+join : ClientId -> GameId -> SessionDict -> SessionDict
+join clientId gameId (SessionDict dict) =
+    SessionDict
+        { dict
+            | games =
+                GameIdDict.update gameId
+                    (\maybeGame ->
+                        let
+                            game =
+                                Maybe.withDefault { clients = Set.empty } maybeGame
+                        in
+                        Just { game | clients = Set.insert clientId game.clients }
+                    )
+                    dict.games
+        }

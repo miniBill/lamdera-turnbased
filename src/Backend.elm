@@ -122,14 +122,10 @@ innerUpdateFromFrontend :
     -> Bridge.ToBackend
     -> BackendModel
     -> ( BackendModel, Cmd BackendMsg )
-innerUpdateFromFrontend _ sid _ msg model =
+innerUpdateFromFrontend _ sid cid msg model =
     case msg of
-        TBJoin _ ->
-            let
-                _ =
-                    Debug.todo
-            in
-            ( model, Cmd.none )
+        TBJoin gameId ->
+            ( { model | sessions = SessionDict.join cid gameId model.sessions }, Cmd.none )
 
         TBPong ->
             ( model, Cmd.none )

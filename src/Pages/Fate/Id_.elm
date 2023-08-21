@@ -1,18 +1,20 @@
 module Pages.Fate.Id_ exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToFrontendPage(..))
+import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Effect exposing (Effect)
 import Element.WithContext exposing (text)
+import Lamdera
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
+import Types.GameId exposing (GameId(..))
 import View exposing (View, ViewKind(..))
 
 
 page : Shared.Model -> Route { id : String } -> Page Model Msg
-page _ _ =
+page _ route =
     Page.new
-        { init = init
+        { init = init { id = GameId route.params.id }
         , update = update
         , subscriptions = subscriptions
         , view = view
@@ -23,14 +25,14 @@ page _ _ =
 -- INIT
 
 
-type alias Model =
-    {}
+type Model
+    = Joining
 
 
-init : () -> ( Model, Effect Msg )
-init () =
-    ( {}
-    , Effect.none
+init : { id : GameId } -> () -> ( Model, Effect Msg )
+init { id } () =
+    ( Joining
+    , Effect.sendCmd <| Lamdera.sendToBackend <| TBJoin id
     )
 
 
