@@ -32,7 +32,7 @@ type alias View msg =
 type ViewKind
     = Home
     | Wanderhome
-    | FateCore
+    | Fate
     | Admin
 
 
@@ -72,7 +72,7 @@ toBrowserDocument { shared, view } =
                     , footer =
                         footer Theme.fonts.arnoPro wanderhomeFooter
                             ++ el [] (text " ")
-                            :: footer Theme.fonts.garamond fateCoreFooter
+                            :: footer Theme.fonts.garamond fateFooter
                     }
 
                 Wanderhome ->
@@ -83,12 +83,12 @@ toBrowserDocument { shared, view } =
                     , footer = footer Theme.fonts.arnoPro wanderhomeFooter
                     }
 
-                FateCore ->
+                Fate ->
                     { title = "Fate Core - TurnBased"
                     , font = Theme.fonts.garamond
-                    , background = Theme.colors.fateCoreBackground
-                    , color = Theme.colors.fateCore
-                    , footer = footer Theme.fonts.garamond fateCoreFooter
+                    , background = Theme.colors.fateBackground
+                    , color = Theme.colors.fate
+                    , footer = footer Theme.fonts.garamond fateFooter
                     }
     in
     { title = data.title
@@ -149,8 +149,8 @@ wanderhomeFooter =
     ]
 
 
-fateCoreFooter : List (List (Element msg))
-fateCoreFooter =
+fateFooter : List (List (Element msg))
+fateFooter =
     [ [ text "This work is based on "
       , link [ Font.underline ]
             { label = text "Fate Core System"
@@ -181,10 +181,10 @@ fontsCss viewKind =
                     wanderhomeFonts
 
                 Home ->
-                    wanderhomeFonts ++ fateCoreFonts
+                    wanderhomeFonts ++ fateFonts
 
-                FateCore ->
-                    fateCoreFonts
+                Fate ->
+                    fateFonts
     in
     fonts
         |> List.map
@@ -214,8 +214,8 @@ type alias Font =
     }
 
 
-fateCoreFonts : List Font
-fateCoreFonts =
+fateFonts : List Font
+fateFonts =
     [ { url = "/fonts/Garamond.ttf"
       , name = "Garamond"
       , fontStyle = "normal"

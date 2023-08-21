@@ -97,8 +97,8 @@ view _ _ =
                 , Border.rounded Theme.rythm
                 , width fill
                 , Border.color <| rgb255 0 0 0
-                , Background.color Theme.colors.fateCoreBackground
-                , Font.color Theme.colors.fateCore
+                , Background.color Theme.colors.fateBackground
+                , Font.color Theme.colors.fate
                 ]
                 { url =
                     Route.toString
@@ -106,7 +106,7 @@ view _ _ =
                         , query = Dict.empty
                         , hash = Nothing
                         }
-                , label = Theme.fateCoreTitle
+                , label = Theme.fateTitle
                 }
             ]
     }

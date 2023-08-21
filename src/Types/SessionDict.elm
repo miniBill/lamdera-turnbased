@@ -1,10 +1,12 @@
-module Types.SessionDict exposing (Client, Game, Session, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Game, GameData, Session, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
 
 import Dict exposing (Dict)
 import Env
 import Lamdera exposing (ClientId, SessionId)
 import Set exposing (Set)
 import Time
+import Types.Fate as Fate
+import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
 
@@ -19,7 +21,12 @@ type SessionDict
 
 type alias Game =
     { clients : Set ClientId
+    , gameData : GameData
     }
+
+
+type GameData
+    = FateGameData Fate.GameData
 
 
 type alias Session =
@@ -201,13 +208,17 @@ isAdmin sessionId dict =
         |> Maybe.withDefault False
 
 
-join : ClientId -> GameId -> SessionDict -> SessionDict
-join clientId gameId (SessionDict dict) =
+join : Game.Game -> ClientId -> GameId -> SessionDict -> SessionDict
+join gameType clientId gameId (SessionDict dict) =
     SessionDict
         { dict
             | clients =
                 Dict.update clientId
-                    (Maybe.map (\client -> { client | playing = Just gameId }))
+                    (Maybe.map
+                        (\client ->
+                            { client | playing = Just gameId }
+                        )
+                    )
                     dict.clients
             , games =
                 GameIdDict.update gameId
@@ -215,7 +226,19 @@ join clientId gameId (SessionDict dict) =
                         let
                             game : Game
                             game =
-                                Maybe.withDefault { clients = Set.empty } maybeGame
+                                Maybe.withDefault
+                                    { clients = Set.empty
+                                    , gameData =
+                                        case gameType of
+                                            Game.Fate ->
+                                                FateGameData
+                                                    { userData = Dict.empty
+                                                    }
+
+                                            Game.Wanderhome ->
+                                                Debug.todo "branch 'Wanderhome' not implemented"
+                                    }
+                                    maybeGame
                         in
                         Just { game | clients = Set.insert clientId game.clients }
                     )

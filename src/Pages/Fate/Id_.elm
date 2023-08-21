@@ -68,7 +68,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view _ =
-    { kind = FateCore
+    { kind = Fate
     , body = text "TODO"
     }
 

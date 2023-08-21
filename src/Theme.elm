@@ -1,4 +1,4 @@
-module Theme exposing (Attribute, Element, colors, column, fateCoreTitle, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, colors, column, fateTitle, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
 import Element.WithContext.Font as Font
@@ -86,14 +86,14 @@ wanderhomeOnlineTitle =
 colors :
     { wanderhome : Color
     , wanderhomeBackground : Color
-    , fateCore : Color
-    , fateCoreBackground : Color
+    , fate : Color
+    , fateBackground : Color
     }
 colors =
     { wanderhome = rgb255 0x1C 0x54 0x49
     , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
-    , fateCore = rgb255 0xFF 0xFF 0xFF
-    , fateCoreBackground = rgb255 0 0x55 0x88
+    , fate = rgb255 0xFF 0xFF 0xFF
+    , fateBackground = rgb255 0 0x55 0x88
     }
 
 
@@ -113,8 +113,8 @@ fonts =
     }
 
 
-fateCoreTitle : Element msg
-fateCoreTitle =
+fateTitle : Element msg
+fateTitle =
     row [ width fill ]
         [ el
             [ fonts.gotham

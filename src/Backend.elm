@@ -12,6 +12,7 @@ import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
+import Types.Game as Game
 import Types.SessionDict as SessionDict exposing (SessionDict)
 
 
@@ -125,7 +126,11 @@ innerUpdateFromFrontend :
 innerUpdateFromFrontend _ sid cid msg model =
     case msg of
         TBJoin gameId ->
-            ( { model | sessions = SessionDict.join cid gameId model.sessions }, Cmd.none )
+            let
+                newSessions =
+                    SessionDict.join Game.Fate cid gameId model.sessions
+            in
+            ( { model | sessions = newSessions }, Cmd.none )
 
         TBPong ->
             ( model, Cmd.none )

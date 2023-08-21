@@ -84,19 +84,19 @@ subscriptions _ =
 
 view : Shared.Model -> Model -> View Msg
 view _ model =
-    { kind = FateCore
+    { kind = Fate
     , body =
         Theme.column
             [ centerX
             , height fill
             ]
-            [ Theme.fateCoreTitle
+            [ Theme.fateTitle
             , Theme.column [ centerX, centerY ]
                 [ Input.text
                     [ Font.center
                     , centerY
-                    , Background.color Theme.colors.fateCoreBackground
-                    , Border.color Theme.colors.fateCore
+                    , Background.color Theme.colors.fateBackground
+                    , Border.color Theme.colors.fate
                     ]
                     { label =
                         Input.labelAbove [ centerX ] <|
@@ -135,7 +135,7 @@ view _ model =
                     el
                         [ Theme.padding
                         , Border.width 1
-                        , Border.color Theme.colors.fateCoreBackground
+                        , Border.color Theme.colors.fateBackground
                         ]
                         (text " ")
                 ]
