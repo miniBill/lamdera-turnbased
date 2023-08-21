@@ -1,4 +1,4 @@
-module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData, UserData, emptyGameData, emptyUser)
+module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData, Skill, UserData, allSkills, emptyGameData)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -39,13 +39,40 @@ type alias Character =
     , description : String
     , fate : Int
     , refresh : Int
-    , skills : Dict String Int
+    , skills : Dict Skill Int
     , consequences : Consequences
     , stunts : List String
     , aspects : Aspects
     , physicalStress : Set Int
     , mentalStress : Set Int
     }
+
+
+type alias Skill =
+    String
+
+
+allSkills : List Skill
+allSkills =
+    [ "Academics"
+    , "Athletics"
+    , "Contacts"
+    , "Deceive"
+    , "Empathy"
+    , "Engineering"
+    , "Fight"
+    , "Investigate"
+    , "Notice"
+    , "Physique"
+    , "Pilot"
+    , "Provoke"
+    , "Rapport"
+    , "Resources"
+    , "Security"
+    , "Shoot"
+    , "Stealth"
+    , "Will"
+    ]
 
 
 type alias Consequences =

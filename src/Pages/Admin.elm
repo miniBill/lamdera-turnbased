@@ -6,7 +6,7 @@ import Color.Oklch
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, el, fill, height, row, text)
+import Element.WithContext as Element exposing (Color, alignTop, el, fill, height, paragraph, row, text)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import FNV1a
@@ -39,12 +39,16 @@ page _ route =
 
 
 type alias Model =
-    { sessions : SessionDict }
+    { sessions : SessionDict
+    , errors : List String
+    }
 
 
 init : Route () -> () -> ( Model, Effect Msg )
 init route () =
-    ( { sessions = SessionDict.empty }
+    ( { sessions = SessionDict.empty
+      , errors = []
+      }
     , case Dict.get "key" route.query of
         Just key ->
             Effect.loginAsAdmin key
@@ -97,6 +101,8 @@ view model =
             , viewSessions model.sessions
             , text "Games"
             , viewGames model.sessions
+            , text "Errors"
+            , viewErrors model.errors
             ]
     }
 
@@ -136,9 +142,9 @@ viewSession : ( SessionId, Session ) -> Element Msg
 viewSession ( sessionId, session ) =
     Theme.column
         [ Border.rounded Theme.rythm
+        , Border.width 1
         , Theme.padding
         , alignTop
-        , Border.width 1
         ]
         [ Theme.row []
             [ text "Session"
@@ -151,6 +157,17 @@ viewSession ( sessionId, session ) =
             ]
         , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList session.clients)
         ]
+
+
+viewErrors : List String -> Element msg
+viewErrors errors =
+    errors
+        |> List.map (\error -> paragraph [] [ text error ])
+        |> Theme.column
+            [ Border.rounded Theme.rythm
+            , Border.width 1
+            , Theme.padding
+            ]
 
 
 viewHashedId : String -> Element Msg

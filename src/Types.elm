@@ -22,6 +22,7 @@ type alias FrontendModel =
 
 type alias BackendModel =
     { sessions : SessionDict
+    , errors : List String
     }
 
 

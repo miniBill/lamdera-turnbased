@@ -43,7 +43,9 @@ subscriptions _ =
 
 init : ( BackendModel, Cmd BackendMsg )
 init =
-    ( { sessions = SessionDict.empty }
+    ( { sessions = SessionDict.empty
+      , errors = []
+      }
     , Cmd.none
     )
 
@@ -81,11 +83,63 @@ update msg model =
             ( model, Cmd.none )
 
         SendResult (Err e) ->
-            let
-                _ =
-                    Debug.log "Error sending email" e
-            in
-            ( model, Cmd.none )
+            ( { model | errors = sendGridErrorToString e :: model.errors }
+            , Cmd.none
+            )
+
+
+sendGridErrorToString : SendGrid.Error -> String
+sendGridErrorToString error =
+    let
+        messageToString : SendGrid.ErrorMessage -> String
+        messageToString { field, message, errorId } =
+            [ ( "field", field )
+            , ( "message", Just message )
+            , ( "errorId", errorId )
+            ]
+                |> List.filterMap (\( k, v ) -> Maybe.map (\w -> k ++ ": " ++ w) v)
+                |> String.join " - "
+
+        message403ToString : SendGrid.ErrorMessage403 -> String
+        message403ToString { field, message, help } =
+            [ ( "field", field )
+            , ( "message", message )
+            , ( "help", help )
+            ]
+                |> List.filterMap (\( k, v ) -> Maybe.map (\w -> k ++ ": " ++ w) v)
+                |> String.join " - "
+    in
+    case error of
+        SendGrid.StatusCode400 messages ->
+            "400: " ++ String.join ", " (List.map messageToString messages)
+
+        SendGrid.StatusCode401 messages ->
+            "401: " ++ String.join ", " (List.map messageToString messages)
+
+        SendGrid.StatusCode413 messages ->
+            "413: " ++ String.join ", " (List.map messageToString messages)
+
+        SendGrid.StatusCode403 { errors, id } ->
+            (case id of
+                Nothing ->
+                    "403: "
+
+                Just i ->
+                    "403 (id " ++ i ++ "):"
+            )
+                ++ String.join ", " (List.map message403ToString errors)
+
+        SendGrid.UnknownError { statusCode, body } ->
+            String.fromInt statusCode ++ ": " ++ body
+
+        SendGrid.NetworkError ->
+            "Network error"
+
+        SendGrid.Timeout ->
+            "Timeout"
+
+        SendGrid.BadUrl url ->
+            "Bad Url: " ++ url
 
 
 innerUpdate : Time.Posix -> InnerBackendMsg -> BackendModel -> ( BackendModel, Cmd BackendMsg )
