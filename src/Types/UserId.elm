@@ -1,4 +1,4 @@
-module Types.UserId exposing (UserId, fromString, toString)
+module Types.UserId exposing (UserId, admin, fromString, toString)
 
 
 type UserId
@@ -13,3 +13,8 @@ fromString id =
 toString : UserId -> String
 toString (UserId id) =
     id
+
+
+admin : UserId
+admin =
+    UserId "admin"

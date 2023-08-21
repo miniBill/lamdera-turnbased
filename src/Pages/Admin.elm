@@ -20,6 +20,7 @@ import Theme exposing (Element)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.SessionDict as SessionDict exposing (Game, Session, SessionDict)
+import Types.UserId as UserId
 import View exposing (View)
 
 
@@ -142,7 +143,7 @@ viewSession ( sessionId, session ) =
         [ Theme.row []
             [ text "Session"
             , viewHashedId sessionId
-            , if session.isAdmin then
+            , if session.loggedIn == Just UserId.admin then
                 text "(admin)"
 
               else

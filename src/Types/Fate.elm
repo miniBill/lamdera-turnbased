@@ -1,17 +1,35 @@
-module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData)
+module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData, UserData, emptyGameData, emptyUser)
 
 import Dict exposing (Dict)
-import Lamdera exposing (SessionId)
 import Set exposing (Set)
+import Types.UserIdDict as UserIdDict exposing (UserIdDict)
+
+
+type alias UserData =
+    { characters : List Character
+    }
+
+
+emptyUser : UserData
+emptyUser =
+    { characters = []
+    }
 
 
 type alias GameData =
-    { userData : Dict SessionId SharedData
+    { userData : UserIdDict SharedData
+    }
+
+
+emptyGameData : GameData
+emptyGameData =
+    { userData = UserIdDict.empty
     }
 
 
 type alias SharedData =
-    { character : Maybe Character
+    { name : String
+    , character : Maybe Character
     }
 
 

@@ -3,20 +3,30 @@ module Types.SessionDict exposing (Client, Game, GameData, Session, SessionDict,
 import Dict exposing (Dict)
 import Env
 import Lamdera exposing (ClientId, SessionId)
+import Maybe.Extra
 import Set exposing (Set)
 import Time
 import Types.Fate as Fate
 import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
+import Types.UserId as UserId exposing (UserId)
+import Types.UserIdDict as UserIdDict exposing (UserIdDict)
 
 
 type SessionDict
     = SessionDict
         { sessions : Dict SessionId Session
         , clients : Dict ClientId Client
+        , users : UserIdDict UserData
         , games : GameIdDict Game
         }
+
+
+type alias UserData =
+    { name : String
+    , fate : Fate.UserData
+    }
 
 
 type alias Game =
@@ -31,14 +41,14 @@ type GameData
 
 type alias Session =
     { clients : Set ClientId
-    , isAdmin : Bool
+    , loggedIn : Maybe UserId
     }
 
 
 emptySession : Session
 emptySession =
     { clients = Set.empty
-    , isAdmin = False
+    , loggedIn = Nothing
     }
 
 
@@ -55,6 +65,7 @@ empty =
         { sessions = Dict.empty
         , clients = Dict.empty
         , games = GameIdDict.empty
+        , users = UserIdDict.empty
         }
 
 
@@ -66,36 +77,36 @@ getSession sessionId (SessionDict dict) =
 seen : Time.Posix -> SessionId -> ClientId -> SessionDict -> SessionDict
 seen now sessionId clientId (SessionDict dict) =
     SessionDict
-        { sessions =
-            Dict.update sessionId
-                (\v ->
-                    let
-                        session : Session
-                        session =
-                            Maybe.withDefault emptySession v
-                    in
-                    Just { session | clients = Set.insert clientId session.clients }
-                )
-                dict.sessions
-        , clients =
-            Dict.update clientId
-                (\maybeClient ->
-                    case maybeClient of
-                        Just client ->
-                            { client
-                                | lastSeen = now
-                            }
-                                |> Just
+        { dict
+            | sessions =
+                Dict.update sessionId
+                    (\v ->
+                        let
+                            session : Session
+                            session =
+                                Maybe.withDefault emptySession v
+                        in
+                        Just { session | clients = Set.insert clientId session.clients }
+                    )
+                    dict.sessions
+            , clients =
+                Dict.update clientId
+                    (\maybeClient ->
+                        case maybeClient of
+                            Just client ->
+                                { client
+                                    | lastSeen = now
+                                }
+                                    |> Just
 
-                        Nothing ->
-                            { session = sessionId
-                            , lastSeen = now
-                            , playing = Nothing
-                            }
-                                |> Just
-                )
-                dict.clients
-        , games = dict.games
+                            Nothing ->
+                                { session = sessionId
+                                , lastSeen = now
+                                , playing = Nothing
+                                }
+                                    |> Just
+                    )
+                    dict.clients
         }
 
 
@@ -117,38 +128,39 @@ disconnected sessionId clientId (SessionDict dict) =
                 |> Maybe.andThen .playing
     in
     SessionDict
-        { sessions =
-            if Set.isEmpty newSession.clients then
-                Dict.remove sessionId dict.sessions
+        { dict
+            | sessions =
+                if Set.isEmpty newSession.clients then
+                    Dict.remove sessionId dict.sessions
 
-            else
-                Dict.insert sessionId newSession dict.sessions
-        , clients = Dict.remove clientId dict.clients
-        , games =
-            case maybeGameId of
-                Nothing ->
-                    dict.games
-
-                Just gameId ->
-                    GameIdDict.update gameId
-                        (Maybe.andThen
-                            (\game ->
-                                let
-                                    newClients : Set ClientId
-                                    newClients =
-                                        Set.remove clientId game.clients
-                                in
-                                if Set.isEmpty newClients then
-                                    Nothing
-
-                                else
-                                    { game
-                                        | clients = newClients
-                                    }
-                                        |> Just
-                            )
-                        )
+                else
+                    Dict.insert sessionId newSession dict.sessions
+            , clients = Dict.remove clientId dict.clients
+            , games =
+                case maybeGameId of
+                    Nothing ->
                         dict.games
+
+                    Just gameId ->
+                        GameIdDict.update gameId
+                            (Maybe.andThen
+                                (\game ->
+                                    let
+                                        newClients : Set ClientId
+                                        newClients =
+                                            Set.remove clientId game.clients
+                                    in
+                                    if Set.isEmpty newClients then
+                                        Nothing
+
+                                    else
+                                        { game
+                                            | clients = newClients
+                                        }
+                                            |> Just
+                                )
+                            )
+                            dict.games
         }
 
 
@@ -171,7 +183,7 @@ toAdmin sessionId (SessionDict dict) =
                     (Maybe.map
                         (\session ->
                             { session
-                                | isAdmin = True
+                                | loggedIn = Just UserId.admin
                             }
                         )
                     )
@@ -204,8 +216,8 @@ cleanup now dict =
 isAdmin : SessionId -> SessionDict -> Bool
 isAdmin sessionId dict =
     getSession sessionId dict
-        |> Maybe.map .isAdmin
-        |> Maybe.withDefault False
+        |> Maybe.andThen .loggedIn
+        |> (==) (Just UserId.admin)
 
 
 join : Game.Game -> ClientId -> GameId -> SessionDict -> SessionDict
@@ -226,19 +238,19 @@ join gameType clientId gameId (SessionDict dict) =
                         let
                             game : Game
                             game =
-                                Maybe.withDefault
-                                    { clients = Set.empty
-                                    , gameData =
-                                        case gameType of
-                                            Game.Fate ->
-                                                FateGameData
-                                                    { userData = Dict.empty
-                                                    }
+                                maybeGame
+                                    |> Maybe.Extra.withDefaultLazy
+                                        (\_ ->
+                                            { clients = Set.empty
+                                            , gameData =
+                                                case gameType of
+                                                    Game.Fate ->
+                                                        FateGameData Fate.emptyGameData
 
-                                            Game.Wanderhome ->
-                                                Debug.todo "branch 'Wanderhome' not implemented"
-                                    }
-                                    maybeGame
+                                                    Game.Wanderhome ->
+                                                        Debug.todo "branch 'Wanderhome' not implemented"
+                                            }
+                                        )
                         in
                         Just { game | clients = Set.insert clientId game.clients }
                     )

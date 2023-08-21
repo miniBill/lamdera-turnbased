@@ -14,6 +14,7 @@ import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
 import Types.Game as Game
 import Types.SessionDict as SessionDict exposing (SessionDict)
+import Types.UserId as UserId
 
 
 app :
@@ -70,7 +71,7 @@ update msg model =
                 , newSessions
                     |> SessionDict.sessions
                     |> Dict.toList
-                    |> List.filter (\( _, { isAdmin } ) -> isAdmin)
+                    |> List.filter (\( _, { loggedIn } ) -> loggedIn == Just UserId.admin)
                     |> List.map (\( sid, _ ) -> Lamdera.sendToFrontend sid <| TFPage <| TFSessions newSessions)
                     |> (::) cmd
                     |> Cmd.batch
