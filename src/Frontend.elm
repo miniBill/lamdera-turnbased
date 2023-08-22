@@ -12,6 +12,7 @@ import Pages.Admin
 import Pages.Fate
 import Pages.Fate.Id_
 import Pages.Home_
+import Pages.SignIn
 import Pages.Wanderhome
 import Pages.Wanderhome.Id_
 import Types exposing (FrontendModel, FrontendMsg, ToFrontend)
@@ -65,6 +66,13 @@ updateFromBackend msg model =
                         Pages.Home_.updateFromBackend
                         Main.Pages.Model.Home_
                         Main.Pages.Msg.Home_
+                        innerModel
+
+                Main.Pages.Model.SignIn innerModel ->
+                    updatePageFromBackend
+                        Pages.SignIn.updateFromBackend
+                        Main.Pages.Model.SignIn
+                        Main.Pages.Msg.SignIn
                         innerModel
 
                 Main.Pages.Model.Admin innerModel ->

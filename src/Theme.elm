@@ -1,7 +1,12 @@
-module Theme exposing (Attribute, Element, colors, column, fateTitle, fonts, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, button, colors, column, fateTitle, fonts, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
+import Element.WithContext.Background as Background
+import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
+import Element.WithContext.Input as Input
+import Html.Events
+import Json.Decode
 import Shared.Model exposing (Context)
 
 
@@ -130,3 +135,51 @@ fateTitle =
             , description = "Powered by Fate logo"
             }
         ]
+
+
+button :
+    List (Attribute msg)
+    ->
+        { onPress : Maybe msg
+        , label : Element msg
+        }
+    -> Element msg
+button attrs config =
+    if config.onPress == Nothing then
+        el
+            ([ Border.width 1
+             , Border.rounded rythm
+             , padding
+             , Background.color <| rgb255 0xC0 0xC0 0xC0
+             ]
+                ++ attrs
+            )
+            config.label
+
+    else
+        Input.button
+            ([ Border.width 1
+             , Border.rounded rythm
+             , padding
+             , Background.color <| rgb255 0x9D 0xB7 0xD6
+             ]
+                ++ attrs
+            )
+            config
+
+
+onEnter : msg -> Attribute msg
+onEnter msg =
+    Element.htmlAttribute <|
+        Html.Events.on "keyup" <|
+            (Json.Decode.string
+                |> Json.Decode.field "key"
+                |> Json.Decode.andThen
+                    (\key ->
+                        if key == "Enter" then
+                            Json.Decode.succeed msg
+
+                        else
+                            Json.Decode.fail "Not the enter key"
+                    )
+            )
