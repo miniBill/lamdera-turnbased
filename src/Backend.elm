@@ -15,7 +15,6 @@ import Types exposing (BackendModel, BackendMsg(..), Email(..), InnerBackendMsg(
 import Types.Game as Game
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
-import Types.UserId as UserId
 
 
 app :
@@ -199,35 +198,6 @@ innerUpdateFromFrontend _ sid cid msg model =
         TBLoginAsAdmin key ->
             if key == Env.adminKey then
                 ( { model | sessions = SessionDict.toAdmin sid model.sessions }, Cmd.none )
-
-            else
-                ( model, Cmd.none )
-
-        TBSendTestEmail ->
-            if SessionDict.isAdmin sid model.sessions then
-                case
-                    ( EmailAddress.fromString "leonardo@taglialegne.it"
-                    , EmailAddress.fromString "cmt.miniBill@gmail.com"
-                    )
-                of
-                    ( Just sender, Just recipient ) ->
-                        let
-                            email : Email
-                            email =
-                                LoginEmail
-                                    { to = recipient
-                                    , token =
-                                        let
-                                            _ =
-                                                Debug.todo
-                                        in
-                                        "TOKEN"
-                                    }
-                        in
-                        sendEmail email model
-
-                    _ ->
-                        ( model, Cmd.none )
 
             else
                 ( model, Cmd.none )

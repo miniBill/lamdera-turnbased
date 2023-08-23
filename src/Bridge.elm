@@ -9,7 +9,6 @@ type ToBackend
     | TBPong
     | TBLoginAsAdmin String
     | TBLogin String
-    | TBSendTestEmail
 
 
 type ToFrontend
