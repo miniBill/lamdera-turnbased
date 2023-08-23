@@ -1,12 +1,12 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToFrontendPage(..))
+import Bridge exposing (AdminPageData, ToFrontendPage(..))
 import Color
 import Color.Oklch
 import Diceware
-import Dict
+import Dict exposing (Dict)
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, column, el, fill, height, paragraph, px, rgb255, row, shrink, text, width)
+import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, paragraph, px, rgb255, row, shrink, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -22,6 +22,7 @@ import Set
 import Shared
 import String.Nonempty
 import Theme exposing (Element)
+import Time
 import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
@@ -45,18 +46,12 @@ page _ route =
 
 
 type alias Model =
-    { sessions : SessionDict
-    , errors : List String
-    , emails : List EmailData
-    }
+    Maybe AdminPageData
 
 
 init : Route () -> () -> ( Model, Effect Msg )
 init route () =
-    ( { sessions = SessionDict.empty
-      , errors = []
-      , emails = []
-      }
+    ( Nothing
     , case Dict.get "key" route.query of
         Just key ->
             Effect.loginAsAdmin key
@@ -101,19 +96,24 @@ subscriptions _ =
 
 
 view : Model -> View Msg
-view model =
+view maybeModel =
     { kind = View.Admin
     , body =
-        Theme.column [ Theme.padding ]
-            [ text "Sessions"
-            , viewSessions model.sessions
-            , text "Games"
-            , viewGames model.sessions
-            , text "Errors"
-            , viewErrors model.errors
-            , text "Emails"
-            , viewEmails model.emails
-            ]
+        case maybeModel of
+            Nothing ->
+                el [ centerX, centerY ] <| text "Loading..."
+
+            Just model ->
+                Theme.column [ Theme.padding ]
+                    [ text "Sessions"
+                    , viewSessions model.sessions
+                    , text "Games"
+                    , viewGames model.sessions
+                    , text "Errors"
+                    , viewErrors model.errors
+                    , text "Emails"
+                    , viewEmails model.emails
+                    ]
     }
 
 
@@ -169,10 +169,22 @@ viewSession ( sessionId, session ) =
         ]
 
 
-viewErrors : List String -> Element msg
+viewErrors : Dict String { count : Int, last : Time.Posix } -> Element msg
 viewErrors errors =
     errors
-        |> List.map (\error -> paragraph [] [ text error ])
+        |> Dict.toList
+        |> List.sortBy (\( _, { last } ) -> -(Time.posixToMillis last))
+        |> List.map
+            (\( error, { count, last } ) ->
+                paragraph []
+                    [ [ String.fromInt (Time.posixToMillis last)
+                      , error
+                      , "(" ++ String.fromInt count ++ ")"
+                      ]
+                        |> String.join " "
+                        |> text
+                    ]
+            )
         |> Theme.column
             [ Border.rounded Theme.rythm
             , Border.width 1
@@ -336,4 +348,4 @@ updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
 updateFromBackend msg _ =
     case msg of
         TFAdminPageData data ->
-            ( data, Cmd.none )
+            ( Just data, Cmd.none )

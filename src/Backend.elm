@@ -43,7 +43,7 @@ subscriptions _ =
 init : ( BackendModel, Cmd BackendMsg )
 init =
     ( { sessions = SessionDict.empty
-      , errors = []
+      , errors = Dict.empty
       , emails = []
       }
     , Cmd.none
@@ -84,13 +84,23 @@ update msg model =
                     |> Cmd.batch
                 )
 
-        SendResult (Ok ()) ->
-            ( model, Cmd.none )
 
-        SendResult (Err e) ->
-            ( { model | errors = sendGridErrorToString e :: model.errors }
-            , Cmd.none
-            )
+appendError : Time.Posix -> String -> BackendModel -> BackendModel
+appendError now message model =
+    { model
+        | errors =
+            Dict.update message
+                (\old ->
+                    let
+                        oldCount =
+                            Maybe.map .count old
+                                |> Maybe.withDefault 0
+                    in
+                    { count = oldCount + 1, last = now }
+                        |> Just
+                )
+                model.errors
+    }
 
 
 sendGridErrorToString : SendGrid.Error -> String
@@ -175,6 +185,14 @@ innerUpdate now submsg model =
         ShouldPing ->
             ( { model | sessions = SessionDict.cleanup now model.sessions }, Lamdera.broadcast TFPing )
 
+        SendResult (Ok ()) ->
+            ( model, Cmd.none )
+
+        SendResult (Err e) ->
+            ( appendError now (sendGridErrorToString e) model
+            , Cmd.none
+            )
+
 
 innerUpdateFromFrontend :
     Time.Posix
@@ -183,7 +201,7 @@ innerUpdateFromFrontend :
     -> Bridge.ToBackend
     -> BackendModel
     -> ( BackendModel, Cmd BackendMsg )
-innerUpdateFromFrontend _ sid cid msg model =
+innerUpdateFromFrontend now sid cid msg model =
     case msg of
         TBJoin gameId ->
             let
@@ -205,7 +223,7 @@ innerUpdateFromFrontend _ sid cid msg model =
         TBLogin email ->
             case EmailAddress.fromString email of
                 Just recipient ->
-                    sendEmail
+                    sendEmail now
                         (LoginEmail
                             { to = recipient
                             , token =
@@ -222,20 +240,20 @@ innerUpdateFromFrontend _ sid cid msg model =
                     ( model, Cmd.none )
 
 
-sendEmail : EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
-sendEmail email model =
+sendEmail : Time.Posix -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
+sendEmail now email model =
     if Env.isDev then
         ( { model | emails = email :: model.emails }, Cmd.none )
 
     else
         case EmailData.toSendGrid email of
             Nothing ->
-                ( { model | errors = "Error parsing from address" :: model.errors }, Cmd.none )
+                ( appendError now "Error parsing from address" model, Cmd.none )
 
             Just sendGridEmail ->
                 ( model
                 , SendGrid.sendEmail
-                    SendResult
+                    (SendResult >> WithoutTime)
                     (SendGrid.apiKey Env.sendGridKey)
                     sendGridEmail
                 )

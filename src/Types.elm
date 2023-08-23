@@ -9,6 +9,7 @@ module Types exposing
     )
 
 import Bridge
+import Dict exposing (Dict)
 import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
 import SendGrid
@@ -23,7 +24,7 @@ type alias FrontendModel =
 
 type alias BackendModel =
     { sessions : SessionDict
-    , errors : List String
+    , errors : Dict String { count : Int, last : Time.Posix }
     , emails : List EmailData
     }
 
@@ -43,7 +44,6 @@ type alias ToFrontend =
 type BackendMsg
     = WithoutTime InnerBackendMsg
     | WithTime InnerBackendMsg Time.Posix
-    | SendResult (Result SendGrid.Error ())
 
 
 type InnerBackendMsg
@@ -51,3 +51,4 @@ type InnerBackendMsg
     | OnDisconnect SessionId ClientId
     | FromFrontend SessionId ClientId ToBackend
     | ShouldPing
+    | SendResult (Result SendGrid.Error ())
