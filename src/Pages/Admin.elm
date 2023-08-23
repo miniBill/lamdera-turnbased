@@ -6,14 +6,13 @@ import Color.Oklch
 import Diceware
 import Dict
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, el, fill, height, paragraph, row, text)
+import Element.WithContext as Element exposing (Color, alignTop, column, el, fill, height, paragraph, px, rgb255, row, shrink, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Email.Html
 import EmailAddress
 import FNV1a
-import Html
 import Lamdera exposing (SessionId)
 import List.Nonempty as Nonempty
 import Page exposing (Page)
@@ -23,7 +22,7 @@ import Set
 import Shared
 import String.Nonempty
 import Theme exposing (Element)
-import Types.EmailData as EmailData exposing (EmailData)
+import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session as Session exposing (Session)
@@ -188,38 +187,68 @@ viewEmails emails =
             (\email ->
                 email
                     |> EmailData.toHtmlEmail
-                    |> Maybe.map
-                        (\details ->
-                            [ ( "Sender Name", Html.text details.nameOfSender )
-                            , ( "Sender Address", Html.text <| EmailAddress.toString details.emailAddressOfSender )
-                            , ( "Recipient addresses"
-                              , details.to
-                                    |> Nonempty.toList
-                                    |> List.map EmailAddress.toString
-                                    |> String.join ", "
-                                    |> Html.text
-                              )
-                            , ( "Subject", Html.text <| String.Nonempty.toString details.subject )
-                            , ( "Content", Email.Html.toHtml details.content )
-                            ]
-                                |> List.map
-                                    (\( label, content ) ->
-                                        paragraph []
-                                            [ text <| label ++ " "
-                                            , el [ Font.bold ] <| Element.html content
-                                            ]
-                                    )
-                                |> Theme.column
-                                    [ Border.width 1
-                                    , Border.rounded Theme.rythm
-                                    ]
-                        )
+                    |> Maybe.map viewHtmlEmail
             )
         |> Theme.column
             [ Border.rounded Theme.rythm
             , Border.width 1
             , Theme.padding
             ]
+
+
+viewHtmlEmail : HtmlEmail -> Element msg
+viewHtmlEmail details =
+    column
+        [ Border.width 1
+        , Border.rounded Theme.rythm
+        , Background.color <| rgb255 0xE8 0xE8 0xE8
+        ]
+        [ Element.table
+            [ Theme.padding
+            , Theme.spacing
+            ]
+            { data =
+                [ ( "From", details.nameOfSender )
+                , ( "", EmailAddress.toString details.emailAddressOfSender )
+                , ( "To"
+                  , details.to
+                        |> Nonempty.toList
+                        |> List.map EmailAddress.toString
+                        |> String.join ", "
+                  )
+                , ( "Subject", String.Nonempty.toString details.subject )
+                ]
+            , columns =
+                [ { view =
+                        \( label, _ ) ->
+                            el
+                                [ Font.size 16
+                                , Font.color <| rgb255 0x30 0x30 0x30
+                                , Element.alignBottom
+                                ]
+                                (text label)
+                  , header = Element.none
+                  , width = shrink
+                  }
+                , { view = \( _, content ) -> text content
+                  , header = Element.none
+                  , width = shrink
+                  }
+                ]
+            }
+        , el
+            [ width fill
+            , height <| px 1
+            , Border.widthEach
+                { left = 0
+                , right = 0
+                , top = 0
+                , bottom = 1
+                }
+            ]
+            Element.none
+        , el [ Theme.padding ] <| Element.html <| Email.Html.toHtml details.content
+        ]
 
 
 viewHashedId : String -> Element Msg
