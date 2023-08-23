@@ -1,7 +1,6 @@
 module Types exposing
     ( BackendModel
     , BackendMsg(..)
-    , Email(..)
     , FrontendModel
     , FrontendMsg
     , InnerBackendMsg(..)
@@ -10,11 +9,11 @@ module Types exposing
     )
 
 import Bridge
-import EmailAddress exposing (EmailAddress)
 import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
 import SendGrid
 import Time
+import Types.Email exposing (Email)
 import Types.SessionDict exposing (SessionDict)
 
 
@@ -27,13 +26,6 @@ type alias BackendModel =
     , errors : List String
     , emails : List Email
     }
-
-
-type Email
-    = LoginEmail
-        { to : EmailAddress
-        , token : String
-        }
 
 
 type alias FrontendMsg =

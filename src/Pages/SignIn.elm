@@ -2,7 +2,7 @@ module Pages.SignIn exposing (Model, Msg, page, updateFromBackend)
 
 import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (centerX, centerY, el, fill, text, width)
+import Element.WithContext exposing (centerX, centerY, el, fill, text, width)
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Lamdera

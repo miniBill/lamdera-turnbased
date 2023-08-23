@@ -9,14 +9,21 @@ import Effect exposing (Effect)
 import Element.WithContext as Element exposing (Color, alignTop, el, fill, height, paragraph, row, text)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
+import Element.WithContext.Font as Font
+import Email.Html
+import EmailAddress
 import FNV1a
+import Html
 import Lamdera exposing (SessionId)
+import List.Nonempty as Nonempty
 import Page exposing (Page)
 import Route exposing (Route)
 import Route.Path as Path
 import Set
 import Shared
+import String.Nonempty
 import Theme exposing (Element)
+import Types.Email as Email exposing (Email)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session as Session exposing (Session)
@@ -41,6 +48,7 @@ page _ route =
 type alias Model =
     { sessions : SessionDict
     , errors : List String
+    , emails : List Email
     }
 
 
@@ -48,6 +56,7 @@ init : Route () -> () -> ( Model, Effect Msg )
 init route () =
     ( { sessions = SessionDict.empty
       , errors = []
+      , emails = []
       }
     , case Dict.get "key" route.query of
         Just key ->
@@ -103,6 +112,8 @@ view model =
             , viewGames model.sessions
             , text "Errors"
             , viewErrors model.errors
+            , text "Emails"
+            , viewEmails model.emails
             ]
     }
 
@@ -163,6 +174,47 @@ viewErrors : List String -> Element msg
 viewErrors errors =
     errors
         |> List.map (\error -> paragraph [] [ text error ])
+        |> Theme.column
+            [ Border.rounded Theme.rythm
+            , Border.width 1
+            , Theme.padding
+            ]
+
+
+viewEmails : List Email -> Element msg
+viewEmails emails =
+    emails
+        |> List.filterMap
+            (\email ->
+                email
+                    |> Email.toDetails
+                    |> Maybe.map
+                        (\details ->
+                            [ ( "Sender Name", Html.text details.nameOfSender )
+                            , ( "Sender Address", Html.text <| EmailAddress.toString details.emailAddressOfSender )
+                            , ( "Recipient addresses"
+                              , details.to
+                                    |> Nonempty.toList
+                                    |> List.map EmailAddress.toString
+                                    |> String.join ", "
+                                    |> Html.text
+                              )
+                            , ( "Subject", Html.text <| String.Nonempty.toString details.subject )
+                            , ( "Content", Email.Html.toHtml details.content )
+                            ]
+                                |> List.map
+                                    (\( label, content ) ->
+                                        paragraph []
+                                            [ text <| label ++ " "
+                                            , el [ Font.bold ] <| Element.html content
+                                            ]
+                                    )
+                                |> Theme.column
+                                    [ Border.width 1
+                                    , Border.rounded Theme.rythm
+                                    ]
+                        )
+            )
         |> Theme.column
             [ Border.rounded Theme.rythm
             , Border.width 1
