@@ -1,6 +1,6 @@
 module Bridge exposing (ToBackend(..), ToFrontend(..), ToFrontendPage(..))
 
-import Types.Email exposing (Email)
+import Types.EmailData exposing (EmailData)
 import Types.GameId exposing (GameId)
 import Types.SessionDict exposing (SessionDict)
 
@@ -21,5 +21,5 @@ type ToFrontendPage
     = TFAdminPageData
         { sessions : SessionDict
         , errors : List String
-        , emails : List Email
+        , emails : List EmailData
         }

@@ -1,4 +1,4 @@
-module Types.Email exposing (Email(..), EmailDetails, toDetails, toSendGrid)
+module Types.EmailData exposing (EmailData(..), HtmlEmail, toHtmlEmail, toSendGrid)
 
 import Email.Html
 import EmailAddress exposing (EmailAddress)
@@ -8,20 +8,20 @@ import SendGrid
 import String.Nonempty exposing (NonemptyString(..))
 
 
-type Email
+type EmailData
     = LoginEmail
         { to : EmailAddress
         , token : String
         }
 
 
-toSendGrid : Email -> Maybe SendGrid.Email
+toSendGrid : EmailData -> Maybe SendGrid.Email
 toSendGrid email =
-    toDetails email
+    toHtmlEmail email
         |> Maybe.map SendGrid.htmlEmail
 
 
-type alias EmailDetails =
+type alias HtmlEmail =
     { nameOfSender : String
     , emailAddressOfSender : EmailAddress
     , to : Nonempty.Nonempty EmailAddress
@@ -30,8 +30,8 @@ type alias EmailDetails =
     }
 
 
-toDetails : Email -> Maybe EmailDetails
-toDetails email =
+toHtmlEmail : EmailData -> Maybe HtmlEmail
+toHtmlEmail email =
     case email of
         LoginEmail { to, token } ->
             senderEmail

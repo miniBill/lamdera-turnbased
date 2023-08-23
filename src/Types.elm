@@ -13,7 +13,7 @@ import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
 import SendGrid
 import Time
-import Types.Email exposing (Email)
+import Types.EmailData exposing (EmailData)
 import Types.SessionDict exposing (SessionDict)
 
 
@@ -24,7 +24,7 @@ type alias FrontendModel =
 type alias BackendModel =
     { sessions : SessionDict
     , errors : List String
-    , emails : List Email
+    , emails : List EmailData
     }
 
 

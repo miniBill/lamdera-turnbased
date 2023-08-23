@@ -10,7 +10,7 @@ import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
-import Types.Email as Email exposing (Email(..))
+import Types.EmailData as EmailData exposing (EmailData(..))
 import Types.Game as Game
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
@@ -222,13 +222,13 @@ innerUpdateFromFrontend _ sid cid msg model =
                     ( model, Cmd.none )
 
 
-sendEmail : Email -> BackendModel -> ( BackendModel, Cmd BackendMsg )
+sendEmail : EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 sendEmail email model =
     if Env.isDev then
         ( { model | emails = email :: model.emails }, Cmd.none )
 
     else
-        case Email.toSendGrid email of
+        case EmailData.toSendGrid email of
             Nothing ->
                 ( { model | errors = "Error parsing from address" :: model.errors }, Cmd.none )
 

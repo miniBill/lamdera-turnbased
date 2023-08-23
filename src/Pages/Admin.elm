@@ -23,7 +23,7 @@ import Set
 import Shared
 import String.Nonempty
 import Theme exposing (Element)
-import Types.Email as Email exposing (Email)
+import Types.EmailData as EmailData exposing (EmailData)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session as Session exposing (Session)
@@ -48,7 +48,7 @@ page _ route =
 type alias Model =
     { sessions : SessionDict
     , errors : List String
-    , emails : List Email
+    , emails : List EmailData
     }
 
 
@@ -181,13 +181,13 @@ viewErrors errors =
             ]
 
 
-viewEmails : List Email -> Element msg
+viewEmails : List EmailData -> Element msg
 viewEmails emails =
     emails
         |> List.filterMap
             (\email ->
                 email
-                    |> Email.toDetails
+                    |> EmailData.toHtmlEmail
                     |> Maybe.map
                         (\details ->
                             [ ( "Sender Name", Html.text details.nameOfSender )
