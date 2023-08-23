@@ -11,7 +11,7 @@ import SendGrid
 import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
-import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
+import Types exposing (BackendModel, BackendMsg(..), Email(..), InnerBackendMsg(..), ToBackend)
 import Types.Game as Game
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
@@ -46,6 +46,7 @@ init : ( BackendModel, Cmd BackendMsg )
 init =
     ( { sessions = SessionDict.empty
       , errors = []
+      , emails = []
       }
     , Cmd.none
     )
@@ -210,28 +211,98 @@ innerUpdateFromFrontend _ sid cid msg model =
                     )
                 of
                     ( Just sender, Just recipient ) ->
-                        ( model
-                        , SendGrid.sendEmail
-                            SendResult
-                            (SendGrid.apiKey Env.sendGridKey)
-                            (SendGrid.htmlEmail
-                                { subject = NonemptyString 'S' "ubject"
-                                , to = List.Nonempty.fromElement recipient
-                                , content =
-                                    Email.Html.div
-                                        []
-                                        [ Email.Html.text "Hi!" ]
-                                , nameOfSender = "Leonardo Taglialegne"
-                                , emailAddressOfSender = sender
-                                }
-                            )
-                        )
+                        let
+                            email : Email
+                            email =
+                                LoginEmail
+                                    { to = recipient
+                                    , token =
+                                        let
+                                            _ =
+                                                Debug.todo
+                                        in
+                                        "TOKEN"
+                                    }
+                        in
+                        sendEmail email model
 
                     _ ->
                         ( model, Cmd.none )
 
             else
                 ( model, Cmd.none )
+
+        TBLogin email ->
+            case EmailAddress.fromString email of
+                Just recipient ->
+                    sendEmail
+                        (LoginEmail
+                            { to = recipient
+                            , token =
+                                let
+                                    _ =
+                                        Debug.todo
+                                in
+                                "TOKEN"
+                            }
+                        )
+                        model
+
+                Nothing ->
+                    ( model, Cmd.none )
+
+
+sendEmail : Email -> BackendModel -> ( BackendModel, Cmd BackendMsg )
+sendEmail email model =
+    if Env.isDev then
+        ( { model | emails = email :: model.emails }, Cmd.none )
+
+    else
+        case emailToSendGrid email of
+            Nothing ->
+                ( { model | errors = "Error parsing from address" :: model.errors }, Cmd.none )
+
+            Just sendGridEmail ->
+                ( model
+                , SendGrid.sendEmail
+                    SendResult
+                    (SendGrid.apiKey Env.sendGridKey)
+                    sendGridEmail
+                )
+
+
+emailToSendGrid : Email -> Maybe SendGrid.Email
+emailToSendGrid email =
+    case email of
+        LoginEmail { to, token } ->
+            EmailAddress.fromString "leonardo@taglialegne.it"
+                |> Maybe.map
+                    (\sender ->
+                        SendGrid.htmlEmail
+                            { subject =
+                                let
+                                    _ =
+                                        Debug.todo
+                                in
+                                NonemptyString 'S' "ubject"
+                            , to = List.Nonempty.fromElement to
+                            , content =
+                                let
+                                    _ =
+                                        Debug.todo
+                                in
+                                Email.Html.div
+                                    []
+                                    [ Email.Html.text <| "Your token is " ++ token ]
+                            , nameOfSender =
+                                let
+                                    _ =
+                                        Debug.todo
+                                in
+                                "Leonardo Taglialegne"
+                            , emailAddressOfSender = sender
+                            }
+                    )
 
 
 updateFromFrontend : SessionId -> ClientId -> ToBackend -> BackendModel -> ( BackendModel, Cmd BackendMsg )

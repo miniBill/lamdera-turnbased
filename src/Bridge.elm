@@ -8,6 +8,7 @@ type ToBackend
     = TBJoin GameId
     | TBPong
     | TBLoginAsAdmin String
+    | TBLogin String
     | TBSendTestEmail
 
 

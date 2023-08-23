@@ -1,10 +1,11 @@
 module Pages.SignIn exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToFrontendPage(..))
+import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Effect exposing (Effect)
 import Element.WithContext as Element exposing (centerX, centerY, el, fill, text, width)
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
+import Lamdera
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
@@ -58,7 +59,9 @@ update msg model =
 
         Submit ->
             if not model.isSubmitting && isInputValid model then
-                ( { model | isSubmitting = True }, Effect.none )
+                ( { model | isSubmitting = True }
+                , Effect.sendCmd <| Lamdera.sendToBackend <| TBLogin model.email
+                )
 
             else
                 ( model, Effect.none )
