@@ -9,6 +9,7 @@ import Gen.CodeGen.Generate as Generate exposing (Directory(..))
 import Gen.Element.WithContext.Font as Font
 import Gen.Types.GameId
 import Gen.Types.UserId
+import Gen.View
 import GenericDict
 import Json.Decode exposing (Decoder, Value)
 import List.Extra
@@ -97,51 +98,95 @@ fontsFile (Directory { directories }) =
                 |> List.map
                     (\filename ->
                         let
-                            path =
+                            url =
                                 "/fonts/" ++ filename
 
-                            rawName =
+                            splat =
                                 filename
-                                    |> String.split "-"
+                                    |> String.split "."
                                     |> List.head
                                     |> Maybe.withDefault ""
-                                    |> String.split "."
+                                    |> String.split "-"
+
+                            style =
+                                if List.member "Italic" splat then
+                                    "italic"
+
+                                else
+                                    "normal"
+
+                            weight =
+                                if List.member "SemiBold" splat then
+                                    "semibold"
+
+                                else if List.member "Ultra" splat then
+                                    "ultra"
+
+                                else
+                                    "normal"
+
+                            rawName =
+                                splat
                                     |> List.head
                                     |> Maybe.withDefault ""
 
                             varName =
                                 String.Extra.decapitalize rawName
 
-                            fontName =
+                            name =
                                 rawName
                                     |> String.Extra.humanize
                                     |> String.Extra.toTitleCase
                         in
-                        { path = path
-                        , fontName = fontName
+                        { url = url
+                        , name = name
                         , varName = varName
+                        , style = style
+                        , weight = weight
                         }
                     )
-                |> List.Extra.uniqueBy .varName
+                |> List.Extra.gatherEqualsBy .varName
                 |> List.concatMap
-                    (\{ path, fontName, varName } ->
-                        [ Font.family [ Font.typeface fontName ]
+                    (\( { name, varName } as head, others ) ->
+                        [ Font.family [ Font.typeface name ]
                             |> Elm.declaration varName
                             |> Elm.exposeWith
                                 { exposeConstructor = False
                                 , group = Just "Attributes"
                                 }
-                        , path
-                            |> Elm.string
-                            |> Elm.declaration (varName ++ "Path")
+                        , (head :: others)
+                            |> List.map
+                                (\{ url, style, weight } ->
+                                    Elm.record
+                                        [ ( "url", Elm.string url )
+                                        , ( "name", Elm.string name )
+                                        , ( "style", Elm.string style )
+                                        , ( "weight", Elm.string weight )
+                                        ]
+                                        |> Elm.withType (Annotation.named [] "Font")
+                                )
+                            |> Elm.list
+                            |> Elm.declaration (varName ++ "Fonts")
                             |> Elm.exposeWith
                                 { exposeConstructor = False
-                                , group = Just "Paths"
+                                , group = Just "Fonts"
                                 }
                         ]
                     )
-                |> Elm.file
-                    [ "Fonts" ]
+                |> (::)
+                    (Annotation.record
+                        [ ( "url", Annotation.string )
+                        , ( "name", Annotation.string )
+                        , ( "style", Annotation.string )
+                        , ( "weight", Annotation.string )
+                        ]
+                        |> Elm.alias "Font"
+                        |> Elm.exposeWith
+                            { exposeConstructor = False
+                            , group = Just "Fonts"
+                            }
+                    )
+                |> Elm.file [ "Fonts" ]
                 |> Ok
 
 
@@ -162,7 +207,7 @@ imagesFile (Directory { directories }) =
 
                             varName =
                                 filename
-                                    |> String.split "-"
+                                    |> String.split "."
                                     |> List.head
                                     |> Maybe.withDefault ""
                                     |> String.Extra.camelize

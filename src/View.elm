@@ -1,15 +1,16 @@
 module View exposing
-    ( View, map
+    ( View, ViewKind(..), map
     , none, fromString
     , toBrowserDocument
-    , ViewKind(..)
+    , Font
     )
 
 {-|
 
-@docs View, map
+@docs View, ViewKind, map
 @docs none, fromString
 @docs toBrowserDocument
+@docs Font
 
 -}
 
@@ -189,7 +190,7 @@ fontsCss viewKind =
     in
     fonts
         |> List.map
-            (\{ url, name, fontStyle, fontWeight } ->
+            (\{ url, name, style, weight } ->
                 let
                     quote : String -> String
                     quote value =
@@ -198,8 +199,8 @@ fontsCss viewKind =
                 """
                 @font-face {
                     font-family: """ ++ quote name ++ """;
-                    font-style: """ ++ quote fontStyle ++ """;
-                    font-weight: """ ++ quote fontWeight ++ """;
+                    font-style: """ ++ quote style ++ """;
+                    font-weight: """ ++ quote weight ++ """;
                     src: local(""" ++ quote name ++ """), url(""" ++ quote url ++ """);
                 }
                 """
@@ -210,54 +211,22 @@ fontsCss viewKind =
 type alias Font =
     { url : String
     , name : String
-    , fontStyle : String
-    , fontWeight : String
+    , style : String
+    , weight : String
     }
 
 
 fateFonts : List Font
 fateFonts =
-    [ { url = "/fonts/Garamond.ttf"
-      , name = "Garamond"
-      , fontStyle = "normal"
-      , fontWeight = "normal"
-      }
-    , { url = "/fonts/Gotham-Ultra.otf"
-      , name = "Gotham"
-      , fontStyle = "normal"
-      , fontWeight = "ultra"
-      }
-    ]
+    Fonts.garamondFonts
+        ++ Fonts.gothamFonts
 
 
 wanderhomeFonts : List Font
 wanderhomeFonts =
-    [ { url = "/fonts/ArnoPro.otf"
-      , name = "Arno Pro"
-      , fontStyle = "normal"
-      , fontWeight = "normal"
-      }
-    , { url = "/fonts/ArnoPro-Italic.otf"
-      , name = "Arno Pro"
-      , fontStyle = "italic"
-      , fontWeight = "normal"
-      }
-    , { url = "/fonts/ArnoPro-SemiBold-Italic.otf"
-      , name = "Arno Pro"
-      , fontStyle = "italic"
-      , fontWeight = "semibold"
-      }
-    , { url = "/fonts/Luminari.ttf"
-      , name = "Luminari"
-      , fontStyle = "normal"
-      , fontWeight = "normal"
-      }
-    , { url = "/fonts/Ruritania.ttf"
-      , name = "Ruritania"
-      , fontStyle = "normal"
-      , fontWeight = "normal"
-      }
-    ]
+    Fonts.arnoProFonts
+        ++ Fonts.luminariFonts
+        ++ Fonts.ruritaniaFonts
 
 
 {-| Used internally by Elm Land to connect your pages together.

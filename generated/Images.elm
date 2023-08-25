@@ -1,17 +1,17 @@
-module Images exposing (powered, wanderhome)
+module Images exposing (poweredByFateDark, wanderhomeFlower)
 
 {-|
 
-@docs powered, wanderhome
+@docs poweredByFateDark, wanderhomeFlower
 
 -}
 
 
-powered : String
-powered =
+poweredByFateDark : String
+poweredByFateDark =
     "/images/powered-by-fate-dark.png"
 
 
-wanderhome : String
-wanderhome =
+wanderhomeFlower : String
+wanderhomeFlower =
     "/images/wanderhome-flower.png"

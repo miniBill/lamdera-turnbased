@@ -7,6 +7,7 @@ import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Fonts
 import Html.Events
+import Images
 import Json.Decode
 import Shared.Model exposing (Context)
 
@@ -80,7 +81,7 @@ wanderhomeOnlineTitle =
                         [ width <| px 30
                         , Element.moveUp 2
                         ]
-                        { src = "/wanderhome-flower.png"
+                        { src = Images.wanderhomeFlower
                         , description = "A flowery glyph"
                         }
                     ]
@@ -116,7 +117,7 @@ fateTitle =
             [ width <| px 300
             , alignRight
             ]
-            { src = "/powered-by-fate-dark.png"
+            { src = Images.poweredByFateDark
             , description = "Powered by Fate logo"
             }
         ]

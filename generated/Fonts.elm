@@ -1,6 +1,6 @@
 module Fonts exposing
     ( arnoPro, garamond, gotham, luminari, ruritania
-    , arnoProPath, garamondPath, gothamPath, luminariPath, ruritaniaPath
+    , Font, arnoProFonts, garamondFonts, gothamFonts, luminariFonts, ruritaniaFonts
     )
 
 {-|
@@ -11,14 +11,18 @@ module Fonts exposing
 @docs arnoPro, garamond, gotham, luminari, ruritania
 
 
-## Paths
+## Fonts
 
-@docs arnoProPath, garamondPath, gothamPath, luminariPath, ruritaniaPath
+@docs Font, arnoProFonts, garamondFonts, gothamFonts, luminariFonts, ruritaniaFonts
 
 -}
 
 import Element.WithContext
 import Element.WithContext.Font
+
+
+type alias Font =
+    { url : String, name : String, style : String, weight : String }
 
 
 arnoPro : Element.WithContext.Attribute context msg
@@ -27,9 +31,24 @@ arnoPro =
         [ Element.WithContext.Font.typeface "Arno Pro" ]
 
 
-arnoProPath : String
-arnoProPath =
-    "/fonts/ArnoPro-Italic.otf"
+arnoProFonts : List Font
+arnoProFonts =
+    [ { url = "/fonts/ArnoPro-Italic.otf"
+      , name = "Arno Pro"
+      , style = "italic"
+      , weight = "normal"
+      }
+    , { url = "/fonts/ArnoPro-SemiBold-Italic.otf"
+      , name = "Arno Pro"
+      , style = "italic"
+      , weight = "semibold"
+      }
+    , { url = "/fonts/ArnoPro.otf"
+      , name = "Arno Pro"
+      , style = "normal"
+      , weight = "normal"
+      }
+    ]
 
 
 garamond : Element.WithContext.Attribute context msg
@@ -38,9 +57,14 @@ garamond =
         [ Element.WithContext.Font.typeface "Garamond" ]
 
 
-garamondPath : String
-garamondPath =
-    "/fonts/Garamond.ttf"
+garamondFonts : List Font
+garamondFonts =
+    [ { url = "/fonts/Garamond.ttf"
+      , name = "Garamond"
+      , style = "normal"
+      , weight = "normal"
+      }
+    ]
 
 
 gotham : Element.WithContext.Attribute context msg
@@ -49,9 +73,14 @@ gotham =
         [ Element.WithContext.Font.typeface "Gotham" ]
 
 
-gothamPath : String
-gothamPath =
-    "/fonts/Gotham-Ultra.otf"
+gothamFonts : List Font
+gothamFonts =
+    [ { url = "/fonts/Gotham-Ultra.otf"
+      , name = "Gotham"
+      , style = "normal"
+      , weight = "ultra"
+      }
+    ]
 
 
 luminari : Element.WithContext.Attribute context msg
@@ -60,9 +89,14 @@ luminari =
         [ Element.WithContext.Font.typeface "Luminari" ]
 
 
-luminariPath : String
-luminariPath =
-    "/fonts/Luminari.ttf"
+luminariFonts : List Font
+luminariFonts =
+    [ { url = "/fonts/Luminari.ttf"
+      , name = "Luminari"
+      , style = "normal"
+      , weight = "normal"
+      }
+    ]
 
 
 ruritania : Element.WithContext.Attribute context msg
@@ -71,6 +105,11 @@ ruritania =
         [ Element.WithContext.Font.typeface "Ruritania" ]
 
 
-ruritaniaPath : String
-ruritaniaPath =
-    "/fonts/Ruritania.ttf"
+ruritaniaFonts : List Font
+ruritaniaFonts =
+    [ { url = "/fonts/Ruritania.ttf"
+      , name = "Ruritania"
+      , style = "normal"
+      , weight = "normal"
+      }
+    ]
