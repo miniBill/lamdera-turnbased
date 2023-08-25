@@ -17,6 +17,7 @@ import Browser
 import Element.WithContext as Element exposing (Color, alignBottom, el, fill, height, link, paragraph, rgb255, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
+import Fonts
 import Html
 import Route exposing (Route)
 import Shared.Model
@@ -70,25 +71,25 @@ toBrowserDocument { shared, view } =
                     , background = rgb255 0xAD 0xD7 0xF6
                     , color = rgb255 0x28 0x12 0x2B
                     , footer =
-                        footer Theme.fonts.arnoPro wanderhomeFooter
+                        footer Fonts.arnoPro wanderhomeFooter
                             ++ el [] (text " ")
-                            :: footer Theme.fonts.garamond fateFooter
+                            :: footer Fonts.garamond fateFooter
                     }
 
                 Wanderhome ->
                     { title = "Wanderhome - TurnBased"
-                    , font = Theme.fonts.arnoPro
+                    , font = Fonts.arnoPro
                     , background = Theme.colors.wanderhomeBackground
                     , color = Theme.colors.wanderhome
-                    , footer = footer Theme.fonts.arnoPro wanderhomeFooter
+                    , footer = footer Fonts.arnoPro wanderhomeFooter
                     }
 
                 Fate ->
                     { title = "Fate Core - TurnBased"
-                    , font = Theme.fonts.garamond
+                    , font = Fonts.garamond
                     , background = Theme.colors.fateBackground
                     , color = Theme.colors.fate
-                    , footer = footer Theme.fonts.garamond fateFooter
+                    , footer = footer Fonts.garamond fateFooter
                     }
     in
     { title = data.title

@@ -9,6 +9,7 @@ import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
+import Fonts
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -106,7 +107,7 @@ body model =
                 { label =
                     Input.labelAbove [ centerX ] <|
                         paragraph
-                            [ Theme.fonts.gotham ]
+                            [ Fonts.gotham ]
                             [ text "GAME NAME" ]
                 , onChange = Input
                 , text = model.input
@@ -125,7 +126,7 @@ body model =
                     , Border.width 1
                     , Theme.padding
                     , Border.rounded Theme.rythm
-                    , Theme.fonts.gotham
+                    , Fonts.gotham
                     ]
                     { url =
                         Route.toString

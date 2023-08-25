@@ -1,27 +1,39 @@
-module Types.GameIdDict exposing (GameIdDict, empty, filter, foldl, foldr, fromList, get, insert, isEmpty, keys, map, member, partition, remove, singleton, size, toList, update, values)
+module Types.GameIdDict exposing
+    ( empty, singleton, insert, update, remove
+    , GameIdDict
+    , keys, values, toList, fromList
+    , isEmpty, member, get, size
+    , map, foldl, foldr, filter, partition
+    )
 
-{-| 
+{-|
+
+
 ## Build
 
 @docs empty, singleton, insert, update, remove
+
 
 ## Dictionaries
 
 @docs GameIdDict
 
+
 ## Lists
 
 @docs keys, values, toList, fromList
+
 
 ## Query
 
 @docs isEmpty, member, get, size
 
+
 ## Transform
 
 @docs map, foldl, foldr, filter, partition
--}
 
+-}
 
 import Dict
 import Types.GameId
@@ -49,8 +61,7 @@ insert key value d =
                 (Dict.insert (Types.GameId.toString key) ( key, value ) dict)
 
 
-update :
-    Types.GameId.GameId -> (Maybe b -> Maybe b) -> GameIdDict b -> GameIdDict b
+update : Types.GameId.GameId -> (Maybe b -> Maybe b) -> GameIdDict b -> GameIdDict b
 update key f d =
     case d of
         GameIdDict dict ->

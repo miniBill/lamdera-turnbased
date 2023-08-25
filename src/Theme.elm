@@ -1,10 +1,11 @@
-module Theme exposing (Attribute, Element, button, colors, column, fateTitle, fonts, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
+import Fonts
 import Html.Events
 import Json.Decode
 import Shared.Model exposing (Context)
@@ -51,25 +52,25 @@ rythm =
 wanderhomeOnlineTitle : Element msg
 wanderhomeOnlineTitle =
     Element.row
-        [ fonts.luminari
+        [ Fonts.luminari
         , Font.size 70
         , Element.paddingEach { top = 28, left = 26, bottom = 26, right = 6 }
         ]
         [ el
-            [ fonts.ruritania
+            [ Fonts.ruritania
             , Element.moveDown 10
             ]
             (Element.text "O")
         , Element.text "nline "
         , el
-            [ fonts.ruritania
+            [ Fonts.ruritania
             , Element.moveDown 10
             ]
             (Element.text " W")
         , el
             [ Element.below <|
                 Element.row
-                    [ fonts.arnoPro
+                    [ Fonts.arnoPro
                     , Font.size 30
                     , Element.moveRight 5
                     , Element.moveUp 10
@@ -102,27 +103,11 @@ colors =
     }
 
 
-fonts :
-    { arnoPro : Attribute msg
-    , luminari : Attribute msg
-    , ruritania : Attribute msg
-    , garamond : Attribute msg
-    , gotham : Attribute msg
-    }
-fonts =
-    { arnoPro = Font.family [ Font.typeface "Arno Pro" ]
-    , luminari = Font.family [ Font.typeface "Luminari" ]
-    , ruritania = Font.family [ Font.typeface "Ruritania" ]
-    , garamond = Font.family [ Font.typeface "Garamond" ]
-    , gotham = Font.family [ Font.typeface "Gotham" ]
-    }
-
-
 fateTitle : Element msg
 fateTitle =
     row [ width fill ]
         [ el
-            [ fonts.gotham
+            [ Fonts.gotham
             , Font.size 60
             , Element.moveDown 14
             ]

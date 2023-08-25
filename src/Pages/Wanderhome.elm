@@ -8,6 +8,7 @@ import Element.WithContext exposing (centerX, centerY, el, fill, height, link, p
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
+import Fonts
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -96,7 +97,7 @@ view _ model =
                     { label =
                         Input.labelAbove [ centerX ] <|
                             paragraph
-                                [ Theme.fonts.luminari ]
+                                [ Fonts.luminari ]
                                 [ text "Game name" ]
                     , onChange = Input
                     , text = model.input
@@ -113,7 +114,7 @@ view _ model =
                         , Border.width 1
                         , Theme.padding
                         , Border.rounded Theme.rythm
-                        , Theme.fonts.luminari
+                        , Fonts.luminari
                         ]
                         { url =
                             Route.toString

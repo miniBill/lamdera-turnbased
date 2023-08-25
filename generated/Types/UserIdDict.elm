@@ -1,27 +1,39 @@
-module Types.UserIdDict exposing (UserIdDict, empty, filter, foldl, foldr, fromList, get, insert, isEmpty, keys, map, member, partition, remove, singleton, size, toList, update, values)
+module Types.UserIdDict exposing
+    ( empty, singleton, insert, update, remove
+    , UserIdDict
+    , keys, values, toList, fromList
+    , isEmpty, member, get, size
+    , map, foldl, foldr, filter, partition
+    )
 
-{-| 
+{-|
+
+
 ## Build
 
 @docs empty, singleton, insert, update, remove
+
 
 ## Dictionaries
 
 @docs UserIdDict
 
+
 ## Lists
 
 @docs keys, values, toList, fromList
+
 
 ## Query
 
 @docs isEmpty, member, get, size
 
+
 ## Transform
 
 @docs map, foldl, foldr, filter, partition
--}
 
+-}
 
 import Dict
 import Types.UserId
@@ -49,8 +61,7 @@ insert key value d =
                 (Dict.insert (Types.UserId.toString key) ( key, value ) dict)
 
 
-update :
-    Types.UserId.UserId -> (Maybe b -> Maybe b) -> UserIdDict b -> UserIdDict b
+update : Types.UserId.UserId -> (Maybe b -> Maybe b) -> UserIdDict b -> UserIdDict b
 update key f d =
     case d of
         UserIdDict dict ->
