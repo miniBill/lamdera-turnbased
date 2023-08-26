@@ -9,7 +9,6 @@ import Gen.CodeGen.Generate as Generate exposing (Directory(..))
 import Gen.Element.WithContext.Font as Font
 import Gen.Types.GameId
 import Gen.Types.UserId
-import Gen.View
 import GenericDict
 import Json.Decode exposing (Decoder, Value)
 import List.Extra
