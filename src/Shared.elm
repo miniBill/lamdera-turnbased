@@ -61,21 +61,14 @@ type alias Msg =
 
 
 update : Route () -> Msg -> Model -> ( Model, Effect Msg )
-update route msg ({ context } as model) =
+update _ msg ({ context } as model) =
     case msg of
         CheckedLogin Nothing ->
             ( { model | context = { context | loggedIn = NotLoggedIn } }, Effect.none )
 
         CheckedLogin (Just result) ->
             ( { model | context = { context | loggedIn = LoggedInAs result } }
-            , case
-                Dict.get "returnTo" route.query |> Maybe.andThen Route.Path.fromString
-              of
-                Nothing ->
-                    Effect.pushPath Route.Path.Home_
-
-                Just returnTo ->
-                    Effect.pushPath returnTo
+            , Effect.none
             )
 
 
