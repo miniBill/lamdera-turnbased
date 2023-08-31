@@ -4,6 +4,7 @@ import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Effect exposing (Effect)
 import Element.WithContext exposing (text)
 import Lamdera
+import Layouts
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
@@ -19,6 +20,7 @@ page _ route =
         , subscriptions = subscriptions
         , view = view
         }
+        |> Page.withLayout (\_ -> Layouts.Default {})
 
 
 

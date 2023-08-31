@@ -14,6 +14,7 @@ import Email.Html
 import EmailAddress
 import FNV1a
 import Lamdera exposing (SessionId)
+import Layouts
 import List.Nonempty as Nonempty
 import Page exposing (Page)
 import Route exposing (Route)
@@ -39,6 +40,7 @@ page _ route =
         , subscriptions = subscriptions
         , view = view
         }
+        |> Page.withLayout (\_ -> Layouts.Default {})
 
 
 

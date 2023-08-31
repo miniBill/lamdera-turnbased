@@ -8,6 +8,7 @@ import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Fonts
+import Layouts
 import Page exposing (Page)
 import Random
 import Route exposing (Route)
@@ -25,6 +26,7 @@ page shared _ =
         , subscriptions = subscriptions
         , view = view shared
         }
+        |> Page.withLayout (\_ -> Layouts.Default {})
 
 
 

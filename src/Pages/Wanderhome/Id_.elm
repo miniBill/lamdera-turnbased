@@ -3,6 +3,7 @@ module Pages.Wanderhome.Id_ exposing (Model, Msg, page, updateFromBackend)
 import Bridge exposing (ToFrontendPage(..))
 import Effect exposing (Effect)
 import Element.WithContext exposing (text)
+import Layouts
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
@@ -17,6 +18,7 @@ page _ _ =
         , subscriptions = subscriptions
         , view = view
         }
+        |> Page.withLayout (\_ -> Layouts.Default {})
 
 
 

@@ -15,6 +15,7 @@ import Types.EmailData as EmailData exposing (EmailData(..))
 import Types.Game as Game
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
+import Types.UserId as UserId
 
 
 app :
@@ -216,7 +217,10 @@ innerUpdateFromFrontend now sid cid msg model =
 
         TBLoginAsAdmin key ->
             if key == Env.adminKey then
-                ( { model | sessions = SessionDict.toAdmin sid model.sessions }, Cmd.none )
+                ( { model | sessions = SessionDict.toAdmin sid model.sessions }
+                , Lamdera.sendToFrontend sid <|
+                    TFCheckedLogin (Just { userId = UserId.admin })
+                )
 
             else
                 ( model, Cmd.none )
@@ -246,7 +250,7 @@ innerUpdateFromFrontend now sid cid msg model =
                 |> Maybe.andThen .loggedIn
                 |> Maybe.map (\userId -> { userId = userId })
                 |> TFCheckedLogin
-                |> Lamdera.sendToFrontend cid
+                |> Lamdera.sendToFrontend sid
             )
 
 
