@@ -1,4 +1,4 @@
-module Env exposing (adminKey, isDev, pingTime, sendGridKey)
+module Env exposing (adminKey, emailSenderAddress, emailSenderName, isDev, pingTime, sendGridKey)
 
 
 sendGridKey : String
@@ -25,3 +25,13 @@ pingTime =
 
     else
         60 * 1000
+
+
+emailSenderAddress : String
+emailSenderAddress =
+    "leonardo@taglialegne.it"
+
+
+emailSenderName : String
+emailSenderName =
+    "Leonardo Taglialegne"
