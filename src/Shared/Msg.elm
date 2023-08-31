@@ -2,7 +2,7 @@ module Shared.Msg exposing (Msg(..))
 
 {-| -}
 
-import Shared.Model exposing (LoggedIn)
+import Shared.Model exposing (User)
 
 
 {-| Normally, this value would live in "Shared.elm"
@@ -13,4 +13,4 @@ own file, so they can be imported by `Effect.elm`
 
 -}
 type Msg
-    = CheckedLogin LoggedIn
+    = CheckedLogin (Maybe User)

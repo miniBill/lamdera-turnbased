@@ -2,7 +2,6 @@ module Pages.Wanderhome exposing (Model, Msg(..), page, updateFromBackend)
 
 import Bridge exposing (ToFrontendPage(..))
 import Diceware
-import Dict
 import Effect exposing (Effect)
 import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, text)
 import Element.WithContext.Border as Border

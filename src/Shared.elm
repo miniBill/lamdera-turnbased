@@ -12,6 +12,7 @@ module Shared exposing
 
 -}
 
+import Dict
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
@@ -60,11 +61,21 @@ type alias Msg =
 
 
 update : Route () -> Msg -> Model -> ( Model, Effect Msg )
-update _ msg ({ context } as model) =
+update route msg ({ context } as model) =
     case msg of
-        CheckedLogin result ->
-            ( { model | context = { context | loggedIn = result } }
-            , Effect.pushPath Route.Path.Home_
+        CheckedLogin Nothing ->
+            ( { model | context = { context | loggedIn = NotLoggedIn } }, Effect.none )
+
+        CheckedLogin (Just result) ->
+            ( { model | context = { context | loggedIn = LoggedInAs result } }
+            , case
+                Dict.get "returnTo" route.query |> Maybe.andThen Route.Path.fromString
+              of
+                Nothing ->
+                    Effect.pushPath Route.Path.Home_
+
+                Just returnTo ->
+                    Effect.pushPath returnTo
             )
 
 

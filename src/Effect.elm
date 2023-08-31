@@ -24,7 +24,7 @@ import Dict exposing (Dict)
 import Lamdera
 import Route
 import Route.Path
-import Shared.Model exposing (LoggedIn)
+import Shared.Model exposing (User)
 import Shared.Msg
 import Task
 import Url exposing (Url)
@@ -43,7 +43,7 @@ type Effect msg
     | SendSharedMsg Shared.Msg.Msg
     | LoginAsAdmin String
     | CheckLogin
-    | CheckedLogin LoggedIn
+    | CheckedLogin (Maybe User)
 
 
 
@@ -148,7 +148,7 @@ checkLogin =
     CheckLogin
 
 
-checkedLogin : LoggedIn -> Effect msg
+checkedLogin : Maybe User -> Effect msg
 checkedLogin =
     CheckedLogin
 

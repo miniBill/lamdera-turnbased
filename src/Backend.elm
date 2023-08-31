@@ -244,8 +244,7 @@ innerUpdateFromFrontend now sid cid msg model =
             ( model
             , SessionDict.getSession sid model.sessions
                 |> Maybe.andThen .loggedIn
-                |> Maybe.map (\userId -> LoggedInAs { userId = userId })
-                |> Maybe.withDefault NotLoggedIn
+                |> Maybe.map (\userId -> { userId = userId })
                 |> TFCheckedLogin
                 |> Lamdera.sendToFrontend cid
             )

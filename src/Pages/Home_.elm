@@ -1,7 +1,6 @@
 module Pages.Home_ exposing (Model, Msg, page, updateFromBackend)
 
 import Bridge exposing (ToFrontendPage(..))
-import Dict
 import Effect exposing (Effect)
 import Element.WithContext exposing (centerX, centerY, fill, link, rgb255, width)
 import Element.WithContext.Background as Background
