@@ -117,11 +117,7 @@ view _ model =
                         , Fonts.luminari
                         ]
                         { url =
-                            Route.toString
-                                { path = Route.Path.Wanderhome_Id_ { id = model.input }
-                                , query = Dict.empty
-                                , hash = Nothing
-                                }
+                            Route.Path.toString <| Route.Path.Wanderhome_Id_ { id = model.input }
                         , label = text "Join game"
                         }
 

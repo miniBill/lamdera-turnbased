@@ -83,11 +83,7 @@ view _ _ =
                 , Font.color Theme.colors.wanderhome
                 ]
                 { url =
-                    Route.toString
-                        { path = Route.Path.Wanderhome
-                        , query = Dict.empty
-                        , hash = Nothing
-                        }
+                    Route.Path.toString Route.Path.Wanderhome
                 , label = Theme.wanderhomeOnlineTitle
                 }
             , link
@@ -101,11 +97,7 @@ view _ _ =
                 , Font.color Theme.colors.fate
                 ]
                 { url =
-                    Route.toString
-                        { path = Route.Path.Fate
-                        , query = Dict.empty
-                        , hash = Nothing
-                        }
+                    Route.Path.toString Route.Path.Fate
                 , label = Theme.fateTitle
                 }
             ]

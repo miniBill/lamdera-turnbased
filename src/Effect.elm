@@ -4,7 +4,7 @@ module Effect exposing
     , sendCmd, sendMsg
     , pushRoute, replaceRoute, loadExternalUrl
     , map, toCmd
-    , checkLogin, checkedLogin, loginAsAdmin
+    , checkLogin, checkedLogin, loginAsAdmin, pushPath, replacePath
     )
 
 {-|
@@ -96,6 +96,15 @@ pushRoute route =
     PushUrl (Route.toString route)
 
 
+pushPath : Route.Path.Path -> Effect msg
+pushPath path =
+    pushRoute
+        { path = path
+        , query = Dict.empty
+        , hash = Nothing
+        }
+
+
 {-| Set the new route, but replace the previous one, so clicking the back
 button **won't** go back to the previous route.
 -}
@@ -107,6 +116,15 @@ replaceRoute :
     -> Effect msg
 replaceRoute route =
     ReplaceUrl (Route.toString route)
+
+
+replacePath : Route.Path.Path -> Effect msg
+replacePath path =
+    replaceRoute
+        { path = path
+        , query = Dict.empty
+        , hash = Nothing
+        }
 
 
 {-| Redirect users to a new URL, somewhere external your web application.

@@ -128,12 +128,7 @@ body model =
                     , Border.rounded Theme.rythm
                     , Fonts.gotham
                     ]
-                    { url =
-                        Route.toString
-                            { path = Route.Path.Fate_Id_ { id = model.input }
-                            , query = Dict.empty
-                            , hash = Nothing
-                            }
+                    { url = Route.Path.toString <| Route.Path.Fate_Id_ { id = model.input }
                     , label = text "JOIN GAME"
                     }
 

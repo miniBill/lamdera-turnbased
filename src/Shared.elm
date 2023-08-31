@@ -15,6 +15,7 @@ module Shared exposing
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
+import Route.Path
 import Shared.Model exposing (Context, LoggedIn(..))
 import Shared.Msg exposing (Msg(..))
 
@@ -63,7 +64,7 @@ update _ msg ({ context } as model) =
     case msg of
         CheckedLogin result ->
             ( { model | context = { context | loggedIn = result } }
-            , Effect.none
+            , Effect.pushPath Route.Path.Home_
             )
 
 

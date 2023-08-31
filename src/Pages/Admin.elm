@@ -57,11 +57,7 @@ init route () =
             Effect.loginAsAdmin key
 
         Nothing ->
-            Effect.replaceRoute
-                { path = Path.Home_
-                , query = Dict.empty
-                , hash = Nothing
-                }
+            Effect.replacePath Path.Home_
     )
 
 
