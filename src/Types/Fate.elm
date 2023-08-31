@@ -10,12 +10,6 @@ type alias UserData =
     }
 
 
-emptyUser : UserData
-emptyUser =
-    { characters = []
-    }
-
-
 type alias GameData =
     { userData : UserIdDict SharedData
     }

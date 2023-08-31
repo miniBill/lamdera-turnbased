@@ -15,7 +15,7 @@ module Shared exposing
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
-import Shared.Model exposing (Context)
+import Shared.Model exposing (Context, LoggedIn(..))
 import Shared.Msg exposing (Msg(..))
 
 
@@ -42,14 +42,12 @@ type alias Model =
 
 init : Result Json.Decode.Error Flags -> Route () -> ( Model, Effect Msg )
 init _ _ =
-    ( { context = initialContext }
-    , Effect.none
-    )
+    ( { context = initialContext }, Effect.checkLogin )
 
 
 initialContext : Context
 initialContext =
-    {}
+    { loggedIn = Unknown }
 
 
 
@@ -61,10 +59,12 @@ type alias Msg =
 
 
 update : Route () -> Msg -> Model -> ( Model, Effect Msg )
-update _ msg model =
+update _ msg ({ context } as model) =
     case msg of
-        NoOp ->
-            ( model, Effect.none )
+        CheckedLogin result ->
+            ( { model | context = { context | loggedIn = result } }
+            , Effect.none
+            )
 
 
 

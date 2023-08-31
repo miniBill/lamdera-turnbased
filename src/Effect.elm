@@ -4,7 +4,7 @@ module Effect exposing
     , sendCmd, sendMsg
     , pushRoute, replaceRoute, loadExternalUrl
     , map, toCmd
-    , loginAsAdmin
+    , checkLogin, checkedLogin, loginAsAdmin
     )
 
 {-|
@@ -24,7 +24,7 @@ import Dict exposing (Dict)
 import Lamdera
 import Route
 import Route.Path
-import Shared.Model
+import Shared.Model exposing (LoggedIn)
 import Shared.Msg
 import Task
 import Url exposing (Url)
@@ -42,6 +42,8 @@ type Effect msg
       -- SHARED
     | SendSharedMsg Shared.Msg.Msg
     | LoginAsAdmin String
+    | CheckLogin
+    | CheckedLogin LoggedIn
 
 
 
@@ -114,9 +116,23 @@ loadExternalUrl =
     LoadExternalUrl
 
 
+
+-- SPECIFIC
+
+
 loginAsAdmin : String -> Effect msg
 loginAsAdmin =
     LoginAsAdmin
+
+
+checkLogin : Effect msg
+checkLogin =
+    CheckLogin
+
+
+checkedLogin : LoggedIn -> Effect msg
+checkedLogin =
+    CheckedLogin
 
 
 
@@ -152,6 +168,12 @@ map fn effect =
 
         LoginAsAdmin key ->
             LoginAsAdmin key
+
+        CheckLogin ->
+            CheckLogin
+
+        CheckedLogin result ->
+            CheckedLogin result
 
 
 {-| Elm Land depends on this function to perform your effects.
@@ -192,3 +214,12 @@ toCmd options effect =
 
         LoginAsAdmin key ->
             Lamdera.sendToBackend <| TBLoginAsAdmin key
+
+        CheckLogin ->
+            Lamdera.sendToBackend TBCheckLogin
+
+        CheckedLogin result ->
+            result
+                |> Shared.Msg.CheckedLogin
+                |> options.fromSharedMsg
+                |> options.toCmd

@@ -138,8 +138,8 @@ view _ model =
     }
 
 
-updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
+updateFromBackend : ToFrontendPage -> Model -> ( Model, Effect Msg )
 updateFromBackend msg model =
     case msg of
         TFAdminPageData _ ->
-            ( model, Cmd.none )
+            ( model, Effect.none )

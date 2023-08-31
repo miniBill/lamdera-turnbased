@@ -6,6 +6,7 @@ import EmailAddress
 import Env
 import Lamdera exposing (ClientId, SessionId)
 import SendGrid
+import Shared.Model exposing (LoggedIn(..))
 import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
@@ -238,6 +239,16 @@ innerUpdateFromFrontend now sid cid msg model =
 
                 Nothing ->
                     ( model, Cmd.none )
+
+        TBCheckLogin ->
+            ( model
+            , SessionDict.getSession sid model.sessions
+                |> Maybe.andThen .loggedIn
+                |> Maybe.map (\userId -> LoggedInAs { userId = userId })
+                |> Maybe.withDefault NotLoggedIn
+                |> TFCheckedLogin
+                |> Lamdera.sendToFrontend cid
+            )
 
 
 sendEmail : Time.Posix -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )

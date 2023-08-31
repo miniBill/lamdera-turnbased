@@ -1,6 +1,8 @@
-module Shared.Model exposing (Context, Model)
+module Shared.Model exposing (Context, LoggedIn(..), Model)
 
 {-| -}
+
+import Types.UserId exposing (UserId)
 
 
 {-| Normally, this value would live in "Shared.elm"
@@ -15,4 +17,14 @@ type alias Model =
 
 
 type alias Context =
-    {}
+    { loggedIn : LoggedIn }
+
+
+type LoggedIn
+    = Unknown
+    | LoggedInAs User
+    | NotLoggedIn
+
+
+type alias User =
+    { userId : UserId }

@@ -344,8 +344,8 @@ stringToColor input =
         |> (\{ red, green, blue, alpha } -> Element.rgba red green blue alpha)
 
 
-updateFromBackend : ToFrontendPage -> Model -> ( Model, Cmd Msg )
+updateFromBackend : ToFrontendPage -> Model -> ( Model, Effect Msg )
 updateFromBackend msg _ =
     case msg of
         TFAdminPageData data ->
-            ( Just data, Cmd.none )
+            ( Just data, Effect.none )

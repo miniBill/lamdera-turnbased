@@ -1,6 +1,7 @@
 module Bridge exposing (AdminPageData, ToBackend(..), ToFrontend(..), ToFrontendPage(..))
 
 import Dict exposing (Dict)
+import Shared.Model exposing (LoggedIn)
 import Time
 import Types.EmailData exposing (EmailData)
 import Types.GameId exposing (GameId)
@@ -12,11 +13,13 @@ type ToBackend
     | TBPong
     | TBLoginAsAdmin String
     | TBLogin String
+    | TBCheckLogin
 
 
 type ToFrontend
     = TFPage ToFrontendPage
     | TFPing
+    | TFCheckedLogin LoggedIn
 
 
 type ToFrontendPage
