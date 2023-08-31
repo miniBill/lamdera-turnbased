@@ -13,7 +13,7 @@ isDev =
 
 adminKey : String
 adminKey =
-    "abc"
+    "abcd"
 
 
 {-| Time between pings, in milliseconds.
