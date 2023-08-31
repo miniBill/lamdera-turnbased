@@ -12,6 +12,7 @@ import Bridge
 import Dict exposing (Dict)
 import Lamdera exposing (ClientId, SessionId)
 import Main as ElmLand
+import Random
 import SendGrid
 import Time
 import Types.EmailData exposing (EmailData)
@@ -23,7 +24,8 @@ type alias FrontendModel =
 
 
 type alias BackendModel =
-    { sessions : SessionDict
+    { seed : Random.Seed
+    , sessions : SessionDict
     , errors : Dict String { count : Int, last : Time.Posix }
     , emails : List EmailData
     }
@@ -44,6 +46,7 @@ type alias ToFrontend =
 type BackendMsg
     = WithoutTime InnerBackendMsg
     | WithTime InnerBackendMsg Time.Posix
+    | Seed Random.Seed
 
 
 type InnerBackendMsg

@@ -1,10 +1,13 @@
 module Backend exposing (app)
 
 import Bridge exposing (ToBackend(..), ToFrontend(..), ToFrontendPage(..))
+import Diceware
 import Dict
 import EmailAddress
 import Env
 import Lamdera exposing (ClientId, SessionId)
+import Random
+import Random.Extra
 import SendGrid
 import Shared.Model exposing (LoggedIn(..))
 import String.Nonempty exposing (NonemptyString(..))
@@ -47,14 +50,18 @@ init =
     ( { sessions = SessionDict.empty
       , errors = Dict.empty
       , emails = []
+      , seed = Random.initialSeed 0
       }
-    , Cmd.none
+    , Random.generate Seed Random.independentSeed
     )
 
 
 update : BackendMsg -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 update msg model =
     case msg of
+        Seed seed ->
+            ( { model | seed = seed }, Cmd.none )
+
         WithoutTime innerMsg ->
             ( model, Task.perform (WithTime innerMsg) Time.now )
 
@@ -228,19 +235,18 @@ innerUpdateFromFrontend now sid cid msg model =
         TBLogin email ->
             case EmailAddress.fromString email of
                 Just recipient ->
-                    sendEmail now
-                        cid
-                        (LoginEmail
-                            { to = recipient
-                            , token =
-                                let
-                                    _ =
-                                        Debug.todo
-                                in
-                                "TOKEN"
-                            }
-                        )
-                        model
+                    let
+                        ( token, newSeed ) =
+                            Random.step tokenGenerator model.seed
+                    in
+                    { model | seed = newSeed }
+                        |> sendEmail now
+                            cid
+                            (LoginEmail
+                                { to = recipient
+                                , token = token
+                                }
+                            )
 
                 Nothing ->
                     ( model, Lamdera.sendToFrontend cid TFInvalidEmail )
@@ -255,9 +261,26 @@ innerUpdateFromFrontend now sid cid msg model =
             )
 
 
+tokenGenerator : Random.Generator String
+tokenGenerator =
+    let
+        wordGenerator =
+            Random.int 0 (Diceware.listLength - 1)
+                |> Random.map Diceware.numberToWords
+    in
+    List.repeat 8 wordGenerator
+        |> Random.Extra.combine
+        |> Random.map ((::) "aardvark")
+        |> Random.map (String.join "-")
+
+
 sendEmail : Time.Posix -> ClientId -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 sendEmail now cid email model =
     if Env.isDev then
+        let
+            _ =
+                Debug.log "Email sent" email
+        in
         ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
 
     else
