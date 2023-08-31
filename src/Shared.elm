@@ -12,11 +12,9 @@ module Shared exposing
 
 -}
 
-import Dict
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
-import Route.Path
 import Shared.Model exposing (Context, LoggedIn(..))
 import Shared.Msg exposing (Msg(..))
 
