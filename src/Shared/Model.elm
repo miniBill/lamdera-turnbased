@@ -1,4 +1,4 @@
-module Shared.Model exposing (Context, LoggedIn(..), Model)
+module Shared.Model exposing (Context, LoggedIn(..), Model, User)
 
 {-| -}
 
