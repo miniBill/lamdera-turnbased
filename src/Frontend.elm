@@ -127,6 +127,15 @@ updateFromBackend msg model =
 
                 TFCheckedLogin result ->
                     ( model, Effect.checkedLogin result )
+
+                TFInvalidEmail ->
+                    ( model, Effect.invalidEmail )
+
+                TFEmailSent ->
+                    ( model, Effect.emailSent )
+
+                TFEmailError ->
+                    ( model, Effect.emailError )
     in
     ( newModel
     , Effect.toCmd

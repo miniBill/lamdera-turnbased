@@ -15,7 +15,7 @@ module Shared exposing
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
-import Shared.Model exposing (Context, LoggedIn(..))
+import Shared.Model exposing (Context)
 import Shared.Msg exposing (Msg(..))
 
 
@@ -47,7 +47,7 @@ init _ _ =
 
 initialContext : Context
 initialContext =
-    { loggedIn = Unknown }
+    { loggedIn = Shared.Model.Unknown }
 
 
 
@@ -62,12 +62,21 @@ update : Route () -> Msg -> Model -> ( Model, Effect Msg )
 update _ msg ({ context } as model) =
     case msg of
         CheckedLogin Nothing ->
-            ( { model | context = { context | loggedIn = NotLoggedIn } }, Effect.none )
+            ( { model | context = { context | loggedIn = Shared.Model.NotLoggedIn } }, Effect.none )
 
         CheckedLogin (Just result) ->
-            ( { model | context = { context | loggedIn = LoggedInAs result } }
+            ( { model | context = { context | loggedIn = Shared.Model.LoggedInAs result } }
             , Effect.none
             )
+
+        InvalidEmail ->
+            ( { model | context = { context | loggedIn = Shared.Model.InvalidEmail } }, Effect.none )
+
+        EmailSent ->
+            ( { model | context = { context | loggedIn = Shared.Model.EmailSent } }, Effect.none )
+
+        EmailError ->
+            ( { model | context = { context | loggedIn = Shared.Model.EmailError } }, Effect.none )
 
 
 

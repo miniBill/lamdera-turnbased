@@ -20,6 +20,9 @@ type ToFrontend
     = TFPage ToFrontendPage
     | TFPing
     | TFCheckedLogin (Maybe User)
+    | TFInvalidEmail
+    | TFEmailSent
+    | TFEmailError
 
 
 type ToFrontendPage

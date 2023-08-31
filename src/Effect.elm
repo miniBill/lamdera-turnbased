@@ -4,7 +4,7 @@ module Effect exposing
     , sendCmd, sendMsg
     , pushRoute, replaceRoute, loadExternalUrl
     , map, toCmd
-    , checkLogin, checkedLogin, loginAsAdmin, pushPath, replacePath
+    , checkLogin, checkedLogin, emailError, emailSent, invalidEmail, loginAsAdmin, pushPath, replacePath
     )
 
 {-|
@@ -43,7 +43,6 @@ type Effect msg
     | SendSharedMsg Shared.Msg.Msg
     | LoginAsAdmin String
     | CheckLogin
-    | CheckedLogin (Maybe User)
 
 
 
@@ -149,8 +148,23 @@ checkLogin =
 
 
 checkedLogin : Maybe User -> Effect msg
-checkedLogin =
-    CheckedLogin
+checkedLogin user =
+    SendSharedMsg (Shared.Msg.CheckedLogin user)
+
+
+invalidEmail : Effect msg
+invalidEmail =
+    SendSharedMsg Shared.Msg.InvalidEmail
+
+
+emailSent : Effect msg
+emailSent =
+    SendSharedMsg Shared.Msg.EmailSent
+
+
+emailError : Effect msg
+emailError =
+    SendSharedMsg Shared.Msg.EmailError
 
 
 
@@ -190,9 +204,6 @@ map fn effect =
         CheckLogin ->
             CheckLogin
 
-        CheckedLogin result ->
-            CheckedLogin result
-
 
 {-| Elm Land depends on this function to perform your effects.
 -}
@@ -227,8 +238,7 @@ toCmd options effect =
             Browser.Navigation.load url
 
         SendSharedMsg sharedMsg ->
-            Task.succeed sharedMsg
-                |> Task.perform options.fromSharedMsg
+            sendShared options sharedMsg
 
         LoginAsAdmin key ->
             Lamdera.sendToBackend <| TBLoginAsAdmin key
@@ -236,8 +246,11 @@ toCmd options effect =
         CheckLogin ->
             Lamdera.sendToBackend TBCheckLogin
 
-        CheckedLogin result ->
-            result
-                |> Shared.Msg.CheckedLogin
-                |> options.fromSharedMsg
-                |> options.toCmd
+
+sendShared :
+    { a | fromSharedMsg : Shared.Msg.Msg -> msg }
+    -> Shared.Msg.Msg
+    -> Cmd msg
+sendShared options sharedMsg =
+    Task.succeed sharedMsg
+        |> Task.perform options.fromSharedMsg

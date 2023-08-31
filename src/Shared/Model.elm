@@ -24,6 +24,9 @@ type LoggedIn
     = Unknown
     | LoggedInAs User
     | NotLoggedIn
+    | InvalidEmail
+    | EmailSent
+    | EmailError
 
 
 type alias User =

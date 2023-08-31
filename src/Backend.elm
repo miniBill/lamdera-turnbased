@@ -187,12 +187,12 @@ innerUpdate now submsg model =
         ShouldPing ->
             ( { model | sessions = SessionDict.cleanup now model.sessions }, Lamdera.broadcast TFPing )
 
-        SendResult (Ok ()) ->
-            ( model, Cmd.none )
+        SendResult cid (Ok ()) ->
+            ( model, Lamdera.sendToFrontend cid TFEmailSent )
 
-        SendResult (Err e) ->
+        SendResult cid (Err e) ->
             ( appendError now (sendGridErrorToString e) model
-            , Cmd.none
+            , Lamdera.sendToFrontend cid TFEmailError
             )
 
 
@@ -229,6 +229,7 @@ innerUpdateFromFrontend now sid cid msg model =
             case EmailAddress.fromString email of
                 Just recipient ->
                     sendEmail now
+                        cid
                         (LoginEmail
                             { to = recipient
                             , token =
@@ -242,7 +243,7 @@ innerUpdateFromFrontend now sid cid msg model =
                         model
 
                 Nothing ->
-                    ( model, Cmd.none )
+                    ( model, Lamdera.sendToFrontend cid TFInvalidEmail )
 
         TBCheckLogin ->
             ( model
@@ -254,10 +255,10 @@ innerUpdateFromFrontend now sid cid msg model =
             )
 
 
-sendEmail : Time.Posix -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
-sendEmail now email model =
+sendEmail : Time.Posix -> ClientId -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
+sendEmail now cid email model =
     if Env.isDev then
-        ( { model | emails = email :: model.emails }, Cmd.none )
+        ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
 
     else
         case EmailData.toSendGrid email of
@@ -267,7 +268,7 @@ sendEmail now email model =
             Just sendGridEmail ->
                 ( model
                 , SendGrid.sendEmail
-                    (SendResult >> WithoutTime)
+                    (SendResult cid >> WithoutTime)
                     (SendGrid.apiKey Env.sendGridKey)
                     sendGridEmail
                 )

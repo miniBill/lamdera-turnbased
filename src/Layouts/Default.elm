@@ -2,7 +2,7 @@ module Layouts.Default exposing (Model, Msg, Props, layout)
 
 import Bridge exposing (ToBackend(..))
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (centerX, centerY, el, fill, text, width)
+import Element.WithContext as Element exposing (centerX, centerY, el, fill, height, paragraph, rgb, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -93,73 +93,101 @@ view shared { toContentMsg, model, content } =
                 el [ centerX, centerY ] <| text "Loading..."
 
             LoggedInAs user ->
-                Theme.column []
+                Theme.column
+                    [ width fill
+                    , height fill
+                    ]
                     [ text <| "Logged in as " ++ UserId.toString user.userId
                     , content.body
                     ]
 
             NotLoggedIn ->
-                let
-                    loginColumn : List (Element Msg)
-                    loginColumn =
-                        [ el
-                            [ centerX
-                            , Font.size 40
-                            ]
-                            (text "Log in or sign up")
-                        , Input.email
-                            (Theme.onEnter Submit :: colors)
-                            { label = Input.labelLeft [] <| text "Email"
-                            , text = model.email
-                            , onChange = Email
-                            , placeholder = Just <| Input.placeholder [] <| text "your@email.here"
-                            }
-                        , Theme.button
-                            [ width fill
-                            , Font.center
-                            ]
-                            (if model.isSubmitting then
-                                { onPress = Nothing
-                                , label = text "Submitting..."
-                                }
+                viewLoginForm model content Nothing
+                    |> Element.map toContentMsg
 
-                             else if isInputValid model then
-                                { onPress = Just Submit
-                                , label = text "Submit"
-                                }
+            InvalidEmail ->
+                viewLoginForm model content (Just "Invalid email!")
+                    |> Element.map toContentMsg
 
-                             else
-                                { onPress = Nothing
-                                , label = text "Insert a valid email"
-                                }
-                            )
-                        ]
+            EmailError ->
+                viewLoginForm model content (Just "There was an error in sending the email link, try again later.")
+                    |> Element.map toContentMsg
 
-                    colors =
-                        case content.kind of
-                            View.Home ->
-                                []
-
-                            View.Fate ->
-                                [ Background.color Theme.colors.fateBackground
-                                , Border.color Theme.colors.fate
-                                ]
-
-                            View.Wanderhome ->
-                                [ Background.color Theme.colors.wanderhomeBackground
-                                , Border.color Theme.colors.wanderhome
-                                ]
-
-                            View.Admin ->
-                                []
-                in
-                loginColumn
-                    |> Theme.column
-                        [ centerX
-                        , centerY
-                        ]
+            EmailSent ->
+                paragraph [ centerX, centerY ]
+                    [ text "We sent you an email with your login link. Check your inbox! And spam folder! And Cthulhu folder (just in case)!"
+                    ]
                     |> Element.map toContentMsg
     }
+
+
+viewLoginForm : Model -> { a | kind : View.ViewKind } -> Maybe String -> Element Msg
+viewLoginForm model content error =
+    let
+        loginColumn : List (Element Msg)
+        loginColumn =
+            [ el
+                [ centerX
+                , Font.size 40
+                ]
+                (text "Log in or sign up")
+            , Input.email
+                (Theme.onEnter Submit :: colors)
+                { label = Input.labelLeft [] <| text "Email"
+                , text = model.email
+                , onChange = Email
+                , placeholder = Just <| Input.placeholder [] <| text "your@email.here"
+                }
+            , case error of
+                Nothing ->
+                    Element.none
+
+                Just e ->
+                    el [ Font.color <| rgb 1 0 0, Font.bold ] <| text e
+            , Theme.button
+                [ width fill
+                , Font.center
+                ]
+                (if model.isSubmitting then
+                    { onPress = Nothing
+                    , label = text "Submitting..."
+                    }
+
+                 else if isInputValid model then
+                    { onPress = Just Submit
+                    , label = text "Submit"
+                    }
+
+                 else
+                    { onPress = Nothing
+                    , label = text "Insert a valid email"
+                    }
+                )
+            ]
+
+        colors =
+            case content.kind of
+                View.Home ->
+                    []
+
+                View.Fate ->
+                    [ Background.color Theme.colors.fateBackground
+                    , Border.color Theme.colors.fate
+                    ]
+
+                View.Wanderhome ->
+                    [ Background.color Theme.colors.wanderhomeBackground
+                    , Border.color Theme.colors.wanderhome
+                    ]
+
+                View.Admin ->
+                    []
+    in
+    loginColumn
+        |> Theme.column
+            [ centerX
+            , centerY
+            ]
 
 
 isInputValid : Model -> Bool

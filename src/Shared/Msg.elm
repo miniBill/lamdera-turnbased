@@ -14,3 +14,6 @@ own file, so they can be imported by `Effect.elm`
 -}
 type Msg
     = CheckedLogin (Maybe User)
+    | InvalidEmail
+    | EmailSent
+    | EmailError

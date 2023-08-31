@@ -21,7 +21,7 @@ adminKey =
 pingTime : number
 pingTime =
     if isDev then
-        10 * 1000
+        100 * 1000
 
     else
         60 * 1000

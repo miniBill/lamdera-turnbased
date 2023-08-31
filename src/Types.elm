@@ -51,4 +51,4 @@ type InnerBackendMsg
     | OnDisconnect SessionId ClientId
     | FromFrontend SessionId ClientId ToBackend
     | ShouldPing
-    | SendResult (Result SendGrid.Error ())
+    | SendResult ClientId (Result SendGrid.Error ())
