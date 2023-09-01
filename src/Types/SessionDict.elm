@@ -11,7 +11,8 @@ import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
 import Types.Session as Session exposing (Session)
-import Types.Token exposing (Token(..))
+import Types.Token exposing (Token)
+import Types.TokenDict as TokenDict exposing (TokenDict)
 import Types.UserId as UserId exposing (UserId)
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
 
@@ -63,6 +64,7 @@ empty =
         , clients = Dict.empty
         , games = GameIdDict.empty
         , users = UserIdDict.empty
+        , tokens = TokenDict.empty
         }
 
 
@@ -264,5 +266,11 @@ games (SessionDict dict) =
 
 
 tryLogin : SessionId -> Token -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
-tryLogin sid (Token token) (SessionDict dict) =
-    Debug.todo "TODO"
+tryLogin sid token (SessionDict dict) =
+    TokenDict.get token dict.tokens
+        |> Maybe.map
+            (\userId ->
+                ( SessionDict { dict | tokens = TokenDict.remove token dict.tokens }
+                , userId
+                )
+            )

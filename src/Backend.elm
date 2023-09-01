@@ -18,6 +18,7 @@ import Types.EmailData as EmailData exposing (EmailData(..))
 import Types.Game as Game
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict)
+import Types.Token exposing (Token(..))
 import Types.UserId as UserId
 
 
@@ -233,7 +234,7 @@ innerUpdateFromFrontend now sid cid msg model =
                 ( model, Cmd.none )
 
         TBLoginWithToken token ->
-            case SessionDict.tryLogin sid token of
+            case SessionDict.tryLogin sid token model.sessions of
                 Just ( newSession, userId ) ->
                     ( { model | sessions = newSession }
                     , Lamdera.sendToFrontend sid <|
@@ -276,7 +277,7 @@ innerUpdateFromFrontend now sid cid msg model =
             )
 
 
-tokenGenerator : Random.Generator String
+tokenGenerator : Random.Generator Token
 tokenGenerator =
     let
         wordGenerator =
@@ -285,8 +286,13 @@ tokenGenerator =
     in
     List.repeat 8 wordGenerator
         |> Random.Extra.combine
-        |> Random.map ((::) "aardvark")
-        |> Random.map (String.join "-")
+        |> Random.map
+            (\components ->
+                components
+                    |> (::) "aardvark"
+                    |> String.join "-"
+                    |> Token
+            )
 
 
 sendEmail : Time.Posix -> ClientId -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )

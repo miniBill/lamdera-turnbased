@@ -14,6 +14,7 @@ import Route exposing (Route)
 import Shared
 import Shared.Model exposing (LoggedIn(..))
 import Theme exposing (Element)
+import Types.Token exposing (Token(..))
 import Types.UserId as UserId
 import View exposing (View)
 
@@ -57,7 +58,7 @@ init route _ =
               , isSubmitting = False
               }
             , Effect.batch
-                [ Effect.sendCmd <| Lamdera.sendToBackend <| TBLoginWithToken token
+                [ Effect.sendCmd <| Lamdera.sendToBackend <| TBLoginWithToken (Token token)
                 , Effect.replaceRoute { route | query = Dict.remove "token" route.query }
                 ]
             )
