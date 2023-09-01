@@ -232,7 +232,21 @@ innerUpdateFromFrontend now sid cid msg model =
             else
                 ( model, Cmd.none )
 
-        TBLogin email ->
+        TBLoginWithToken token ->
+            case SessionDict.tryLogin sid token of
+                Just ( newSession, userId ) ->
+                    ( { model | sessions = newSession }
+                    , Lamdera.sendToFrontend sid <|
+                        TFCheckedLogin (Just { userId = userId })
+                    )
+
+                Nothing ->
+                    ( model
+                    , Lamdera.sendToFrontend sid <|
+                        TFCheckedLogin Nothing
+                    )
+
+        TBLogin route email ->
             case EmailAddress.fromString email of
                 Just recipient ->
                     let
@@ -244,6 +258,7 @@ innerUpdateFromFrontend now sid cid msg model =
                             cid
                             (LoginEmail
                                 { to = recipient
+                                , route = route
                                 , token = token
                                 }
                             )
@@ -276,19 +291,19 @@ tokenGenerator =
 
 sendEmail : Time.Posix -> ClientId -> EmailData -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 sendEmail now cid email model =
-    if Env.isDev then
-        let
-            _ =
-                Debug.log "Email sent" email
-        in
-        ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
+    case EmailData.toSendGrid email of
+        Nothing ->
+            ( appendError now "Error parsing from address" model, Cmd.none )
 
-    else
-        case EmailData.toSendGrid email of
-            Nothing ->
-                ( appendError now "Error parsing from address" model, Cmd.none )
+        Just sendGridEmail ->
+            if Env.isDev then
+                let
+                    _ =
+                        Debug.log "Email sent" sendGridEmail
+                in
+                ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
 
-            Just sendGridEmail ->
+            else
                 ( model
                 , SendGrid.sendEmail
                     (SendResult cid >> WithoutTime)

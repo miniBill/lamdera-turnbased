@@ -3,3 +3,5 @@
 /.env
 elm-stuff
 /node_modules
+build.ninja
+.ninja_log

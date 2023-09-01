@@ -8,6 +8,7 @@ import Elm.Annotation as Annotation
 import Gen.CodeGen.Generate as Generate exposing (Directory(..))
 import Gen.Element.WithContext.Font as Font
 import Gen.Types.GameId
+import Gen.Types.Token
 import Gen.Types.UserId
 import GenericDict
 import Json.Decode exposing (Decoder, Value)
@@ -29,6 +30,7 @@ main =
                         (\input ->
                             [ Ok gameIdDictFile
                             , Ok userIdDictFile
+                            , Ok tokenDictFile
                             , fontsFile input
                             , imagesFile input
                             ]
@@ -247,4 +249,18 @@ gameIdDictFile =
                     |> Elm.withType Annotation.string
         }
         |> GenericDict.withTypeName "GameIdDict"
+        |> GenericDict.generateFile
+
+
+tokenDictFile : Elm.File
+tokenDictFile =
+    GenericDict.init
+        { keyType = Gen.Types.Token.annotation_.token
+        , namespace = [ "Types" ]
+        , toComparable =
+            \v ->
+                Gen.Types.Token.toString v
+                    |> Elm.withType Annotation.string
+        }
+        |> GenericDict.withTypeName "TokenDict"
         |> GenericDict.generateFile

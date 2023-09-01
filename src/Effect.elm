@@ -108,9 +108,10 @@ pushPath path =
 button **won't** go back to the previous route.
 -}
 replaceRoute :
-    { path : Route.Path.Path
-    , query : Dict String String
-    , hash : Maybe String
+    { route
+        | path : Route.Path.Path
+        , query : Dict String String
+        , hash : Maybe String
     }
     -> Effect msg
 replaceRoute route =

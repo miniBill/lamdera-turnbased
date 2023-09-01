@@ -4,6 +4,7 @@ import Email.Html
 import EmailAddress exposing (EmailAddress)
 import Env
 import List.Nonempty as Nonempty
+import Route exposing (Route)
 import SendGrid
 import String.Nonempty exposing (NonemptyString(..))
 
@@ -11,6 +12,7 @@ import String.Nonempty exposing (NonemptyString(..))
 type EmailData
     = LoginEmail
         { to : EmailAddress
+        , route : Route ()
         , token : String
         }
 

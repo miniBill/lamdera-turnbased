@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin, tryLogin)
 
 import Dict exposing (Dict)
 import Env
@@ -11,7 +11,8 @@ import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
 import Types.Session as Session exposing (Session)
-import Types.UserId as UserId
+import Types.Token exposing (Token(..))
+import Types.UserId as UserId exposing (UserId)
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
 
 
@@ -21,6 +22,7 @@ type SessionDict
         , clients : Dict ClientId Client
         , users : UserIdDict UserData
         , games : GameIdDict Game
+        , tokens : TokenDict UserId
         }
 
 
@@ -259,3 +261,8 @@ join gameType clientId gameId (SessionDict dict) =
 games : SessionDict -> GameIdDict Game
 games (SessionDict dict) =
     dict.games
+
+
+tryLogin : SessionId -> Token -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
+tryLogin sid (Token token) (SessionDict dict) =
+    Debug.todo "TODO"

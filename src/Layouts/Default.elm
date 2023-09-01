@@ -1,6 +1,7 @@
 module Layouts.Default exposing (Model, Msg, Props, layout)
 
 import Bridge exposing (ToBackend(..))
+import Dict
 import Effect exposing (Effect)
 import Element.WithContext as Element exposing (centerX, centerY, el, fill, height, paragraph, rgb, text, width)
 import Element.WithContext.Background as Background
@@ -22,10 +23,10 @@ type alias Props =
 
 
 layout : Props -> Shared.Model -> Route () -> Layout () Model Msg contentMsg
-layout _ shared _ =
+layout _ shared route =
     Layout.new
-        { init = init
-        , update = update
+        { init = init route
+        , update = update route
         , view = view shared
         , subscriptions = subscriptions
         }
@@ -41,13 +42,25 @@ type alias Model =
     }
 
 
-init : () -> ( Model, Effect Msg )
-init _ =
-    ( { email = ""
-      , isSubmitting = False
-      }
-    , Effect.none
-    )
+init : Route () -> () -> ( Model, Effect Msg )
+init route _ =
+    case Dict.get "token" route.query of
+        Nothing ->
+            ( { email = ""
+              , isSubmitting = False
+              }
+            , Effect.none
+            )
+
+        Just token ->
+            ( { email = ""
+              , isSubmitting = False
+              }
+            , Effect.batch
+                [ Effect.sendCmd <| Lamdera.sendToBackend <| TBLoginWithToken token
+                , Effect.replaceRoute { route | query = Dict.remove "token" route.query }
+                ]
+            )
 
 
 
@@ -59,8 +72,8 @@ type Msg
     | Submit
 
 
-update : Msg -> Model -> ( Model, Effect Msg )
-update msg model =
+update : Route () -> Msg -> Model -> ( Model, Effect Msg )
+update route msg model =
     case msg of
         Email email ->
             ( { model | email = email }, Effect.none )
@@ -68,7 +81,7 @@ update msg model =
         Submit ->
             if not model.isSubmitting && isInputValid model then
                 ( { model | isSubmitting = True }
-                , Effect.sendCmd <| Lamdera.sendToBackend <| TBLogin model.email
+                , Effect.sendCmd <| Lamdera.sendToBackend <| TBLogin route model.email
                 )
 
             else
