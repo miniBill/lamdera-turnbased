@@ -9,8 +9,6 @@ import Lamdera exposing (ClientId, SessionId)
 import Random
 import Random.Extra
 import SendGrid
-import Shared.Model exposing (LoggedIn(..))
-import String.Nonempty exposing (NonemptyString(..))
 import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)

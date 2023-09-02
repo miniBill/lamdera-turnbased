@@ -3,7 +3,7 @@ module Pages.Fate exposing (Model, Msg, page, updateFromBackend)
 import Bridge exposing (ToFrontendPage(..))
 import Diceware
 import Effect exposing (Effect)
-import Element.WithContext exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
+import Element.WithContext as Element exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -98,50 +98,68 @@ body model =
         , height fill
         ]
         [ Theme.fateTitle
-        , Theme.column [ centerX, centerY ]
-            [ Input.text
-                [ Font.center
-                , centerY
-                , Background.color Theme.colors.fateBackground
-                , Border.color Theme.colors.fate
-                ]
-                { label =
-                    Input.labelAbove [ centerX ] <|
-                        paragraph
-                            [ Fonts.gotham ]
-                            [ text "GAME NAME" ]
-                , onChange = Input
-                , text = model.input
-                , placeholder =
-                    Maybe.map
-                        (\placeholder ->
-                            Input.placeholder
-                                [ Font.color <| rgb255 0xA8 0xAA 0xA5 ]
-                                (text placeholder)
-                        )
-                        model.placeholder
-                }
-            , if String.length model.input > 5 then
-                link
-                    [ centerX
-                    , Border.width 1
-                    , Theme.padding
-                    , Border.rounded Theme.rythm
-                    , Fonts.gotham
-                    ]
-                    { url = Route.Path.toString <| Route.Path.Fate_Id_ { id = model.input }
-                    , label = text "JOIN GAME"
+        , Theme.box []
+            { label = "Characters"
+            , children =
+                [ Theme.button []
+                    { onPress = Nothing
+                    , label = text "Create new"
                     }
-
-              else
-                el
-                    [ Theme.padding
-                    , Border.width 1
-                    , Border.color Theme.colors.fateBackground
+                ]
+            }
+        , if false then
+            Theme.column [ centerX, centerY ]
+                [ Input.text
+                    [ Font.center
+                    , centerY
+                    , Background.color Theme.colors.fateBackground
+                    , Border.color Theme.colors.fate
                     ]
-                    (text " ")
-            ]
+                    { label =
+                        Input.labelAbove [ centerX ] <|
+                            paragraph
+                                [ Fonts.gotham ]
+                                [ text "GAME NAME" ]
+                    , onChange = Input
+                    , text = model.input
+                    , placeholder =
+                        Maybe.map
+                            (\placeholder ->
+                                Input.placeholder
+                                    [ Font.color <| rgb255 0xA8 0xAA 0xA5 ]
+                                    (text placeholder)
+                            )
+                            model.placeholder
+                    }
+                , if String.length model.input > 5 then
+                    link
+                        [ centerX
+                        , Border.width 1
+                        , Theme.padding
+                        , Border.rounded Theme.rythm
+                        , Fonts.gotham
+                        ]
+                        { url = Route.Path.toString <| Route.Path.Fate_Id_ { id = model.input }
+                        , label = text "JOIN GAME"
+                        }
+
+                  else
+                    el
+                        [ Theme.padding
+                        , Border.width 1
+                        , Border.color Theme.colors.fateBackground
+                        ]
+                        (text " ")
+                ]
+
+          else
+            Element.none
         ]
+
+
+false : Bool
+false =
+    False
 
 
 updateFromBackend : ToFrontendPage -> Model -> ( Model, Effect Msg )

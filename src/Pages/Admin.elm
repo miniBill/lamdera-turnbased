@@ -27,7 +27,7 @@ import Time
 import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
-import Types.Session as Session exposing (Session)
+import Types.Session exposing (Session)
 import Types.SessionDict as SessionDict exposing (Game, SessionDict)
 import Types.UserId as UserId exposing (UserId)
 import View exposing (View)
@@ -69,18 +69,12 @@ init route () =
 
 
 type Msg
-    = NoOp
-    | ClearEmails
+    = ClearEmails
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
-        NoOp ->
-            ( model
-            , Effect.none
-            )
-
         ClearEmails ->
             ( model, Effect.sendToBackend TBClearEmails )
 

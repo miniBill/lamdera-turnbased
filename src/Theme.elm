@@ -1,4 +1,4 @@
-module Theme exposing (Attribute, Element, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Element, box, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
 import Element.WithContext.Background as Background
@@ -169,3 +169,19 @@ onEnter msg =
                             Json.Decode.fail "Not the enter key"
                     )
             )
+
+
+box :
+    List (Attribute msg)
+    ->
+        { label : String
+        , children : List (Element msg)
+        }
+    -> Element msg
+box attrs config =
+    column attrs
+        [ text config.label
+        , column
+            [ Border.width 1, Border.rounded rythm ]
+            config.children
+        ]
