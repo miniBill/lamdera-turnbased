@@ -15,6 +15,7 @@ import Types.Token exposing (Token)
 import Types.TokenDict as TokenDict exposing (TokenDict)
 import Types.UserId as UserId exposing (UserId)
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
+import Types.Wanderhome as Wanderhome
 
 
 type SessionDict
@@ -41,6 +42,7 @@ type alias Game =
 
 type GameData
     = FateGameData Fate.GameData
+    | WanderhomeGameData Wanderhome.GameData
 
 
 emptySession : Time.Posix -> Session
@@ -267,7 +269,7 @@ join gameType clientId gameId (SessionDict dict) =
                                                         FateGameData Fate.emptyGameData
 
                                                     Game.Wanderhome ->
-                                                        Debug.todo "branch 'Wanderhome' not implemented"
+                                                        WanderhomeGameData Wanderhome.emptyGameData
                                             }
                                         )
                         in

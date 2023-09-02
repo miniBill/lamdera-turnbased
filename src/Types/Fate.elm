@@ -5,13 +5,13 @@ import Set exposing (Set)
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
 
 
-type alias UserData =
-    { characters : List Character
+type alias GameData =
+    { userData : UserIdDict SharedData
     }
 
 
-type alias GameData =
-    { userData : UserIdDict SharedData
+type alias UserData =
+    { characters : List Character
     }
 
 
