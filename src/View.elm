@@ -22,6 +22,7 @@ import Fonts
 import Html
 import Route exposing (Route)
 import Shared.Model exposing (ViewKind(..))
+import String.Multiline
 import Theme exposing (Attribute, Element)
 
 
@@ -193,12 +194,13 @@ fontsCss viewKind =
                     quote value =
                         "\"" ++ value ++ "\""
                 in
-                """
+                -- local(""" ++ quote name ++ """)
+                String.Multiline.here <| """
                 @font-face {
                     font-family: """ ++ quote name ++ """;
                     font-style: """ ++ quote style ++ """;
-                    font-weight: """ ++ quote weight ++ """;
-                    src: local(""" ++ quote name ++ """), url(""" ++ quote url ++ """);
+                    font-weight: """ ++ weight ++ """;
+                    src: url(""" ++ quote url ++ """);
                 }
                 """
             )
