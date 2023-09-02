@@ -221,30 +221,34 @@ viewUser ( userId, userData ) =
 
 viewCharacter : Fate.Character -> Element msg
 viewCharacter character =
+    let
+        paragraph_ : String -> Element msg
+        paragraph_ line =
+            paragraph [] [ text line ]
+    in
     Theme.column [ width fill ] <|
-        [ Theme.Fate.imageContain
-            [ width <| px 80
-            , height <| px 80
+        [ Theme.row [ width fill ]
+            [ Theme.Fate.imageContain
+                [ width <| px 80
+                , height <| px 80
+                ]
+                { description = "Avatar"
+                , src = character.avatarUrl
+                }
+            , [ paragraph_ character.name
+              , paragraph_ character.aspects.highConcept
+              ]
+                |> Theme.column [ width fill ]
             ]
-            { description = "Avatar"
-            , src = character.avatarUrl
-            }
-        , Theme.row []
-            [ column
+        , viewSkill character.skills
+        , (character.aspects.trouble
+            :: character.aspects.others
+          )
+            |> List.map paragraph_
+            |> Theme.wrappedRow
                 [ spacing <| Theme.rythm // 2
                 , alignTop
                 ]
-                (([ character.name
-                  , character.aspects.highConcept
-                  , character.aspects.trouble
-                  ]
-                    ++ character.aspects.others
-                 )
-                    |> List.map (\line -> paragraph [] [ text line ])
-                    |> List.intersperse (el [ width fill, Border.width 1 ] Element.none)
-                )
-            , viewSkill character.skills
-            ]
         ]
 
 
