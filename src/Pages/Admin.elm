@@ -219,11 +219,13 @@ viewCharacter character =
             { description = "Avatar"
             , src = character.avatarUrl
             }
-        , text character.name
-        , text character.aspects.highConcept
-        , text character.aspects.trouble
+        , paragraph [] [ text character.name ]
+        , paragraph [] [ text character.aspects.highConcept ]
+        , paragraph [] [ text character.aspects.trouble ]
         ]
-            ++ List.map text character.aspects.others
+            ++ List.map
+                (\aspect -> paragraph [] [ text aspect ])
+                character.aspects.others
 
 
 viewUserId : Maybe UserId -> Element Msg
