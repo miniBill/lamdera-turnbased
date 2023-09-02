@@ -246,7 +246,7 @@ titledBox title attrs elem =
               ]
             ]
     in
-    grid attrs [ fill, shrink ] children
+    grid (Element.spacing 0 :: attrs) [ fill, shrink ] children
 
 
 htmlStyle : String -> String -> Attribute msg
@@ -269,7 +269,7 @@ grid attrs lengths children =
                         |> Maybe.withDefault Element.none
             }
     in
-    table attrs
+    table (spacing :: attrs)
         { data = children
         , columns =
             let

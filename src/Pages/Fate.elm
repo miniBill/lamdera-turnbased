@@ -155,7 +155,7 @@ body model =
                         ]
                         (text "Characters")
                     , if model.characters == Loaded [] then
-                        Theme.button [ alignRight ]
+                        Theme.Fate.button [ alignRight ]
                             { onPress = Just CreateCharacter
                             , label = text "Create new"
                             }
@@ -171,7 +171,7 @@ body model =
                     Loaded [] ->
                         [ Theme.row []
                             [ text "None yet, maybe you want to"
-                            , Theme.button [ alignRight ]
+                            , Theme.Fate.button [ alignRight ]
                                 { onPress = Just CreateCharacter
                                 , label = text "create a new one"
                                 }
@@ -231,7 +231,7 @@ idBox character =
                             { label = Input.labelHidden "Name"
                             , onChange = \n -> { character | name = n }
                             , text = character.name
-                            , placeholder = Nothing
+                            , placeholder = Just <| Input.placeholder [] <| text "Name"
                             }
                       , Element.map
                             (\fate -> { character | fate = fate })
@@ -244,7 +244,7 @@ idBox character =
                             { label = Input.labelHidden "Description"
                             , onChange = \n -> { character | description = n }
                             , text = character.description
-                            , placeholder = Nothing
+                            , placeholder = Just <| Input.placeholder [] <| text "Description"
                             }
                       , el [ alignTop ] <|
                             Element.map
@@ -258,7 +258,7 @@ idBox character =
                     { label = Input.labelAbove [] <| label "Avatar"
                     , onChange = \n -> { character | avatarUrl = n }
                     , text = character.avatarUrl
-                    , placeholder = Nothing
+                    , placeholder = Just <| Input.placeholder [] <| text "Avatar"
                     }
                 ]
             ]
@@ -355,7 +355,7 @@ stuntsAndExtrasBlock ({ stunts } as character) =
                 { label = Input.labelHidden "Stunt"
                 , onChange = \v -> { character | stunts = List.Extra.setAt i v filteredStunts }
                 , text = stunt
-                , placeholder = Nothing
+                , placeholder = Just <| Input.placeholder [] <| text "Stunt"
                 }
     in
     filteredStunts
@@ -463,7 +463,7 @@ viewConsequence character enabled points consequenceLabel value setter =
                 inputText
                     [ width fill ]
                     { label = Input.labelHidden consequenceLabel
-                    , placeholder = Nothing
+                    , placeholder = Just <| Input.placeholder [] <| text consequenceLabel
                     , onChange = \nv -> { character | consequences = setter <| Just nv }
                     , text = Maybe.withDefault "" value
                     }
@@ -510,7 +510,7 @@ stressTrack toMsg skillLevel tacks =
 
 stressCell : { a | tack : Int, crossed : Bool, onPress : Maybe msg } -> Element msg
 stressCell { tack, crossed, onPress } =
-    Theme.button
+    Theme.Fate.button
         [ padding <| Theme.rythm // 2
         , crossBehind crossed
         ]
@@ -551,32 +551,32 @@ aspectsBlock aspects =
             inputText
                 [ width fill ]
                 { text = o
-                , placeholder = Nothing
+                , placeholder = Just <| Input.placeholder [] <| text "Aspect"
                 , onChange = \v -> { aspects | others = List.Extra.setAt i v filteredOther }
-                , label = Input.labelAbove [] <| text "Aspect"
+                , label =
+                    if i == 0 then
+                        Input.labelAbove [] <| label "Aspect"
+
+                    else
+                        Input.labelHidden "Aspect"
                 }
     in
     Theme.titledBox (text "Aspects") [ width fill, height fill ] <|
         Theme.column [ width fill, Theme.padding ] <|
             [ inputText
                 []
-                { label = Input.labelHidden "High Concept"
+                { label = Input.labelAbove [] <| label "High Concept"
                 , text = aspects.highConcept
-                , placeholder = Nothing
+                , placeholder = Just <| Input.placeholder [] <| text "High Concept"
                 , onChange = \v -> { aspects | highConcept = v }
                 }
             , inputText
                 []
-                { label = Input.labelHidden "Trouble"
+                { label = Input.labelAbove [] <| label "Trouble"
                 , text = aspects.trouble
-                , placeholder = Nothing
+                , placeholder = Just <| Input.placeholder [] <| text "Trouble"
                 , onChange = \v -> { aspects | trouble = v }
                 }
-            , Element.el
-                [ Font.size 14
-                , Font.color Theme.colors.disabled
-                ]
-                (text "Other aspects")
             ]
                 ++ List.indexedMap otherView filteredOther
 
