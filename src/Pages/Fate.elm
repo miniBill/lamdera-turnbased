@@ -219,13 +219,13 @@ viewCharacter character =
 
 idBox : Character -> Element Character
 idBox character =
-    Theme.titledBox (text "Id") [ width fill ] <|
+    Theme.Fate.titledBox (text "Id") [ width fill ] <|
         Theme.row [ width fill, Theme.padding ]
             [ viewAvatar character.avatarUrl
             , Theme.column [ width fill, alignTop ]
                 [ Theme.grid [ width fill ]
                     [ fill, shrink ]
-                    [ [ label "Name", label "Fate" ]
+                    [ [ grayLabel "Name", grayLabel "Fate" ]
                     , [ inputText
                             [ width fill, centerY ]
                             { label = Input.labelHidden "Name"
@@ -238,7 +238,7 @@ idBox character =
                         <|
                             plusMinus character.fate
                       ]
-                    , [ label "Description", label "Refresh" ]
+                    , [ grayLabel "Description", grayLabel "Refresh" ]
                     , [ inputText
                             [ width fill ]
                             { label = Input.labelHidden "Description"
@@ -255,7 +255,7 @@ idBox character =
                     ]
                 , inputText
                     [ width fill, Theme.htmlStyle "word-break" "break-all" ]
-                    { label = Input.labelAbove [] <| label "Avatar"
+                    { label = Input.labelAbove [] <| grayLabel "Avatar"
                     , onChange = \n -> { character | avatarUrl = n }
                     , text = character.avatarUrl
                     , placeholder = Just <| Input.placeholder [] <| text "Avatar"
@@ -299,11 +299,11 @@ plusMinus value =
         ]
 
 
-label : String -> Element msg
-label content =
+grayLabel : String -> Element msg
+grayLabel content =
     Element.el
         [ Font.size 14
-        , Font.color Theme.colors.disabled
+        , Font.color Theme.Fate.colors.disabled
         ]
         (text content)
 
@@ -361,7 +361,7 @@ stuntsAndExtrasBlock ({ stunts } as character) =
     filteredStunts
         |> List.indexedMap viewStunt
         |> Theme.column [ Theme.padding, width fill ]
-        |> Theme.titledBox (text "Stunts and Extras") [ width <| Element.minimum 800 fill, height fill ]
+        |> Theme.Fate.titledBox (text "Stunts and Extras") [ width <| Element.minimum 800 fill, height fill ]
 
 
 stressAndConsequencesBlock : Character -> Element Character
@@ -375,18 +375,9 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
         will =
             Dict.get "Will" skills |> Maybe.withDefault 0
 
-        lbl value =
-            el
-                [ width fill
-                , Font.center
-                , Font.size 14
-                , Font.color Theme.colors.disabled
-                ]
-                (text value)
-
         hr =
             el
-                [ Border.color Theme.colors.disabled
+                [ Border.color Theme.Fate.colors.disabled
                 , Border.width 1
                 , width fill
                 ]
@@ -400,14 +391,14 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
                 Set.insert v s
 
         container =
-            Theme.titledBox (text "Stress and Consequences") [ width fill, alignTop ]
+            Theme.Fate.titledBox (text "Stress and Consequences") [ width fill, alignTop ]
     in
     container <|
         Theme.column [ alignTop, Theme.padding, width fill ]
             [ Theme.grid [ width fill ]
                 [ fill, fill ]
-                [ [ lbl "Physical Stress (Physique)"
-                  , lbl "Mental Stress (Will)"
+                [ [ grayLabel "Physical Stress (Physique)"
+                  , grayLabel "Mental Stress (Will)"
                   ]
                 , [ stressTrack
                         (\s -> { character | physicalStress = setFlip s physicalStress })
@@ -474,11 +465,7 @@ viewConsequence character enabled points consequenceLabel value setter =
     Theme.grid [ width fill ]
         [ px 42, fill ]
         [ [ Element.none
-          , Element.el
-                [ Font.size 14
-                , Font.color Theme.colors.disabled
-                ]
-                (text consequenceLabel)
+          , grayLabel consequenceLabel
           ]
         , [ tackButton, valueBox ]
         ]
@@ -555,24 +542,24 @@ aspectsBlock aspects =
                 , onChange = \v -> { aspects | others = List.Extra.setAt i v filteredOther }
                 , label =
                     if i == 0 then
-                        Input.labelAbove [] <| label "Aspect"
+                        Input.labelAbove [] <| grayLabel "Aspect"
 
                     else
                         Input.labelHidden "Aspect"
                 }
     in
-    Theme.titledBox (text "Aspects") [ width fill, height fill ] <|
+    Theme.Fate.titledBox (text "Aspects") [ width fill, height fill ] <|
         Theme.column [ width fill, Theme.padding ] <|
             [ inputText
                 []
-                { label = Input.labelAbove [] <| label "High Concept"
+                { label = Input.labelAbove [] <| grayLabel "High Concept"
                 , text = aspects.highConcept
                 , placeholder = Just <| Input.placeholder [] <| text "High Concept"
                 , onChange = \v -> { aspects | highConcept = v }
                 }
             , inputText
                 []
-                { label = Input.labelAbove [] <| label "Trouble"
+                { label = Input.labelAbove [] <| grayLabel "Trouble"
                 , text = aspects.trouble
                 , placeholder = Just <| Input.placeholder [] <| text "Trouble"
                 , onChange = \v -> { aspects | trouble = v }
@@ -608,7 +595,7 @@ skillsBlock skills =
                     el
                         [ width fill
                         , height <| px 3
-                        , Border.color Theme.colors.disabled
+                        , Border.color Theme.Fate.colors.disabled
                         , Border.widthEach { top = top, left = 0, right = 1, bottom = bottom }
                         ]
                         Element.none
@@ -657,7 +644,7 @@ skillsBlock skills =
             }
 
         container =
-            Theme.titledBox (text "Skills") [ width fill, height fill, alignTop ]
+            Theme.Fate.titledBox (text "Skills") [ width fill, height fill, alignTop ]
     in
     container <|
         table []

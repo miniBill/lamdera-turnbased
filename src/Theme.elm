@@ -1,4 +1,4 @@
-module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, grid, htmlStyle, onEnter, padding, row, rythm, select, spacing, titledBox, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, grid, htmlStyle, onEnter, padding, row, rythm, select, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Column, Element, Length, alignBottom, alignRight, alignTop, el, fill, height, image, px, rgb, rgb255, shrink, table, text, width)
 import Element.WithContext.Background as Background
@@ -99,17 +99,13 @@ wanderhomeOnlineTitle =
 
 
 colors :
-    { dark : Color
-    , disabled : Color
-    , fate : Color
+    { fate : Color
     , fateBackground : Color
     , wanderhome : Color
     , wanderhomeBackground : Color
     }
 colors =
-    { dark = rgb255 0 0x00 0x22
-    , disabled = rgb 0.6 0.6 0.6
-    , fate = rgb255 0xFF 0xFF 0xFF
+    { fate = rgb255 0xFF 0xFF 0xFF
     , fateBackground = rgb255 0 0x55 0x88
     , wanderhome = rgb255 0x1C 0x54 0x49
     , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
@@ -200,53 +196,6 @@ box attrs config =
             ]
             config.children
         ]
-
-
-titledBox : Element msg -> List (Attribute msg) -> Element msg -> Element msg
-titledBox title attrs elem =
-    let
-        notchSize =
-            px 20
-
-        children =
-            [ [ Element.el
-                    [ width fill
-                    , Background.color colors.dark
-                    , padding
-                    ]
-                    title
-              , column
-                    [ alignTop
-                    , height fill
-                    , width shrink
-                    , Background.color colors.dark
-                    ]
-                    [ Element.el
-                        [ alignBottom
-                        , width notchSize
-                        , height notchSize
-                        , htmlStyle "background-image" "linear-gradient(135deg, #002 50%, #058 50.5%)"
-                        ]
-                        Element.none
-                    ]
-              ]
-            , [ Element.el
-                    [ width fill
-                    , height fill
-                    , Border.color colors.dark
-                    , Border.widthEach
-                        { top = 0
-                        , left = 1
-                        , bottom = 1
-                        , right = 1
-                        }
-                    ]
-                    elem
-              , Element.none
-              ]
-            ]
-    in
-    grid (Element.spacing 0 :: attrs) [ fill, shrink ] children
 
 
 htmlStyle : String -> String -> Attribute msg
