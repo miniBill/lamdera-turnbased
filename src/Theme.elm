@@ -1,6 +1,6 @@
 module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, grid, htmlStyle, onEnter, padding, row, rythm, select, spacing, wanderhomeOnlineTitle, wrappedRow)
 
-import Element.WithContext as Element exposing (Attribute, Color, Column, Element, Length, alignBottom, alignRight, alignTop, el, fill, height, image, px, rgb, rgb255, shrink, table, text, width)
+import Element.WithContext as Element exposing (Attribute, Color, Column, Element, Length, alignRight, el, image, px, rgb255, shrink, table, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
