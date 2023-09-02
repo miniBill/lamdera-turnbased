@@ -16,6 +16,7 @@ import Env
 import FNV1a
 import Lamdera exposing (SessionId)
 import Layouts
+import List.Extra
 import List.Nonempty as Nonempty
 import Page exposing (Page)
 import Route exposing (Route)
@@ -171,7 +172,9 @@ viewUsers sessionsDict =
         |> SessionDict.users
         |> UserIdDict.toList
         |> List.map viewUser
-        |> Theme.wrappedRow []
+        |> List.Extra.greedyGroupsOf 2
+        |> List.map (Theme.row [])
+        |> Theme.column []
 
 
 viewSession : ( SessionId, Session ) -> Element Msg
