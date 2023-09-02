@@ -173,8 +173,8 @@ viewUsers sessionsDict =
         |> UserIdDict.toList
         |> List.map viewUser
         |> List.Extra.greedyGroupsOf 2
-        |> List.map (Theme.row [])
-        |> Theme.column []
+        |> List.map (Theme.row [ width fill ])
+        |> Theme.column [ width fill ]
 
 
 viewSession : ( SessionId, Session ) -> Element Msg
@@ -196,28 +196,27 @@ viewSession ( sessionId, session ) =
 
 viewUser : ( UserId, UserData ) -> Element Msg
 viewUser ( userId, userData ) =
-    Theme.column
+    Theme.grid
         [ Border.rounded Theme.rythm
         , Border.width 1
         , Theme.padding
         , alignTop
+        , width fill
         ]
-        [ Theme.grid []
-            []
-            [ [ text "User", text <| UserId.toString userId ]
-            , [ text "Name", text userData.name ]
-            , [ text "Fate characters"
-              , userData.fate.characters
-                    |> List.map viewCharacter
-                    |> Theme.column []
-              ]
-            ]
+        []
+        [ [ text "User", text <| UserId.toString userId ]
+        , [ text "Name", text userData.name ]
+        , [ text "Fate characters"
+          , userData.fate.characters
+                |> List.map viewCharacter
+                |> Theme.column [ width fill ]
+          ]
         ]
 
 
 viewCharacter : Fate.Character -> Element Msg
 viewCharacter character =
-    Theme.column [] <|
+    Theme.column [ width fill ] <|
         [ image [ width <| px 50 ]
             { description = "Avatar"
             , src = character.avatarUrl
