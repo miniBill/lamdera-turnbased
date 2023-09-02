@@ -224,7 +224,7 @@ viewCharacter character =
     let
         paragraph_ : String -> Element msg
         paragraph_ line =
-            paragraph [] [ text line ]
+            paragraph [ alignTop ] [ text line ]
     in
     Theme.column [ width fill ] <|
         [ Theme.row [ width fill ]
@@ -245,9 +245,12 @@ viewCharacter character =
             :: character.aspects.others
           )
             |> List.map paragraph_
+            |> List.Extra.greedyGroupsOf 2
+            |> List.map (Theme.row [ alignTop, width fill ])
             |> Theme.wrappedRow
                 [ spacing <| Theme.rythm // 2
                 , alignTop
+                , width fill
                 ]
         ]
 
