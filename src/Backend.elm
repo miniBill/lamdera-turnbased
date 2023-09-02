@@ -334,20 +334,21 @@ sendEmail now cid email model =
             ( appendError now "Error parsing from address" model, Cmd.none )
 
         Just sendGridEmail ->
-            if Env.isDev then
-                let
-                    _ =
-                        Debug.log "Email sent" sendGridEmail
-                in
-                ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
+            case Env.mode of
+                Env.Development ->
+                    let
+                        _ =
+                            Debug.log "Email sent" sendGridEmail
+                    in
+                    ( { model | emails = email :: model.emails }, Lamdera.sendToFrontend cid TFEmailSent )
 
-            else
-                ( model
-                , SendGrid.sendEmail
-                    (SendResult cid >> WithoutTime)
-                    (SendGrid.apiKey Env.sendGridKey)
-                    sendGridEmail
-                )
+                Env.Production ->
+                    ( model
+                    , SendGrid.sendEmail
+                        (SendResult cid >> WithoutTime)
+                        (SendGrid.apiKey Env.sendGridKey)
+                        sendGridEmail
+                    )
 
 
 updateFromFrontend : SessionId -> ClientId -> ToBackend -> BackendModel -> ( BackendModel, Cmd BackendMsg )

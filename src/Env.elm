@@ -1,14 +1,9 @@
-module Env exposing (adminKey, domain, emailSenderAddress, emailSenderName, isDev, pingTime, sendGridKey)
+module Env exposing (adminKey, domain, emailSenderAddress, emailSenderName, pingTime, sendGridKey)
 
 
 sendGridKey : String
 sendGridKey =
     ""
-
-
-isDev : Bool
-isDev =
-    True
 
 
 adminKey : String
@@ -20,11 +15,7 @@ adminKey =
 -}
 pingTime : number
 pingTime =
-    if isDev then
-        100 * 1000
-
-    else
-        60 * 1000
+    100 * 1000
 
 
 emailSenderAddress : String
