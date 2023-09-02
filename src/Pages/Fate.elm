@@ -20,7 +20,7 @@ import Set exposing (Set)
 import Shared
 import Shared.Model exposing (ViewKind(..))
 import Theme exposing (Attribute, Context, Element)
-import Theme.Fate
+import Theme.Fate exposing (grayLabel)
 import Types.Fate as Fate exposing (Aspects, Character, Consequences, Skill)
 import Types.ServerData as ServerData exposing (ServerData(..))
 import View exposing (View)
@@ -146,7 +146,6 @@ body model =
         , Theme.box
             [ width fill
             , Fonts.gotham
-            , Theme.htmlStyle "font-variant" "small-caps"
             ]
             { label =
                 Theme.row [ width fill ]
@@ -297,15 +296,6 @@ plusMinus value =
             , label = text "+"
             }
         ]
-
-
-grayLabel : String -> Element msg
-grayLabel content =
-    Element.el
-        [ Font.size 14
-        , Font.color Theme.Fate.colors.disabled
-        ]
-        (text content)
 
 
 viewAvatar : String -> Element msg

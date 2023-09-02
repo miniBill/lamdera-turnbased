@@ -1,6 +1,6 @@
-module Theme.Fate exposing (button, colors, titledBox)
+module Theme.Fate exposing (button, colors, grayLabel, titledBox)
 
-import Element.WithContext as Element exposing (Color, alignBottom, alignTop, centerX, centerY, el, fill, height, padding, px, rgb, rgb255, shrink, width)
+import Element.WithContext as Element exposing (Color, alignBottom, alignTop, centerX, centerY, el, fill, height, padding, px, rgb, rgb255, shrink, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -71,6 +71,7 @@ titledBox title attrs elem =
                     [ width fill
                     , Background.color colors.dark
                     , Theme.padding
+                    , Theme.htmlStyle "text-transform" "uppercase"
                     ]
                     title
               , Theme.column
@@ -105,3 +106,13 @@ titledBox title attrs elem =
             ]
     in
     Theme.grid (Element.spacing 0 :: attrs) [ fill, shrink ] children
+
+
+grayLabel : String -> Element msg
+grayLabel content =
+    Element.el
+        [ Font.size 14
+        , Font.color colors.disabled
+        , Theme.htmlStyle "text-transform" "uppercase"
+        ]
+        (text content)
