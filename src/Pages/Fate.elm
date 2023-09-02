@@ -20,6 +20,7 @@ import Set exposing (Set)
 import Shared
 import Shared.Model exposing (ViewKind(..))
 import Theme exposing (Attribute, Context, Element)
+import Theme.Fate
 import Types.Fate as Fate exposing (Aspects, Character, Consequences, Skill)
 import Types.ServerData as ServerData exposing (ServerData(..))
 import View exposing (View)
@@ -281,7 +282,7 @@ inputText attrs config =
 plusMinus : Int -> Element Int
 plusMinus value =
     Theme.row [ centerY ]
-        [ Theme.button []
+        [ Theme.Fate.button []
             { onPress =
                 if value > 0 then
                     Just (value - 1)
@@ -291,7 +292,7 @@ plusMinus value =
             , label = text "-"
             }
         , text <| String.fromInt value
-        , Theme.button []
+        , Theme.Fate.button []
             { onPress = Just (value + 1)
             , label = text "+"
             }
