@@ -13,7 +13,7 @@ adminKey =
 
 {-| Time between pings, in milliseconds.
 -}
-pingTime : number
+pingTime : Int
 pingTime =
     100 * 1000
 

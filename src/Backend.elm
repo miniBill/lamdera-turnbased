@@ -40,7 +40,7 @@ subscriptions _ =
     Sub.batch
         [ Sub.map WithoutTime <| Lamdera.onConnect OnConnect
         , Sub.map WithoutTime <| Lamdera.onDisconnect OnDisconnect
-        , Time.every Env.pingTime (WithTime ShouldPing)
+        , Time.every (toFloat Env.pingTime) (WithTime ShouldPing)
         ]
 
 
