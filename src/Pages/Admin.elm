@@ -29,6 +29,7 @@ import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session as Session exposing (Session)
 import Types.SessionDict as SessionDict exposing (Game, SessionDict)
+import Types.UserId as UserId exposing (UserId)
 import View exposing (View)
 
 
@@ -167,14 +168,20 @@ viewSession ( sessionId, session ) =
         [ Theme.row []
             [ text "Session"
             , viewHashedId sessionId
-            , if Session.isAdmin session then
-                text "(admin)"
-
-              else
-                Element.none
+            , viewUserId session.loggedIn
             ]
         , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList session.clients)
         ]
+
+
+viewUserId : Maybe UserId -> Element Msg
+viewUserId maybeUser =
+    case maybeUser of
+        Nothing ->
+            text "(anon)"
+
+        Just user ->
+            text <| UserId.toString user
 
 
 viewErrors : Dict String { count : Int, last : Time.Posix } -> Element msg

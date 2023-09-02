@@ -43,10 +43,11 @@ type GameData
     = FateGameData Fate.GameData
 
 
-emptySession : Session
-emptySession =
+emptySession : Time.Posix -> Session
+emptySession now =
     { clients = Set.empty
     , loggedIn = Nothing
+    , lastSeen = now
     }
 
 
@@ -73,53 +74,56 @@ getSession sessionId (SessionDict dict) =
     Dict.get sessionId dict.sessions
 
 
+updateWithDefault : comparable -> a -> (a -> a) -> Dict comparable a -> Dict comparable a
+updateWithDefault key default updater dict =
+    Dict.update key
+        (\value ->
+            value
+                |> Maybe.withDefault default
+                |> updater
+                |> Just
+        )
+        dict
+
+
 seen : Time.Posix -> SessionId -> ClientId -> SessionDict -> SessionDict
 seen now sessionId clientId (SessionDict dict) =
     SessionDict
         { dict
             | sessions =
-                Dict.update sessionId
-                    (\v ->
-                        let
-                            session : Session
-                            session =
-                                Maybe.withDefault emptySession v
-                        in
-                        Just { session | clients = Set.insert clientId session.clients }
+                updateWithDefault sessionId
+                    (emptySession now)
+                    (\session ->
+                        { session
+                            | clients = Set.insert clientId session.clients
+                            , lastSeen = now
+                        }
                     )
                     dict.sessions
             , clients =
-                Dict.update clientId
-                    (\maybeClient ->
-                        case maybeClient of
-                            Just client ->
-                                { client
-                                    | lastSeen = now
-                                }
-                                    |> Just
-
-                            Nothing ->
-                                { session = sessionId
-                                , lastSeen = now
-                                , playing = Nothing
-                                }
-                                    |> Just
-                    )
+                updateWithDefault clientId
+                    { session = sessionId
+                    , lastSeen = now
+                    , playing = Nothing
+                    }
+                    (\client -> { client | lastSeen = now })
                     dict.clients
         }
 
 
-disconnected : SessionId -> ClientId -> SessionDict -> SessionDict
-disconnected sessionId clientId (SessionDict dict) =
+disconnected : Time.Posix -> SessionId -> ClientId -> SessionDict -> SessionDict
+disconnected now sessionId clientId (SessionDict dict) =
     let
         session : Session
         session =
             Dict.get sessionId dict.sessions
-                |> Maybe.withDefault emptySession
+                |> Maybe.withDefault (emptySession now)
 
         newSession : Session
         newSession =
-            { session | clients = Set.filter (\c -> c /= clientId) session.clients }
+            { session
+                | clients = Set.filter (\c -> c /= clientId) session.clients
+            }
 
         maybeGameId : Maybe GameId
         maybeGameId =
@@ -128,12 +132,7 @@ disconnected sessionId clientId (SessionDict dict) =
     in
     SessionDict
         { dict
-            | sessions =
-                if Set.isEmpty newSession.clients then
-                    Dict.remove sessionId dict.sessions
-
-                else
-                    Dict.insert sessionId newSession dict.sessions
+            | sessions = Dict.insert sessionId newSession dict.sessions
             , clients = Dict.remove clientId dict.clients
             , games =
                 case maybeGameId of
@@ -196,20 +195,38 @@ cleanup now dict =
         nowMillis : Int
         nowMillis =
             Time.posixToMillis now
+
+        (SessionDict clientsRemoved) =
+            dict
+                |> clients
+                |> Dict.toList
+                |> List.filter
+                    (\( _, { lastSeen } ) ->
+                        let
+                            elapsed : Int
+                            elapsed =
+                                nowMillis - Time.posixToMillis lastSeen
+                        in
+                        elapsed > Env.pingTime * 3 // 2
+                    )
+                |> List.foldl (\( clientId, { session } ) -> disconnected now session clientId) dict
     in
-    dict
-        |> clients
-        |> Dict.toList
-        |> List.filter
-            (\( _, { lastSeen } ) ->
-                let
-                    elapsed : Int
-                    elapsed =
-                        nowMillis - Time.posixToMillis lastSeen
-                in
-                elapsed > Env.pingTime * 3 // 2
-            )
-        |> List.foldl (\( clientId, { session } ) -> disconnected session clientId) dict
+    SessionDict
+        { clientsRemoved
+            | sessions =
+                Dict.filter
+                    (\_ session ->
+                        let
+                            elapsed : Int
+                            elapsed =
+                                nowMillis - Time.posixToMillis session.lastSeen
+                        in
+                        -- Keep sessions active for 30 days
+                        (elapsed <= 30 * 86400 * 1000)
+                            || not (Set.isEmpty session.clients)
+                    )
+                    clientsRemoved.sessions
+        }
 
 
 isAdmin : SessionId -> SessionDict -> Bool
@@ -265,12 +282,20 @@ games (SessionDict dict) =
     dict.games
 
 
-tryLogin : Token -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
-tryLogin token (SessionDict dict) =
+tryLogin : Token -> SessionId -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
+tryLogin token sid (SessionDict dict) =
     TokenDict.get token dict.tokens
         |> Maybe.map
             (\userId ->
-                ( SessionDict { dict | tokens = TokenDict.remove token dict.tokens }
+                ( SessionDict
+                    { dict
+                        | tokens = TokenDict.remove token dict.tokens
+                        , sessions =
+                            Dict.update
+                                sid
+                                (Maybe.map (\session -> { session | loggedIn = Just userId }))
+                                dict.sessions
+                    }
                 , userId
                 )
             )

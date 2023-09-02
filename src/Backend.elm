@@ -176,7 +176,7 @@ innerUpdate now submsg model =
             )
 
         OnDisconnect sid cid ->
-            ( { model | sessions = SessionDict.disconnected sid cid model.sessions }
+            ( { model | sessions = SessionDict.disconnected now sid cid model.sessions }
             , Cmd.none
             )
 
@@ -241,7 +241,7 @@ innerUpdateFromFrontend now sid cid msg model =
                 ( model, Cmd.none )
 
         TBLoginWithToken token ->
-            case SessionDict.tryLogin token model.sessions of
+            case SessionDict.tryLogin token sid model.sessions of
                 Just ( newSession, userId ) ->
                     ( { model | sessions = newSession }
                     , Lamdera.sendToFrontend sid <|
