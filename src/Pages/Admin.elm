@@ -6,7 +6,7 @@ import Color.Oklch
 import Diceware
 import Dict exposing (Dict)
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, paragraph, px, rgb255, row, shrink, spacing, text, width)
+import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, paragraph, px, rgb, rgb255, row, shrink, spacing, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -279,7 +279,19 @@ viewUserId maybeUser =
             text "(anon)"
 
         Just user ->
-            text <| UserId.toString user
+            let
+                splat =
+                    UserId.toString user |> String.split "@"
+            in
+            paragraph []
+                [ el
+                    [ Background.color <| rgb 0 0 0
+                    , Element.mouseOver [ Background.color <| rgb 1 1 1 ]
+                    ]
+                    (text <| String.join "@" <| List.reverse <| List.drop 1 <| List.reverse splat)
+                , text "@"
+                , text <| String.join "@" <| List.reverse <| List.take 1 <| List.reverse splat
+                ]
 
 
 viewErrors : Dict String { count : Int, last : Time.Posix } -> Element msg
