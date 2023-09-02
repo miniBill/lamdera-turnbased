@@ -13,14 +13,14 @@ import Shared.Model exposing (LoggedIn, ViewKind(..))
 
 
 type alias Element msg =
-    Element.Element ViewContext msg
+    Element.Element Context msg
 
 
 type alias Attribute msg =
-    Element.Attribute ViewContext msg
+    Element.Attribute Context msg
 
 
-type alias ViewContext =
+type alias Context =
     { loggedIn : LoggedIn
     , viewKind : ViewKind
     }

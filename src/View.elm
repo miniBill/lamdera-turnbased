@@ -90,7 +90,7 @@ toBrowserDocument { shared, view } =
     , body =
         [ Html.node "style" [] [ Html.text (fontsCss view.kind) ]
         , Element.layout
-            { loggedIn = shared.context.loggedIn
+            { loggedIn = shared.loggedIn
             , viewKind = view.kind
             }
             [ width fill

@@ -16,7 +16,7 @@ import Bridge exposing (ToBackend(..))
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
-import Shared.Model exposing (Context)
+import Shared.Model
 import Shared.Msg exposing (Msg(..))
 
 
@@ -43,12 +43,9 @@ type alias Model =
 
 init : Result Json.Decode.Error Flags -> Route () -> ( Model, Effect Msg )
 init _ _ =
-    ( { context = initialContext }, Effect.sendToBackend TBCheckLogin )
-
-
-initialContext : Context
-initialContext =
-    { loggedIn = Shared.Model.Unknown }
+    ( { loggedIn = Shared.Model.Unknown }
+    , Effect.sendToBackend TBCheckLogin
+    )
 
 
 
@@ -60,24 +57,24 @@ type alias Msg =
 
 
 update : Route () -> Msg -> Model -> ( Model, Effect Msg )
-update _ msg ({ context } as model) =
+update _ msg model =
     case msg of
         CheckedLogin Nothing ->
-            ( { model | context = { context | loggedIn = Shared.Model.NotLoggedIn } }, Effect.none )
+            ( { model | loggedIn = Shared.Model.NotLoggedIn }, Effect.none )
 
         CheckedLogin (Just result) ->
-            ( { model | context = { context | loggedIn = Shared.Model.LoggedInAs result } }
+            ( { model | loggedIn = Shared.Model.LoggedInAs result }
             , Effect.none
             )
 
         InvalidEmail ->
-            ( { model | context = { context | loggedIn = Shared.Model.InvalidEmail } }, Effect.none )
+            ( { model | loggedIn = Shared.Model.InvalidEmail }, Effect.none )
 
         EmailSent ->
-            ( { model | context = { context | loggedIn = Shared.Model.EmailSent } }, Effect.none )
+            ( { model | loggedIn = Shared.Model.EmailSent }, Effect.none )
 
         EmailError ->
-            ( { model | context = { context | loggedIn = Shared.Model.EmailError } }, Effect.none )
+            ( { model | loggedIn = Shared.Model.EmailError }, Effect.none )
 
 
 

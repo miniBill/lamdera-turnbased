@@ -1,4 +1,4 @@
-module Shared.Model exposing (Context, LoggedIn(..), Model, User, ViewKind(..))
+module Shared.Model exposing (LoggedIn(..), Model, User, ViewKind(..))
 
 {-| -}
 
@@ -13,12 +13,7 @@ own file, so they can be imported by `Effect.elm`
 
 -}
 type alias Model =
-    { context : Context }
-
-
-type alias Context =
-    { loggedIn : LoggedIn
-    }
+    { loggedIn : LoggedIn }
 
 
 type ViewKind

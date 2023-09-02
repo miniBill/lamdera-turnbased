@@ -101,7 +101,7 @@ view : Shared.Model -> { toContentMsg : Msg -> contentMsg, content : View conten
 view shared { toContentMsg, model, content } =
     { kind = content.kind
     , body =
-        case shared.context.loggedIn of
+        case shared.loggedIn of
             Shared.Model.Unknown ->
                 el [ centerX, centerY ] <| text "Loading..."
 
