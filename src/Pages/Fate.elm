@@ -153,10 +153,14 @@ body model =
                         [ Font.bold
                         ]
                         (text "Characters")
-                    , Theme.button [ alignRight ]
-                        { onPress = Just CreateCharacter
-                        , label = text "Create new"
-                        }
+                    , if model.characters == Loaded [] then
+                        Theme.button [ alignRight ]
+                            { onPress = Just CreateCharacter
+                            , label = text "Create new"
+                            }
+
+                      else
+                        Element.none
                     ]
             , children =
                 case model.characters of
