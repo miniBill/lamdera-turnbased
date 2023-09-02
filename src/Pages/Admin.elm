@@ -214,13 +214,16 @@ viewUser ( userId, userData ) =
 
 viewCharacter : Fate.Character -> Element Msg
 viewCharacter character =
-    Theme.column []
+    Theme.column [] <|
         [ image [ width <| px 50 ]
             { description = "Avatar"
             , src = character.avatarUrl
             }
         , text character.name
+        , text character.aspects.highConcept
+        , text character.aspects.trouble
         ]
+            ++ List.map text character.aspects.others
 
 
 viewUserId : Maybe UserId -> Element Msg
