@@ -207,22 +207,15 @@ viewUser ( userId, userData ) =
         Nothing
 
     else
-        Theme.grid
-            [ Border.rounded Theme.rythm
-            , Border.width 1
-            , Theme.padding
-            , alignTop
-            , width fill
-            ]
-            []
-            [ [ text "User", text <| UserId.toString userId ]
-            , [ text "Name", text userData.name ]
-            , [ text "Fate characters"
-              , userData.fate.characters
-                    |> List.map viewCharacter
-                    |> Theme.column [ width fill ]
-              ]
-            ]
+        userData.fate.characters
+            |> List.map viewCharacter
+            |> Theme.column
+                [ Border.rounded Theme.rythm
+                , Border.width 1
+                , Theme.padding
+                , alignTop
+                , width fill
+                ]
             |> Just
 
 
