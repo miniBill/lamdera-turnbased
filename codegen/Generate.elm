@@ -109,11 +109,13 @@ fontsFile (Directory { directories }) =
                                     |> List.Extra.find
                                         (\option -> String.contains option filename)
                                     |> Maybe.map String.toLower
+                                    |> Maybe.withDefault "normal"
 
                             style : String
                             style =
-                                find [ "Italic" ]
-                                    |> Maybe.withDefault "normal"
+                                find
+                                    [ "Italic"
+                                    ]
 
                             weight : String
                             weight =
@@ -123,8 +125,6 @@ fontsFile (Directory { directories }) =
                                     , "Black"
                                     , "Medium"
                                     ]
-                                    |> Maybe.withDefault
-                                        "normal"
 
                             rawName : String
                             rawName =
