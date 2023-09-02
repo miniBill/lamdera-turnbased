@@ -1,4 +1,4 @@
-module Theme exposing (Attribute, Element, box, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
 
 import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
 import Element.WithContext.Background as Background
