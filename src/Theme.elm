@@ -186,25 +186,7 @@ box :
     -> Element msg
 box attrs config =
     column attrs
-        [ Element.withContext <|
-            \{ viewKind } ->
-                el
-                    (Font.bold
-                        :: (case viewKind of
-                                HomeView ->
-                                    []
-
-                                WanderhomeView ->
-                                    [ Fonts.luminari ]
-
-                                FateView ->
-                                    [ Fonts.gotham ]
-
-                                AdminView ->
-                                    []
-                           )
-                    )
-                    config.label
+        [ config.label
         , column
             [ padding
             , Border.width 1

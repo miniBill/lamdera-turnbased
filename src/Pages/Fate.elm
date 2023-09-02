@@ -120,7 +120,11 @@ body model =
         , Theme.box [ width fill ]
             { label =
                 Theme.row [ width fill ]
-                    [ text "CHARACTERS"
+                    [ el
+                        [ Font.bold
+                        , Fonts.gotham
+                        ]
+                        (text "CHARACTERS")
                     , Theme.button [ Fonts.gotham, alignRight ]
                         { onPress = Just CreateCharacter
                         , label = text "CREATE NEW"
