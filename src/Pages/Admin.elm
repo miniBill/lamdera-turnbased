@@ -6,7 +6,7 @@ import Color.Oklch
 import Diceware
 import Dict exposing (Dict)
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, image, paragraph, px, rgb255, row, shrink, text, width)
+import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, paragraph, px, rgb255, row, shrink, spacing, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -158,7 +158,7 @@ viewGame ( gameId, game ) =
         ]
 
 
-viewSessions : SessionDict -> Element Msg
+viewSessions : SessionDict -> Element msg
 viewSessions sessionsDict =
     sessionsDict
         |> SessionDict.sessions
@@ -178,7 +178,7 @@ viewUsers sessionsDict =
         |> Theme.column [ width fill ]
 
 
-viewSession : ( SessionId, Session ) -> Element Msg
+viewSession : ( SessionId, Session ) -> Element msg
 viewSession ( sessionId, session ) =
     Theme.column
         [ Border.rounded Theme.rythm
@@ -195,7 +195,7 @@ viewSession ( sessionId, session ) =
         ]
 
 
-viewUser : ( UserId, UserData ) -> Maybe (Element Msg)
+viewUser : ( UserId, UserData ) -> Maybe (Element msg)
 viewUser ( userId, userData ) =
     if
         List.all
@@ -219,7 +219,7 @@ viewUser ( userId, userData ) =
             |> Just
 
 
-viewCharacter : Fate.Character -> Element Msg
+viewCharacter : Fate.Character -> Element msg
 viewCharacter character =
     Theme.column [ width fill ] <|
         [ Theme.Fate.imageContain
@@ -229,16 +229,43 @@ viewCharacter character =
             { description = "Avatar"
             , src = character.avatarUrl
             }
-        , paragraph [] [ text character.name ]
-        , paragraph [] [ text character.aspects.highConcept ]
-        , paragraph [] [ text character.aspects.trouble ]
+        , Theme.row []
+            [ column
+                [ spacing <| Theme.rythm // 2
+                , alignTop
+                ]
+                (([ character.name
+                  , character.aspects.highConcept
+                  , character.aspects.trouble
+                  ]
+                    ++ character.aspects.others
+                 )
+                    |> List.map (\line -> paragraph [] [ text line ])
+                    |> List.intersperse (el [ width fill, Border.width 1 ] Element.none)
+                )
+            , viewSkill character.skills
+            ]
         ]
-            ++ List.map
-                (\aspect -> paragraph [] [ text aspect ])
-                character.aspects.others
 
 
-viewUserId : Maybe UserId -> Element Msg
+viewSkill : Dict Fate.Skill Int -> Element msg
+viewSkill skills =
+    skills
+        |> Dict.toList
+        |> List.Extra.gatherEqualsBy Tuple.second
+        |> List.map
+            (\( ( skill, level ), others ) ->
+                ( level, skill :: List.map Tuple.first others )
+            )
+        |> List.sortBy (\( level, _ ) -> -level)
+        |> List.map
+            (\( level, skillsRow ) ->
+                List.map text (String.fromInt level :: skillsRow)
+            )
+        |> Theme.grid [ alignTop ] []
+
+
+viewUserId : Maybe UserId -> Element msg
 viewUserId maybeUser =
     case maybeUser of
         Nothing ->
@@ -342,7 +369,7 @@ viewHtmlEmail details =
         ]
 
 
-viewHashedId : String -> Element Msg
+viewHashedId : String -> Element msg
 viewHashedId id =
     id
         |> FNV1a.hash
@@ -351,7 +378,7 @@ viewHashedId id =
         |> viewId
 
 
-viewId : String -> Element Msg
+viewId : String -> Element msg
 viewId id =
     let
         pieces : List String
