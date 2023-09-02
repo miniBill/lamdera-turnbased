@@ -141,3 +141,6 @@ updateFromBackend msg model =
     case msg of
         TFAdminPageData _ ->
             ( model, Effect.none )
+
+        TFLoadedFateCharacters _ ->
+            ( model, Effect.none )

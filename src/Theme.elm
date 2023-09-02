@@ -110,9 +110,9 @@ colors =
     }
 
 
-fateTitle : Element msg
-fateTitle =
-    row [ width fill ]
+fateTitle : List (Attribute msg) -> Element msg
+fateTitle attrs =
+    row attrs
         [ el
             [ Fonts.gotham
             , Font.size 60
@@ -180,7 +180,7 @@ onEnter msg =
 box :
     List (Attribute msg)
     ->
-        { label : String
+        { label : Element msg
         , children : List (Element msg)
         }
     -> Element msg
@@ -188,18 +188,23 @@ box attrs config =
     column attrs
         [ Element.withContext <|
             \{ viewKind } ->
-                case viewKind of
-                    HomeView ->
-                        el [ Font.bold ] <| text config.label
+                el
+                    (Font.bold
+                        :: (case viewKind of
+                                HomeView ->
+                                    []
 
-                    WanderhomeView ->
-                        el [ Font.bold, Fonts.luminari ] <| text config.label
+                                WanderhomeView ->
+                                    [ Fonts.luminari ]
 
-                    FateView ->
-                        el [ Font.bold, Fonts.gotham ] <| text config.label
+                                FateView ->
+                                    [ Fonts.gotham ]
 
-                    AdminView ->
-                        el [ Font.bold ] <| text config.label
+                                AdminView ->
+                                    []
+                           )
+                    )
+                    config.label
         , column
             [ padding
             , Border.width 1

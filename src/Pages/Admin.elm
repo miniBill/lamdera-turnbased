@@ -355,7 +355,10 @@ stringToColor input =
 
 
 updateFromBackend : ToFrontendPage -> Model -> ( Model, Effect Msg )
-updateFromBackend msg _ =
+updateFromBackend msg model =
     case msg of
         TFAdminPageData data ->
             ( Just data, Effect.none )
+
+        TFLoadedFateCharacters _ ->
+            ( model, Effect.none )

@@ -5,6 +5,7 @@ import Route exposing (Route)
 import Shared.Model exposing (User)
 import Time
 import Types.EmailData exposing (EmailData)
+import Types.Fate as Fate
 import Types.GameId exposing (GameId)
 import Types.SessionDict exposing (SessionDict)
 import Types.Token exposing (Token)
@@ -18,6 +19,7 @@ type ToBackend
     | TBCheckLogin
     | TBLoginWithToken Token
     | TBClearEmails
+    | TBLoadFateCharacters
 
 
 type ToFrontend
@@ -31,6 +33,7 @@ type ToFrontend
 
 type ToFrontendPage
     = TFAdminPageData AdminPageData
+    | TFLoadedFateCharacters (List Fate.Character)
 
 
 type alias AdminPageData =

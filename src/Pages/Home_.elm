@@ -98,7 +98,7 @@ view _ _ =
                 ]
                 { url =
                     Route.Path.toString Route.Path.Fate
-                , label = Theme.fateTitle
+                , label = Theme.fateTitle [ width fill ]
                 }
             ]
     }
@@ -108,4 +108,7 @@ updateFromBackend : ToFrontendPage -> Model -> ( Model, Effect Msg )
 updateFromBackend msg model =
     case msg of
         TFAdminPageData _ ->
+            ( model, Effect.none )
+
+        TFLoadedFateCharacters _ ->
             ( model, Effect.none )

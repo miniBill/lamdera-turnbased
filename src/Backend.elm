@@ -287,6 +287,16 @@ innerUpdateFromFrontend now sid cid msg model =
                 |> Lamdera.sendToFrontend sid
             )
 
+        TBLoadFateCharacters ->
+            ( model
+            , SessionDict.getUserFromSessionId sid model.sessions
+                |> Maybe.map (.fate >> .characters)
+                |> Maybe.withDefault []
+                |> TFLoadedFateCharacters
+                |> TFPage
+                |> Lamdera.sendToFrontend cid
+            )
+
 
 tokenGenerator : Random.Generator Token
 tokenGenerator =

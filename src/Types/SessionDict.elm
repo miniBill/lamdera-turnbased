@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, addToken, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin, tryLogin)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, clients, disconnected, empty, games, getSession, getUserFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin)
 
 import Dict exposing (Dict)
 import Env
@@ -306,3 +306,10 @@ tryLogin token sid (SessionDict dict) =
 addToken : Token -> UserId.UserId -> SessionDict -> SessionDict
 addToken token userId (SessionDict dict) =
     SessionDict { dict | tokens = TokenDict.insert token userId dict.tokens }
+
+
+getUserFromSessionId : SessionId -> SessionDict -> Maybe UserData
+getUserFromSessionId sid (SessionDict dict) =
+    Dict.get sid dict.sessions
+        |> Maybe.andThen (\{ loggedIn } -> loggedIn)
+        |> Maybe.andThen (\userId -> UserIdDict.get userId dict.users)

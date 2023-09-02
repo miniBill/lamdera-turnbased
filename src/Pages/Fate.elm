@@ -1,9 +1,9 @@
 module Pages.Fate exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (ToFrontendPage(..))
+import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Diceware
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (centerX, centerY, el, fill, height, link, paragraph, rgb255, text)
+import Element.WithContext as Element exposing (alignRight, centerX, centerY, el, fill, height, link, paragraph, rgb255, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -17,6 +17,8 @@ import Route.Path
 import Shared
 import Shared.Model exposing (ViewKind(..))
 import Theme
+import Types.Fate as Fate exposing (Character)
+import Types.ServerData as ServerData exposing (ServerData)
 import View exposing (View)
 
 
@@ -38,6 +40,7 @@ page shared _ =
 type alias Model =
     { input : String
     , placeholder : Maybe String
+    , characters : ServerData (List Character)
     }
 
 
@@ -45,11 +48,15 @@ init : () -> ( Model, Effect Msg )
 init _ =
     ( { input = ""
       , placeholder = Nothing
+      , characters = ServerData.Loading
       }
-    , Random.int Diceware.listLength (Diceware.listLength ^ 2 - 1)
-        |> Random.map Diceware.numberToWords
-        |> Random.generate Placeholder
-        |> Effect.sendCmd
+    , Effect.batch
+        [ Random.int Diceware.listLength (Diceware.listLength ^ 2 - 1)
+            |> Random.map Diceware.numberToWords
+            |> Random.generate Placeholder
+            |> Effect.sendCmd
+        , Effect.sendToBackend TBLoadFateCharacters
+        ]
     )
 
 
@@ -60,6 +67,7 @@ init _ =
 type Msg
     = Input String
     | Placeholder String
+    | CreateCharacter
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -70,6 +78,16 @@ update msg model =
 
         Placeholder placeholder ->
             ( { model | placeholder = Just placeholder }, Effect.none )
+
+        CreateCharacter ->
+            ( { model
+                | characters =
+                    ServerData.map
+                        ((::) Fate.emptyCharacter)
+                        model.characters
+              }
+            , Effect.none
+            )
 
 
 
@@ -95,66 +113,74 @@ view _ model =
 body : Model -> Theme.Element Msg
 body model =
     Theme.column
-        [ centerX
+        [ width fill
         , height fill
         ]
-        [ Theme.fateTitle
-        , Theme.box []
-            { label = "Characters"
+        [ Theme.fateTitle [ centerX ]
+        , Theme.box [ width fill ]
+            { label =
+                Theme.row [ width fill ]
+                    [ text "CHARACTERS"
+                    , Theme.button [ Fonts.gotham, alignRight ]
+                        { onPress = Just CreateCharacter
+                        , label = text "CREATE NEW"
+                        }
+                    ]
             , children =
-                [ Theme.button []
-                    { onPress = Nothing
-                    , label = text "Create new"
-                    }
-                ]
+                []
             }
         , if false then
-            Theme.column [ centerX, centerY ]
-                [ Input.text
-                    [ Font.center
-                    , centerY
-                    , Background.color Theme.colors.fateBackground
-                    , Border.color Theme.colors.fate
-                    ]
-                    { label =
-                        Input.labelAbove [ centerX ] <|
-                            paragraph
-                                [ Fonts.gotham ]
-                                [ text "GAME NAME" ]
-                    , onChange = Input
-                    , text = model.input
-                    , placeholder =
-                        Maybe.map
-                            (\placeholder ->
-                                Input.placeholder
-                                    [ Font.color <| rgb255 0xA8 0xAA 0xA5 ]
-                                    (text placeholder)
-                            )
-                            model.placeholder
-                    }
-                , if String.length model.input > 5 then
-                    link
-                        [ centerX
-                        , Border.width 1
-                        , Theme.padding
-                        , Border.rounded Theme.rythm
-                        , Fonts.gotham
-                        ]
-                        { url = Route.Path.toString <| Route.Path.Fate_Id_ { id = model.input }
-                        , label = text "JOIN GAME"
-                        }
-
-                  else
-                    el
-                        [ Theme.padding
-                        , Border.width 1
-                        , Border.color Theme.colors.fateBackground
-                        ]
-                        (text " ")
-                ]
+            joinView model
 
           else
             Element.none
+        ]
+
+
+joinView : Model -> Theme.Element Msg
+joinView model =
+    Theme.column [ centerX, centerY ]
+        [ Input.text
+            [ Font.center
+            , centerY
+            , Background.color Theme.colors.fateBackground
+            , Border.color Theme.colors.fate
+            ]
+            { label =
+                Input.labelAbove [ centerX ] <|
+                    paragraph
+                        [ Fonts.gotham ]
+                        [ text "GAME NAME" ]
+            , onChange = Input
+            , text = model.input
+            , placeholder =
+                Maybe.map
+                    (\placeholder ->
+                        Input.placeholder
+                            [ Font.color <| rgb255 0xA8 0xAA 0xA5 ]
+                            (text placeholder)
+                    )
+                    model.placeholder
+            }
+        , if String.length model.input > 5 then
+            link
+                [ centerX
+                , Border.width 1
+                , Theme.padding
+                , Border.rounded Theme.rythm
+                , Fonts.gotham
+                ]
+                { url = Route.Path.toString <| Route.Path.Fate_Id_ { id = model.input }
+                , label = text "JOIN GAME"
+                }
+
+          else
+            el
+                [ Theme.padding
+                , Border.width 1
+                , Border.color Theme.colors.fateBackground
+                ]
+                (text " ")
         ]
 
 
@@ -168,3 +194,6 @@ updateFromBackend msg model =
     case msg of
         TFAdminPageData _ ->
             ( model, Effect.none )
+
+        TFLoadedFateCharacters _ ->
+            Debug.todo "TFLoaded"
