@@ -218,7 +218,7 @@ viewCharacter character =
 
 idBox : Character -> Element Character
 idBox character =
-    Theme.Fate.titledBox (text "Id") [ width fill ] <|
+    Theme.Fate.titledBox "Id" [ width fill ] <|
         Theme.row [ width fill, Theme.padding ]
             [ viewAvatar character.avatarUrl
             , Theme.column [ width fill, alignTop ]
@@ -351,7 +351,7 @@ stuntsAndExtrasBlock ({ stunts } as character) =
     filteredStunts
         |> List.indexedMap viewStunt
         |> Theme.column [ Theme.padding, width fill ]
-        |> Theme.Fate.titledBox (text "Stunts and Extras") [ width <| Element.minimum 800 fill, height fill ]
+        |> Theme.Fate.titledBox "Stunts and Extras" [ width <| Element.minimum 800 fill, height fill ]
 
 
 stressAndConsequencesBlock : Character -> Element Character
@@ -381,7 +381,7 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
                 Set.insert v s
 
         container =
-            Theme.Fate.titledBox (text "Stress and Consequences") [ width fill, alignTop ]
+            Theme.Fate.titledBox "Stress and Consequences" [ width fill, alignTop ]
     in
     container <|
         Theme.column [ alignTop, Theme.padding, width fill ]
@@ -538,7 +538,7 @@ aspectsBlock aspects =
                         Input.labelHidden "Aspect"
                 }
     in
-    Theme.Fate.titledBox (text "Aspects") [ width fill, height fill ] <|
+    Theme.Fate.titledBox "Aspects" [ width fill, height fill ] <|
         Theme.column [ width fill, Theme.padding ] <|
             [ inputText
                 []
@@ -640,7 +640,7 @@ skillsBlock skills =
             }
 
         container =
-            Theme.Fate.titledBox (text "Skills") [ width fill, height fill, alignTop ]
+            Theme.Fate.titledBox "Skills" [ width fill, height fill, alignTop ]
     in
     container <|
         table []

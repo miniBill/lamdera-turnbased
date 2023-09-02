@@ -1,6 +1,6 @@
 module Theme.Fate exposing (button, colors, grayLabel, titledBox)
 
-import Element.WithContext as Element exposing (Color, alignBottom, alignTop, centerX, centerY, el, fill, height, padding, px, rgb, rgb255, shrink, text, width)
+import Element.WithContext as Element exposing (Color, alignBottom, alignTop, centerX, centerY, el, fill, height, padding, px, rgb, rgb255, row, shrink, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -60,21 +60,34 @@ button attrs { onPress, label } =
                 }
 
 
-titledBox : Element msg -> List (Attribute msg) -> Element msg -> Element msg
+titledBox : String -> List (Attribute msg) -> Element msg -> Element msg
 titledBox title attrs elem =
     let
+        notchSize : Element.Length
         notchSize =
             px 20
 
+        children : List (List (Element msg))
         children =
-            [ [ el
-                    [ width fill
-                    , Background.color colors.dark
-                    , Theme.padding
-                    , Theme.htmlStyle "text-transform" "uppercase"
-                    , Font.extraBold
-                    ]
-                    title
+            [ [ title
+                    |> String.split " "
+                    |> List.intersperse " "
+                    |> List.map
+                        (\word ->
+                            if word == "and" then
+                                el [ centerY, Font.size 14 ] <|
+                                    text word
+
+                            else
+                                text word
+                        )
+                    |> row
+                        [ width fill
+                        , Background.color colors.dark
+                        , Theme.padding
+                        , Theme.htmlStyle "text-transform" "uppercase"
+                        , Theme.htmlStyle "font-weight" "950"
+                        ]
               , Theme.column
                     [ alignTop
                     , height fill
