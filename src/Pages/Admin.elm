@@ -1,6 +1,6 @@
 module Pages.Admin exposing (Model, Msg, page, updateFromBackend)
 
-import Bridge exposing (AdminPageData, ToFrontendPage(..))
+import Bridge exposing (AdminPageData, ToBackend(..), ToFrontendPage(..))
 import Color
 import Color.Oklch
 import Diceware
@@ -56,7 +56,7 @@ init route () =
     ( Nothing
     , case Dict.get "key" route.query of
         Just key ->
-            Effect.loginAsAdmin key
+            Effect.sendToBackend <| TBLoginAsAdmin key
 
         Nothing ->
             Effect.replacePath Path.Home_
@@ -69,6 +69,7 @@ init route () =
 
 type Msg
     = NoOp
+    | ClearEmails
 
 
 update : Msg -> Model -> ( Model, Effect Msg )
@@ -78,6 +79,9 @@ update msg model =
             ( model
             , Effect.none
             )
+
+        ClearEmails ->
+            ( model, Effect.sendToBackend TBClearEmails )
 
 
 
@@ -109,7 +113,13 @@ view maybeModel =
                     , viewGames model.sessions
                     , text "Errors"
                     , viewErrors model.errors
-                    , text "Emails"
+                    , Theme.row []
+                        [ text "Emails"
+                        , Theme.button []
+                            { onPress = Just ClearEmails
+                            , label = text "Delete all"
+                            }
+                        ]
                     , viewEmails model.emails
                     ]
     }

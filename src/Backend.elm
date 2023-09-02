@@ -233,6 +233,13 @@ innerUpdateFromFrontend now sid cid msg model =
             else
                 ( model, Cmd.none )
 
+        TBClearEmails ->
+            if SessionDict.isAdmin sid model.sessions then
+                ( { model | emails = [] }, Cmd.none )
+
+            else
+                ( model, Cmd.none )
+
         TBLoginWithToken token ->
             case SessionDict.tryLogin sid token model.sessions of
                 Just ( newSession, userId ) ->

@@ -57,10 +57,11 @@ loginEmailDetails route (Token token) =
         []
         [ Email.Html.a
             [ Email.Html.Attributes.href <|
-                Route.toString
-                    { route
-                        | query = Dict.insert "token" token route.query
-                    }
+                Env.domain
+                    ++ Route.toString
+                        { route
+                            | query = Dict.insert "token" token route.query
+                        }
             ]
             [ Email.Html.text "Login"
             ]

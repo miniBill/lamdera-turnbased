@@ -58,7 +58,7 @@ init route _ =
               , isSubmitting = False
               }
             , Effect.batch
-                [ Effect.sendCmd <| Lamdera.sendToBackend <| TBLoginWithToken (Token token)
+                [ Effect.sendToBackend <| TBLoginWithToken (Token token)
                 , Effect.replaceRoute { route | query = Dict.remove "token" route.query }
                 ]
             )
@@ -82,7 +82,7 @@ update route msg model =
         Submit ->
             if not model.isSubmitting && isInputValid model then
                 ( { model | isSubmitting = True }
-                , Effect.sendCmd <| Lamdera.sendToBackend <| TBLogin route model.email
+                , Effect.sendToBackend <| TBLogin route model.email
                 )
 
             else

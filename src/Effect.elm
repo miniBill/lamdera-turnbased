@@ -2,9 +2,9 @@ module Effect exposing
     ( Effect
     , none, batch
     , sendCmd, sendMsg
-    , pushRoute, replaceRoute, loadExternalUrl
+    , pushPath, pushRoute, replacePath, replaceRoute, loadExternalUrl
+    , checkedLogin, emailError, emailSent, invalidEmail, sendToBackend
     , map, toCmd
-    , checkLogin, checkedLogin, emailError, emailSent, invalidEmail, loginAsAdmin, pushPath, replacePath
     )
 
 {-|
@@ -12,7 +12,8 @@ module Effect exposing
 @docs Effect
 @docs none, batch
 @docs sendCmd, sendMsg
-@docs pushRoute, replaceRoute, loadExternalUrl
+@docs pushPath, pushRoute, replacePath, replaceRoute, loadExternalUrl
+@docs checkedLogin, emailError, emailSent, invalidEmail, sendToBackend
 
 @docs map, toCmd
 
@@ -41,8 +42,7 @@ type Effect msg
     | LoadExternalUrl String
       -- SHARED
     | SendSharedMsg Shared.Msg.Msg
-    | LoginAsAdmin String
-    | CheckLogin
+    | SendToBackend ToBackend
 
 
 
@@ -138,16 +138,6 @@ loadExternalUrl =
 -- SPECIFIC
 
 
-loginAsAdmin : String -> Effect msg
-loginAsAdmin =
-    LoginAsAdmin
-
-
-checkLogin : Effect msg
-checkLogin =
-    CheckLogin
-
-
 checkedLogin : Maybe User -> Effect msg
 checkedLogin user =
     SendSharedMsg (Shared.Msg.CheckedLogin user)
@@ -166,6 +156,11 @@ emailSent =
 emailError : Effect msg
 emailError =
     SendSharedMsg Shared.Msg.EmailError
+
+
+sendToBackend : ToBackend -> Effect msg
+sendToBackend =
+    SendToBackend
 
 
 
@@ -199,11 +194,8 @@ map fn effect =
         SendSharedMsg sharedMsg ->
             SendSharedMsg sharedMsg
 
-        LoginAsAdmin key ->
-            LoginAsAdmin key
-
-        CheckLogin ->
-            CheckLogin
+        SendToBackend tbmsg ->
+            SendToBackend tbmsg
 
 
 {-| Elm Land depends on this function to perform your effects.
@@ -241,11 +233,8 @@ toCmd options effect =
         SendSharedMsg sharedMsg ->
             sendShared options sharedMsg
 
-        LoginAsAdmin key ->
-            Lamdera.sendToBackend <| TBLoginAsAdmin key
-
-        CheckLogin ->
-            Lamdera.sendToBackend TBCheckLogin
+        SendToBackend tbmsg ->
+            Lamdera.sendToBackend tbmsg
 
 
 sendShared :

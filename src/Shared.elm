@@ -12,6 +12,7 @@ module Shared exposing
 
 -}
 
+import Bridge exposing (ToBackend(..))
 import Effect exposing (Effect)
 import Json.Decode
 import Route exposing (Route)
@@ -42,7 +43,7 @@ type alias Model =
 
 init : Result Json.Decode.Error Flags -> Route () -> ( Model, Effect Msg )
 init _ _ =
-    ( { context = initialContext }, Effect.checkLogin )
+    ( { context = initialContext }, Effect.sendToBackend TBCheckLogin )
 
 
 initialContext : Context

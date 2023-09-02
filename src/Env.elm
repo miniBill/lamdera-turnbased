@@ -1,4 +1,4 @@
-module Env exposing (adminKey, emailSenderAddress, emailSenderName, isDev, pingTime, sendGridKey)
+module Env exposing (adminKey, domain, emailSenderAddress, emailSenderName, isDev, pingTime, sendGridKey)
 
 
 sendGridKey : String
@@ -35,3 +35,8 @@ emailSenderAddress =
 emailSenderName : String
 emailSenderName =
     "Leonardo Taglialegne"
+
+
+domain : String
+domain =
+    "http://localhost:8000"

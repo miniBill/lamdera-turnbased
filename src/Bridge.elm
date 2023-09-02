@@ -17,6 +17,7 @@ type ToBackend
     | TBLogin (Route ()) String
     | TBCheckLogin
     | TBLoginWithToken Token
+    | TBClearEmails
 
 
 type ToFrontend

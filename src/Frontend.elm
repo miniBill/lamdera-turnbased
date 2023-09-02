@@ -123,7 +123,7 @@ updateFromBackend msg model =
                             ( model, Effect.none )
 
                 TFPing ->
-                    ( model, Effect.sendCmd <| Lamdera.sendToBackend TBPong )
+                    ( model, Effect.sendToBackend TBPong )
 
                 TFCheckedLogin result ->
                     ( model, Effect.checkedLogin result )
