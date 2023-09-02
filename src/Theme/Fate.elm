@@ -31,8 +31,8 @@ button attrs { onPress, label } =
             List.concat
                 [ [ padding <| Theme.rythm // 2
                   , Border.width 1
-                  , width <| px 42
-                  , height <| px 42
+                  , width <| Element.minimum 42 shrink
+                  , height <| Element.minimum 42 shrink
                   , Font.center
                   ]
                 , a
