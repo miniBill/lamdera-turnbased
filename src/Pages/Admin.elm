@@ -171,7 +171,7 @@ viewUsers sessionsDict =
     sessionsDict
         |> SessionDict.users
         |> UserIdDict.toList
-        |> List.map viewUser
+        |> List.filterMap viewUser
         |> List.Extra.greedyGroupsOf 2
         |> List.map (Theme.row [ width fill ])
         |> Theme.column [ width fill ]
@@ -194,24 +194,35 @@ viewSession ( sessionId, session ) =
         ]
 
 
-viewUser : ( UserId, UserData ) -> Element Msg
+viewUser : ( UserId, UserData ) -> Maybe (Element Msg)
 viewUser ( userId, userData ) =
-    Theme.grid
-        [ Border.rounded Theme.rythm
-        , Border.width 1
-        , Theme.padding
-        , alignTop
-        , width fill
-        ]
-        []
-        [ [ text "User", text <| UserId.toString userId ]
-        , [ text "Name", text userData.name ]
-        , [ text "Fate characters"
-          , userData.fate.characters
-                |> List.map viewCharacter
-                |> Theme.column [ width fill ]
-          ]
-        ]
+    if
+        List.all
+            (\character ->
+                String.length (character.aspects.highConcept ++ character.aspects.trouble) < 10
+            )
+            userData.fate.characters
+    then
+        Nothing
+
+    else
+        Theme.grid
+            [ Border.rounded Theme.rythm
+            , Border.width 1
+            , Theme.padding
+            , alignTop
+            , width fill
+            ]
+            []
+            [ [ text "User", text <| UserId.toString userId ]
+            , [ text "Name", text userData.name ]
+            , [ text "Fate characters"
+              , userData.fate.characters
+                    |> List.map viewCharacter
+                    |> Theme.column [ width fill ]
+              ]
+            ]
+            |> Just
 
 
 viewCharacter : Fate.Character -> Element Msg
