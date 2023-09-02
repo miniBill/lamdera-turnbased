@@ -75,7 +75,17 @@ gotham =
 
 gothamFonts : List Font
 gothamFonts =
-    [ { url = "/fonts/Gotham-Ultra.otf"
+    [ { url = "/fonts/Gotham-Black.otf"
+      , name = "Gotham"
+      , style = "normal"
+      , weight = "normal"
+      }
+    , { url = "/fonts/Gotham-Medium.ttf"
+      , name = "Gotham"
+      , style = "normal"
+      , weight = "normal"
+      }
+    , { url = "/fonts/Gotham-Ultra.otf"
       , name = "Gotham"
       , style = "normal"
       , weight = "ultra"
