@@ -8,7 +8,6 @@ import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
-import Lamdera
 import Layout exposing (Layout)
 import Route exposing (Route)
 import Shared

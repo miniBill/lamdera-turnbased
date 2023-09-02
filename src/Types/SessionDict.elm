@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin, tryLogin)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, addToken, cleanup, clients, disconnected, empty, games, getSession, isAdmin, join, seen, sessions, toAdmin, tryLogin)
 
 import Dict exposing (Dict)
 import Env
@@ -265,8 +265,8 @@ games (SessionDict dict) =
     dict.games
 
 
-tryLogin : SessionId -> Token -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
-tryLogin sid token (SessionDict dict) =
+tryLogin : Token -> SessionDict -> Maybe ( SessionDict, UserId.UserId )
+tryLogin token (SessionDict dict) =
     TokenDict.get token dict.tokens
         |> Maybe.map
             (\userId ->
@@ -274,3 +274,8 @@ tryLogin sid token (SessionDict dict) =
                 , userId
                 )
             )
+
+
+addToken : Token -> UserId.UserId -> SessionDict -> SessionDict
+addToken token userId (SessionDict dict) =
+    SessionDict { dict | tokens = TokenDict.insert token userId dict.tokens }

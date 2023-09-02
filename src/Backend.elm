@@ -241,7 +241,7 @@ innerUpdateFromFrontend now sid cid msg model =
                 ( model, Cmd.none )
 
         TBLoginWithToken token ->
-            case SessionDict.tryLogin sid token model.sessions of
+            case SessionDict.tryLogin token model.sessions of
                 Just ( newSession, userId ) ->
                     ( { model | sessions = newSession }
                     , Lamdera.sendToFrontend sid <|
@@ -261,7 +261,13 @@ innerUpdateFromFrontend now sid cid msg model =
                         ( token, newSeed ) =
                             Random.step tokenGenerator model.seed
                     in
-                    { model | seed = newSeed }
+                    { model
+                        | seed = newSeed
+                        , sessions =
+                            SessionDict.addToken token
+                                (UserId.fromString email)
+                                model.sessions
+                    }
                         |> sendEmail now
                             cid
                             (LoginEmail

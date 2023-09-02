@@ -19,7 +19,7 @@ module Effect exposing
 
 -}
 
-import Bridge exposing (ToBackend(..))
+import Bridge exposing (ToBackend)
 import Browser.Navigation
 import Dict exposing (Dict)
 import Lamdera
