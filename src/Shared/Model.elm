@@ -1,4 +1,4 @@
-module Shared.Model exposing (Context, LoggedIn(..), Model, User)
+module Shared.Model exposing (Context, LoggedIn(..), Model, User, ViewKind(..))
 
 {-| -}
 
@@ -17,7 +17,15 @@ type alias Model =
 
 
 type alias Context =
-    { loggedIn : LoggedIn }
+    { loggedIn : LoggedIn
+    }
+
+
+type ViewKind
+    = HomeView
+    | WanderhomeView
+    | FateView
+    | AdminView
 
 
 type LoggedIn

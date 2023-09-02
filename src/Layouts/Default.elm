@@ -11,7 +11,7 @@ import Element.WithContext.Input as Input
 import Layout exposing (Layout)
 import Route exposing (Route)
 import Shared
-import Shared.Model exposing (LoggedIn(..))
+import Shared.Model exposing (LoggedIn(..), ViewKind(..))
 import Theme exposing (Element)
 import Types.Token exposing (Token(..))
 import Types.UserId as UserId
@@ -115,15 +115,15 @@ view shared { toContentMsg, model, content } =
                     ]
 
             NotLoggedIn ->
-                viewLoginForm model content Nothing
+                viewLoginForm model Nothing
                     |> Element.map toContentMsg
 
             InvalidEmail ->
-                viewLoginForm model content (Just "Invalid email!")
+                viewLoginForm model (Just "Invalid email!")
                     |> Element.map toContentMsg
 
             EmailError ->
-                viewLoginForm model content (Just "There was an error in sending the email link, try again later.")
+                viewLoginForm model (Just "There was an error in sending the email link, try again later.")
                     |> Element.map toContentMsg
 
             EmailSent ->
@@ -134,73 +134,75 @@ view shared { toContentMsg, model, content } =
     }
 
 
-viewLoginForm : Model -> { a | kind : View.ViewKind } -> Maybe String -> Element Msg
-viewLoginForm model content error =
-    let
-        loginColumn : List (Element Msg)
-        loginColumn =
-            [ el
-                [ centerX
-                , Font.size 40
-                ]
-                (text "Log in or sign up")
-            , Input.email
-                (Theme.onEnter Submit :: colors)
-                { label = Input.labelLeft [] <| text "Email"
-                , text = model.email
-                , onChange = Email
-                , placeholder = Just <| Input.placeholder [] <| text "your@email.here"
-                }
-            , case error of
-                Nothing ->
-                    Element.none
+viewLoginForm : Model -> Maybe String -> Element Msg
+viewLoginForm model error =
+    Element.withContext <|
+        \{ viewKind } ->
+            let
+                loginColumn : List (Element Msg)
+                loginColumn =
+                    [ el
+                        [ centerX
+                        , Font.size 40
+                        ]
+                        (text "Log in or sign up")
+                    , Input.email
+                        (Theme.onEnter Submit :: colors)
+                        { label = Input.labelLeft [] <| text "Email"
+                        , text = model.email
+                        , onChange = Email
+                        , placeholder = Just <| Input.placeholder [] <| text "your@email.here"
+                        }
+                    , case error of
+                        Nothing ->
+                            Element.none
 
-                Just e ->
-                    el [ Font.color <| rgb 1 0 0, Font.bold ] <| text e
-            , Theme.button
-                [ width fill
-                , Font.center
-                ]
-                (if model.isSubmitting then
-                    { onPress = Nothing
-                    , label = text "Submitting..."
-                    }
+                        Just e ->
+                            el [ Font.color <| rgb 1 0 0, Font.bold ] <| text e
+                    , Theme.button
+                        [ width fill
+                        , Font.center
+                        ]
+                        (if model.isSubmitting then
+                            { onPress = Nothing
+                            , label = text "Submitting..."
+                            }
 
-                 else if isInputValid model then
-                    { onPress = Just Submit
-                    , label = text "Submit"
-                    }
+                         else if isInputValid model then
+                            { onPress = Just Submit
+                            , label = text "Submit"
+                            }
 
-                 else
-                    { onPress = Nothing
-                    , label = text "Insert a valid email"
-                    }
-                )
-            ]
-
-        colors =
-            case content.kind of
-                View.Home ->
-                    []
-
-                View.Fate ->
-                    [ Background.color Theme.colors.fateBackground
-                    , Border.color Theme.colors.fate
+                         else
+                            { onPress = Nothing
+                            , label = text "Insert a valid email"
+                            }
+                        )
                     ]
 
-                View.Wanderhome ->
-                    [ Background.color Theme.colors.wanderhomeBackground
-                    , Border.color Theme.colors.wanderhome
-                    ]
+                colors =
+                    case viewKind of
+                        HomeView ->
+                            []
 
-                View.Admin ->
-                    []
-    in
-    loginColumn
-        |> Theme.column
-            [ centerX
-            , centerY
-            ]
+                        FateView ->
+                            [ Background.color Theme.colors.fateBackground
+                            , Border.color Theme.colors.fate
+                            ]
+
+                        WanderhomeView ->
+                            [ Background.color Theme.colors.wanderhomeBackground
+                            , Border.color Theme.colors.wanderhome
+                            ]
+
+                        AdminView ->
+                            []
+            in
+            loginColumn
+                |> Theme.column
+                    [ centerX
+                    , centerY
+                    ]
 
 
 isInputValid : Model -> Bool

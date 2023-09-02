@@ -15,8 +15,9 @@ import Random
 import Route exposing (Route)
 import Route.Path
 import Shared
+import Shared.Model exposing (ViewKind(..))
 import Theme
-import View exposing (View, ViewKind(..))
+import View exposing (View)
 
 
 page : Shared.Model -> Route () -> Page Model Msg
@@ -86,7 +87,7 @@ subscriptions _ =
 
 view : Shared.Model -> Model -> View Msg
 view _ model =
-    { kind = Fate
+    { kind = FateView
     , body = body model
     }
 

@@ -8,8 +8,9 @@ import Layouts
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
+import Shared.Model exposing (ViewKind(..))
 import Types.GameId as GameId exposing (GameId)
-import View exposing (View, ViewKind(..))
+import View exposing (View)
 
 
 page : Shared.Model -> Route { id : String } -> Page Model Msg
@@ -70,7 +71,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view _ =
-    { kind = Fate
+    { kind = FateView
     , body = text "TODO"
     }
 

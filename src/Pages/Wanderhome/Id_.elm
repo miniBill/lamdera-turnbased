@@ -7,7 +7,8 @@ import Layouts
 import Page exposing (Page)
 import Route exposing (Route)
 import Shared
-import View exposing (View, ViewKind(..))
+import Shared.Model exposing (ViewKind(..))
+import View exposing (View)
 
 
 page : Shared.Model -> Route { id : String } -> Page Model Msg
@@ -68,7 +69,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view _ =
-    { kind = Wanderhome
+    { kind = WanderhomeView
     , body = text "TODO"
     }
 

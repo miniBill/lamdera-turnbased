@@ -21,6 +21,7 @@ import Route exposing (Route)
 import Route.Path as Path
 import Set
 import Shared
+import Shared.Model exposing (ViewKind(..))
 import String.Nonempty
 import Theme exposing (Element)
 import Time
@@ -94,7 +95,7 @@ subscriptions _ =
 
 view : Model -> View Msg
 view maybeModel =
-    { kind = View.Admin
+    { kind = AdminView
     , body =
         case maybeModel of
             Nothing ->

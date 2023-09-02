@@ -9,15 +9,21 @@ import Fonts
 import Html.Events
 import Images
 import Json.Decode
-import Shared.Model exposing (Context)
+import Shared.Model exposing (LoggedIn, ViewKind(..))
 
 
 type alias Element msg =
-    Element.Element Context msg
+    Element.Element ViewContext msg
 
 
 type alias Attribute msg =
-    Element.Attribute Context msg
+    Element.Attribute ViewContext msg
+
+
+type alias ViewContext =
+    { loggedIn : LoggedIn
+    , viewKind : ViewKind
+    }
 
 
 row : List (Attribute msg) -> List (Element msg) -> Element msg
@@ -180,8 +186,24 @@ box :
     -> Element msg
 box attrs config =
     column attrs
-        [ text config.label
+        [ Element.withContext <|
+            \{ viewKind } ->
+                case viewKind of
+                    HomeView ->
+                        el [ Font.bold ] <| text config.label
+
+                    WanderhomeView ->
+                        el [ Font.bold, Fonts.luminari ] <| text config.label
+
+                    FateView ->
+                        el [ Font.bold, Fonts.gotham ] <| text config.label
+
+                    AdminView ->
+                        el [ Font.bold ] <| text config.label
         , column
-            [ Border.width 1, Border.rounded rythm ]
+            [ padding
+            , Border.width 1
+            , Border.rounded rythm
+            ]
             config.children
         ]

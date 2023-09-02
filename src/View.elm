@@ -1,5 +1,5 @@
 module View exposing
-    ( View, ViewKind(..), map
+    ( View, map
     , none, fromString
     , toBrowserDocument
     , Font
@@ -21,7 +21,7 @@ import Element.WithContext.Font as Font
 import Fonts
 import Html
 import Route exposing (Route)
-import Shared.Model
+import Shared.Model exposing (ViewKind(..))
 import Theme exposing (Attribute, Element)
 
 
@@ -29,13 +29,6 @@ type alias View msg =
     { kind : ViewKind
     , body : Element msg
     }
-
-
-type ViewKind
-    = Home
-    | Wanderhome
-    | Fate
-    | Admin
 
 
 {-| Used internally by Elm Land to create your application
@@ -58,7 +51,7 @@ toBrowserDocument { shared, view } =
             }
         data =
             case view.kind of
-                Admin ->
+                AdminView ->
                     { title = "TurnBased - Admin"
                     , font = Font.family [ Font.sansSerif ]
                     , background = rgb255 0xFF 0xFF 0xFF
@@ -66,7 +59,7 @@ toBrowserDocument { shared, view } =
                     , footer = []
                     }
 
-                Home ->
+                HomeView ->
                     { title = "TurnBased"
                     , font = Font.family [ Font.sansSerif ]
                     , background = rgb255 0xAD 0xD7 0xF6
@@ -77,7 +70,7 @@ toBrowserDocument { shared, view } =
                             :: footer Fonts.garamond fateFooter
                     }
 
-                Wanderhome ->
+                WanderhomeView ->
                     { title = "Wanderhome - TurnBased"
                     , font = Fonts.arnoPro
                     , background = Theme.colors.wanderhomeBackground
@@ -85,7 +78,7 @@ toBrowserDocument { shared, view } =
                     , footer = footer Fonts.arnoPro wanderhomeFooter
                     }
 
-                Fate ->
+                FateView ->
                     { title = "Fate Core - TurnBased"
                     , font = Fonts.garamond
                     , background = Theme.colors.fateBackground
@@ -96,7 +89,10 @@ toBrowserDocument { shared, view } =
     { title = data.title
     , body =
         [ Html.node "style" [] [ Html.text (fontsCss view.kind) ]
-        , Element.layout shared.context
+        , Element.layout
+            { loggedIn = shared.context.loggedIn
+            , viewKind = view.kind
+            }
             [ width fill
             , height fill
             , data.font
@@ -176,16 +172,16 @@ fontsCss viewKind =
         fonts : List Font
         fonts =
             case viewKind of
-                Admin ->
+                AdminView ->
                     []
 
-                Wanderhome ->
+                WanderhomeView ->
                     wanderhomeFonts
 
-                Home ->
+                HomeView ->
                     wanderhomeFonts ++ fateFonts
 
-                Fate ->
+                FateView ->
                     fateFonts
     in
     fonts
@@ -243,7 +239,7 @@ authenticated pages.
 -}
 none : View msg
 none =
-    { kind = Home
+    { kind = HomeView
     , body = Element.none
     }
 
@@ -257,6 +253,6 @@ the new page working in the web browser!
 -}
 fromString : String -> View msg
 fromString moduleName =
-    { kind = Home
+    { kind = HomeView
     , body = Element.text moduleName
     }

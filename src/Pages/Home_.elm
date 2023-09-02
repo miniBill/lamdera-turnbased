@@ -10,6 +10,7 @@ import Page exposing (Page)
 import Route exposing (Route)
 import Route.Path
 import Shared
+import Shared.Model exposing (ViewKind(..))
 import Theme
 import View exposing (View)
 
@@ -67,7 +68,7 @@ subscriptions _ =
 
 view : Shared.Model -> Model -> View Msg
 view _ _ =
-    { kind = View.Home
+    { kind = HomeView
     , body =
         Theme.column
             [ centerX
