@@ -1,11 +1,13 @@
-module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, onEnter, padding, row, rythm, spacing, wanderhomeOnlineTitle, wrappedRow)
+module Theme exposing (Attribute, Context, Element, box, button, colors, column, fateTitle, grid, htmlStyle, onEnter, padding, row, rythm, select, spacing, titledBox, wanderhomeOnlineTitle, wrappedRow)
 
-import Element.WithContext as Element exposing (Attribute, Color, Element, alignRight, el, fill, image, px, rgb255, text, width)
+import Element.WithContext as Element exposing (Attribute, Color, Column, Element, Length, alignBottom, alignRight, alignTop, el, fill, height, image, px, rgb, rgb255, shrink, table, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Element.WithContext.Input as Input
 import Fonts
+import Html
+import Html.Attributes
 import Html.Events
 import Images
 import Json.Decode
@@ -97,16 +99,20 @@ wanderhomeOnlineTitle =
 
 
 colors :
-    { wanderhome : Color
-    , wanderhomeBackground : Color
+    { dark : Color
+    , disabled : Color
     , fate : Color
     , fateBackground : Color
+    , wanderhome : Color
+    , wanderhomeBackground : Color
     }
 colors =
-    { wanderhome = rgb255 0x1C 0x54 0x49
-    , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
+    { dark = rgb255 0 0x00 0x22
+    , disabled = rgb 0.6 0.6 0.6
     , fate = rgb255 0xFF 0xFF 0xFF
     , fateBackground = rgb255 0 0x55 0x88
+    , wanderhome = rgb255 0x1C 0x54 0x49
+    , wanderhomeBackground = rgb255 0xFB 0xEB 0xBA
     }
 
 
@@ -194,3 +200,135 @@ box attrs config =
             ]
             config.children
         ]
+
+
+titledBox : Element msg -> List (Attribute msg) -> Element msg -> Element msg
+titledBox title attrs elem =
+    let
+        notchSize =
+            px 20
+
+        children =
+            [ [ Element.el
+                    [ width fill
+                    , Background.color colors.dark
+                    , padding
+                    ]
+                    title
+              , column
+                    [ alignTop
+                    , height fill
+                    , width shrink
+                    , Background.color colors.dark
+                    ]
+                    [ Element.el
+                        [ alignBottom
+                        , width notchSize
+                        , height notchSize
+                        , htmlStyle "background-image" "linear-gradient(135deg, #002 50%, #058 50.5%)"
+                        ]
+                        Element.none
+                    ]
+              ]
+            , [ Element.el
+                    [ width fill
+                    , height fill
+                    , Border.color colors.dark
+                    , Border.widthEach
+                        { top = 0
+                        , left = 1
+                        , bottom = 1
+                        , right = 1
+                        }
+                    ]
+                    elem
+              , Element.none
+              ]
+            ]
+    in
+    grid attrs [ fill, shrink ] children
+
+
+htmlStyle : String -> String -> Attribute msg
+htmlStyle key value =
+    Element.htmlAttribute <| Html.Attributes.style key value
+
+
+grid : List (Attribute msg) -> List Length -> List (List (Element msg)) -> Element msg
+grid attrs lengths children =
+    let
+        gridCol : Int -> Column Context (List (Element msg)) msg
+        gridCol col =
+            { header = Element.none
+            , width = lengths |> List.drop col |> List.head |> Maybe.withDefault shrink
+            , view =
+                \l ->
+                    l
+                        |> List.drop col
+                        |> List.head
+                        |> Maybe.withDefault Element.none
+            }
+    in
+    table attrs
+        { data = children
+        , columns =
+            let
+                colCount =
+                    children
+                        |> List.map List.length
+                        |> List.maximum
+                        |> Maybe.withDefault 0
+            in
+            List.range 0 (colCount - 1)
+                |> List.map gridCol
+        }
+
+
+select :
+    List (Attribute msg)
+    ->
+        { items : List item
+        , view : item -> String
+        , selected : Maybe item
+        , onChange : Maybe item -> msg
+        }
+    -> Element msg
+select attrs { items, view, selected, onChange } =
+    let
+        options =
+            List.map itemToOption items
+
+        selectedView =
+            Maybe.map view selected
+
+        itemToOption item =
+            let
+                label =
+                    view item
+            in
+            Html.option
+                [ Html.Attributes.value label
+                , Html.Attributes.selected <| Just label == selectedView
+                ]
+                [ Html.text label ]
+
+        emptyOption =
+            Html.option
+                [ Html.Attributes.value ""
+                , Html.Attributes.selected <| selected == Nothing
+                ]
+                [ Html.text "" ]
+    in
+    el attrs <|
+        Element.html <|
+            Html.select
+                [ Html.Attributes.style "padding" <| String.fromInt (rythm // 2) ++ "px"
+                , Html.Events.onInput
+                    (\i ->
+                        items
+                            |> List.filter (\item -> view item == i)
+                            |> List.head
+                            |> onChange
+                    )
+                ]
+                (emptyOption :: options)
