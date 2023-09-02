@@ -11,7 +11,7 @@ import Html.Attributes
 import Html.Events
 import Images
 import Json.Decode
-import Shared.Model exposing (LoggedIn, ViewKind(..))
+import Shared.Model exposing (LoggedIn, ViewKind)
 
 
 type alias Element msg =

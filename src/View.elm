@@ -7,7 +7,7 @@ module View exposing
 
 {-|
 
-@docs View, ViewKind, map
+@docs View, map
 @docs none, fromString
 @docs toBrowserDocument
 @docs Font

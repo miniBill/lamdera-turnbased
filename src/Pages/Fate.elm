@@ -84,23 +84,34 @@ update msg model =
             ( { model | placeholder = Just placeholder }, Effect.none )
 
         CreateCharacter ->
-            ( { model
-                | characters =
-                    ServerData.map
-                        ((::) Fate.emptyCharacter)
-                        model.characters
-              }
-            , Effect.none
-            )
+            updateCharacters model <|
+                \characters ->
+                    Fate.emptyCharacter :: characters
 
         SetCharacterAt index character ->
-            ( { model
-                | characters =
-                    ServerData.map
-                        (List.Extra.setAt index character)
-                        model.characters
-              }
-            , Effect.none
+            updateCharacters model <|
+                \characters ->
+                    List.Extra.setAt index character characters
+
+
+updateCharacters : Model -> (List Character -> List Character) -> ( Model, Effect Msg )
+updateCharacters model updater =
+    case model.characters of
+        Loading ->
+            ( model, Effect.none )
+
+        Loaded characters ->
+            let
+                newCharacters : List Character
+                newCharacters =
+                    updater characters
+            in
+            ( { model | characters = Loaded newCharacters }
+            , if newCharacters == characters then
+                Effect.none
+
+              else
+                Effect.sendToBackend <| TBSaveFateCharacters newCharacters
             )
 
 
@@ -239,7 +250,7 @@ idBox character =
                     ]
                 , Input.text
                     [ width fill, Theme.htmlStyle "word-break" "break-all" ]
-                    { label = Input.labelAbove [] <| text "Avatar"
+                    { label = Input.labelAbove [] <| label "Avatar"
                     , onChange = \n -> { character | avatarUrl = n }
                     , text = character.avatarUrl
                     , placeholder = Nothing
@@ -627,15 +638,12 @@ skillsBlock skills =
 
         container =
             Theme.titledBox (text "Skills") [ width fill, height fill, alignTop ]
-
-        skillsSquare =
-            container <|
-                table []
-                    { data = List.range 0 (2 * maxSkillLevel) |> List.reverse
-                    , columns = labelsColumn :: List.map skillColumn (List.range 1 skillWidth)
-                    }
     in
-    skillsSquare
+    container <|
+        table []
+            { data = List.range 0 (2 * maxSkillLevel) |> List.reverse
+            , columns = labelsColumn :: List.map skillColumn (List.range 1 skillWidth)
+            }
 
 
 viewSkillCell : Dict Skill Int -> Int -> Int -> Element (Dict Skill Int)

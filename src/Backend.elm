@@ -297,6 +297,15 @@ innerUpdateFromFrontend now sid cid msg model =
                 |> Lamdera.sendToFrontend cid
             )
 
+        TBSaveFateCharacters characters ->
+            ( { model
+                | sessions =
+                    SessionDict.updateUserFromSessionId sid model.sessions <|
+                        \({ fate } as user) -> { user | fate = { fate | characters = characters } }
+              }
+            , Cmd.none
+            )
+
 
 tokenGenerator : Random.Generator Token
 tokenGenerator =

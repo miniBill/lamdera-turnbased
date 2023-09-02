@@ -20,6 +20,7 @@ type ToBackend
     | TBLoginWithToken Token
     | TBClearEmails
     | TBLoadFateCharacters
+    | TBSaveFateCharacters (List Fate.Character)
 
 
 type ToFrontend

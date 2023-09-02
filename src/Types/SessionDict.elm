@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, clients, disconnected, empty, games, getSession, getUserFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, clients, disconnected, empty, games, getSession, getUserFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin, updateUserFromSessionId)
 
 import Dict exposing (Dict)
 import Env
@@ -313,3 +313,17 @@ getUserFromSessionId sid (SessionDict dict) =
     Dict.get sid dict.sessions
         |> Maybe.andThen (\{ loggedIn } -> loggedIn)
         |> Maybe.andThen (\userId -> UserIdDict.get userId dict.users)
+
+
+updateUserFromSessionId : SessionId -> SessionDict -> (UserData -> UserData) -> SessionDict
+updateUserFromSessionId sid (SessionDict dict) updater =
+    Dict.get sid dict.sessions
+        |> Maybe.andThen (\{ loggedIn } -> loggedIn)
+        |> Maybe.map
+            (\userId ->
+                { dict
+                    | users = UserIdDict.update userId (Maybe.map updater) dict.users
+                }
+            )
+        |> Maybe.withDefault dict
+        |> SessionDict
