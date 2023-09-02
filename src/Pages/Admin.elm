@@ -6,7 +6,7 @@ import Color.Oklch
 import Diceware
 import Dict exposing (Dict)
 import Effect exposing (Effect)
-import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, paragraph, px, rgb255, row, shrink, text, width)
+import Element.WithContext as Element exposing (Color, alignTop, centerX, centerY, column, el, fill, height, image, paragraph, px, rgb255, row, shrink, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
@@ -27,6 +27,7 @@ import String.Nonempty
 import Theme exposing (Element)
 import Time
 import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
+import Types.Fate as Fate
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session exposing (Session)
@@ -202,8 +203,23 @@ viewUser ( userId, userData ) =
             []
             [ [ text "User", text <| UserId.toString userId ]
             , [ text "Name", text userData.name ]
-            , [ text "Fate characters", text <| String.fromInt <| List.length userData.fate.characters ]
+            , [ text "Fate characters"
+              , userData.fate.characters
+                    |> List.map viewCharacter
+                    |> Theme.column []
+              ]
             ]
+        ]
+
+
+viewCharacter : Fate.Character -> Element Msg
+viewCharacter character =
+    Theme.column []
+        [ image [ width <| px 50 ]
+            { description = "Avatar"
+            , src = character.avatarUrl
+            }
+        , text character.name
         ]
 
 
