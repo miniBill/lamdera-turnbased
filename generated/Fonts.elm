@@ -33,15 +33,15 @@ arnoPro =
 
 arnoProFonts : List Font
 arnoProFonts =
-    [ { url = "/fonts/ArnoPro-Italic.otf"
+    [ { url = "/fonts/ArnoPro-SemiBold-Italic.otf"
+      , name = "Arno Pro"
+      , style = "italic"
+      , weight = "600"
+      }
+    , { url = "/fonts/ArnoPro-Italic.otf"
       , name = "Arno Pro"
       , style = "italic"
       , weight = "normal"
-      }
-    , { url = "/fonts/ArnoPro-SemiBold-Italic.otf"
-      , name = "Arno Pro"
-      , style = "italic"
-      , weight = "semibold"
       }
     , { url = "/fonts/ArnoPro.otf"
       , name = "Arno Pro"
@@ -75,20 +75,20 @@ gotham =
 
 gothamFonts : List Font
 gothamFonts =
-    [ { url = "/fonts/Gotham-Black.otf"
+    [ { url = "/fonts/Gotham-Medium.ttf"
       , name = "Gotham"
       , style = "normal"
-      , weight = "black"
+      , weight = "500"
       }
-    , { url = "/fonts/Gotham-Medium.ttf"
+    , { url = "/fonts/Gotham-Black.otf"
       , name = "Gotham"
       , style = "normal"
-      , weight = "medium"
+      , weight = "900"
       }
     , { url = "/fonts/Gotham-Ultra.otf"
       , name = "Gotham"
       , style = "normal"
-      , weight = "ultra"
+      , weight = "950"
       }
     ]
 

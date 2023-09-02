@@ -103,27 +103,32 @@ fontsFile (Directory { directories }) =
                             url =
                                 "/fonts/" ++ filename
 
-                            find : List String -> Maybe String
+                            find : List ( String, String ) -> String
                             find options =
                                 options
-                                    |> List.Extra.find
-                                        (\option -> String.contains option filename)
-                                    |> Maybe.map String.toLower
+                                    |> List.Extra.findMap
+                                        (\( option, mapsTo ) ->
+                                            if String.contains (String.toLower option) (String.toLower filename) then
+                                                Just mapsTo
+
+                                            else
+                                                Nothing
+                                        )
                                     |> Maybe.withDefault "normal"
 
                             style : String
                             style =
                                 find
-                                    [ "Italic"
+                                    [ ( "Italic", "italic" )
                                     ]
 
                             weight : String
                             weight =
                                 find
-                                    [ "SemiBold"
-                                    , "Ultra"
-                                    , "Black"
-                                    , "Medium"
+                                    [ ( "Medium", "500" )
+                                    , ( "SemiBold", "600" )
+                                    , ( "Black", "900" )
+                                    , ( "Ultra", "950" )
                                     ]
 
                             rawName : String
@@ -153,6 +158,7 @@ fontsFile (Directory { directories }) =
                         , weight = weight
                         }
                     )
+                |> List.sortBy (\{ name, weight } -> ( name, weight ))
                 |> List.Extra.gatherEqualsBy .varName
                 |> List.concatMap
                     (\( { name, varName } as head, others ) ->
