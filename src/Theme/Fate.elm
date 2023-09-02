@@ -72,6 +72,7 @@ titledBox title attrs elem =
                     , Background.color colors.dark
                     , Theme.padding
                     , Theme.htmlStyle "text-transform" "uppercase"
+                    , Font.extraBold
                     ]
                     title
               , Theme.column

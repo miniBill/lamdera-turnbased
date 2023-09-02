@@ -119,6 +119,7 @@ fateTitle attrs =
             [ Fonts.gotham
             , Font.size 60
             , Element.moveDown 14
+            , htmlStyle "font-weight" "950"
             ]
             (text "FATE ONLINE")
         , image

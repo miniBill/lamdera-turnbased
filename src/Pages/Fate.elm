@@ -617,7 +617,13 @@ skillsBlock skills =
                         _ ->
                             intToSkillLabel ((rowNumber + 1) // 2)
                                 |> text
-                                |> el [ Font.bold, centerY, Theme.padding ]
+                                |> el
+                                    [ Font.bold
+                                    , Font.alignRight
+                                    , centerY
+                                    , Theme.padding
+                                    , width fill
+                                    ]
             }
 
         skillColumn : Int -> Column Context Int (Dict Skill Int)
