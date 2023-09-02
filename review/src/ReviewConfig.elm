@@ -60,5 +60,6 @@ config =
             (Rule.ignoreErrorsForDirectories
                 [ ".elm-land"
                 , "generated"
+                , "src/Evergreen"
                 ]
             )
