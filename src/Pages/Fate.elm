@@ -221,7 +221,7 @@ idBox character =
                 [ Theme.grid [ width fill ]
                     [ fill, shrink ]
                     [ [ label "Name", label "Fate" ]
-                    , [ Input.text
+                    , [ inputText
                             [ width fill, centerY ]
                             { label = Input.labelHidden "Name"
                             , onChange = \n -> { character | name = n }
@@ -234,7 +234,7 @@ idBox character =
                             plusMinus character.fate
                       ]
                     , [ label "Description", label "Refresh" ]
-                    , [ Input.text
+                    , [ inputText
                             [ width fill ]
                             { label = Input.labelHidden "Description"
                             , onChange = \n -> { character | description = n }
@@ -248,7 +248,7 @@ idBox character =
                                 plusMinus character.refresh
                       ]
                     ]
-                , Input.text
+                , inputText
                     [ width fill, Theme.htmlStyle "word-break" "break-all" ]
                     { label = Input.labelAbove [] <| label "Avatar"
                     , onChange = \n -> { character | avatarUrl = n }
@@ -257,6 +257,21 @@ idBox character =
                     }
                 ]
             ]
+
+
+inputText :
+    List (Attribute msg)
+    ->
+        { label : Input.Label Context msg
+        , onChange : String -> msg
+        , text : String
+        , placeholder : Maybe (Input.Placeholder Context msg)
+        }
+    -> Element msg
+inputText attrs config =
+    Input.text
+        (Background.color Theme.colors.fateBackground :: attrs)
+        config
 
 
 plusMinus : Int -> Element Int
@@ -330,7 +345,7 @@ stuntsAndExtrasBlock ({ stunts } as character) =
                 |> (\l -> l ++ [ "" ])
 
         viewStunt i stunt =
-            Input.text
+            inputText
                 [ width fill ]
                 { label = Input.labelHidden "Stunt"
                 , onChange = \v -> { character | stunts = List.Extra.setAt i v filteredStunts }
@@ -440,7 +455,7 @@ viewConsequence character enabled points consequenceLabel value setter =
 
         valueBox =
             if enabled then
-                Input.text
+                inputText
                     [ width fill ]
                     { label = Input.labelHidden consequenceLabel
                     , placeholder = Nothing
@@ -528,7 +543,7 @@ aspectsBlock aspects =
                 list ++ List.repeat (len - List.length list) padding
 
         otherView i o =
-            Input.text
+            inputText
                 [ width fill ]
                 { text = o
                 , placeholder = Nothing
@@ -538,14 +553,14 @@ aspectsBlock aspects =
     in
     Theme.titledBox (text "Aspects") [ width fill, height fill ] <|
         Theme.column [ width fill, Theme.padding ] <|
-            [ Input.text
+            [ inputText
                 []
                 { label = Input.labelHidden "High Concept"
                 , text = aspects.highConcept
                 , placeholder = Nothing
                 , onChange = \v -> { aspects | highConcept = v }
                 }
-            , Input.text
+            , inputText
                 []
                 { label = Input.labelHidden "Trouble"
                 , text = aspects.trouble
@@ -741,7 +756,7 @@ intToSkillLabel i =
 joinView : Model -> Element Msg
 joinView model =
     Theme.column [ centerX, centerY ]
-        [ Input.text
+        [ inputText
             [ Font.center
             , centerY
             , Background.color Theme.colors.fateBackground

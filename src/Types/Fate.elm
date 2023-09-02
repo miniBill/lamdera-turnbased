@@ -1,4 +1,4 @@
-module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData, Skill, UserData, allSkills, emptyCharacter, emptyGameData)
+module Types.Fate exposing (Aspects, Character, Consequences, GameData, SharedData, Skill, UserData, allSkills, emptyCharacter, emptyGameData, emptyUserData)
 
 import Dict exposing (Dict)
 import Set exposing (Set)
@@ -10,15 +10,20 @@ type alias GameData =
     }
 
 
+emptyGameData : GameData
+emptyGameData =
+    { userData = UserIdDict.empty
+    }
+
+
 type alias UserData =
     { characters : List Character
     }
 
 
-emptyGameData : GameData
-emptyGameData =
-    { userData = UserIdDict.empty
-    }
+emptyUserData : UserData
+emptyUserData =
+    { characters = [] }
 
 
 type alias SharedData =

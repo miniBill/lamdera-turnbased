@@ -29,8 +29,9 @@ import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
 import Types.GameId as GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict
 import Types.Session exposing (Session)
-import Types.SessionDict as SessionDict exposing (Game, SessionDict)
+import Types.SessionDict as SessionDict exposing (Game, SessionDict, UserData)
 import Types.UserId as UserId exposing (UserId)
+import Types.UserIdDict as UserIdDict
 import View exposing (View)
 
 
@@ -105,6 +106,8 @@ view maybeModel =
                 Theme.column [ Theme.padding ]
                     [ text "Sessions"
                     , viewSessions model.sessions
+                    , text "Users"
+                    , viewUsers model.sessions
                     , text "Games"
                     , viewGames model.sessions
                     , text "Errors"
@@ -152,6 +155,15 @@ viewSessions sessionsDict =
         |> Theme.wrappedRow []
 
 
+viewUsers : SessionDict -> Element Msg
+viewUsers sessionsDict =
+    sessionsDict
+        |> SessionDict.users
+        |> UserIdDict.toList
+        |> List.map viewUser
+        |> Theme.wrappedRow []
+
+
 viewSession : ( SessionId, Session ) -> Element Msg
 viewSession ( sessionId, session ) =
     Theme.column
@@ -166,6 +178,23 @@ viewSession ( sessionId, session ) =
             , viewUserId session.loggedIn
             ]
         , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList session.clients)
+        ]
+
+
+viewUser : ( UserId, UserData ) -> Element Msg
+viewUser ( userId, userData ) =
+    Theme.column
+        [ Border.rounded Theme.rythm
+        , Border.width 1
+        , Theme.padding
+        , alignTop
+        ]
+        [ Theme.grid []
+            []
+            [ [ text "User", text <| UserId.toString userId ]
+            , [ text "Name", text userData.name ]
+            , [ text "Fate characters", text <| String.fromInt <| List.length userData.fate.characters ]
+            ]
         ]
 
 

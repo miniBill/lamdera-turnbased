@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, clients, disconnected, empty, games, getSession, getUserFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin, updateUserFromSessionId)
+module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, clients, disconnected, empty, games, getSession, getUserFromSessionId, getUserIdFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin, updateUserFromSessionId, users)
 
 import Dict exposing (Dict)
 import Env
@@ -34,6 +34,13 @@ type alias UserData =
     }
 
 
+emptyUserData : UserData
+emptyUserData =
+    { name = ""
+    , fate = Fate.emptyUserData
+    }
+
+
 type alias Game =
     { clients : Set ClientId
     , gameData : GameData
@@ -43,14 +50,6 @@ type alias Game =
 type GameData
     = FateGameData Fate.GameData
     | WanderhomeGameData Wanderhome.GameData
-
-
-emptySession : Time.Posix -> Session
-emptySession now =
-    { clients = Set.empty
-    , loggedIn = Nothing
-    , lastSeen = now
-    }
 
 
 type alias Client =
@@ -94,7 +93,7 @@ seen now sessionId clientId (SessionDict dict) =
         { dict
             | sessions =
                 updateWithDefault sessionId
-                    (emptySession now)
+                    (Session.empty now)
                     (\session ->
                         { session
                             | clients = Set.insert clientId session.clients
@@ -119,7 +118,7 @@ disconnected now sessionId clientId (SessionDict dict) =
         session : Session
         session =
             Dict.get sessionId dict.sessions
-                |> Maybe.withDefault (emptySession now)
+                |> Maybe.withDefault (Session.empty now)
 
         newSession : Session
         newSession =
@@ -172,6 +171,11 @@ clients (SessionDict dict) =
 sessions : SessionDict -> Dict SessionId Session
 sessions (SessionDict dict) =
     dict.sessions
+
+
+users : SessionDict -> UserIdDict UserData
+users (SessionDict dict) =
+    dict.users
 
 
 toAdmin : SessionId -> SessionDict -> SessionDict
@@ -308,11 +312,11 @@ addToken token userId (SessionDict dict) =
     SessionDict { dict | tokens = TokenDict.insert token userId dict.tokens }
 
 
-getUserFromSessionId : SessionId -> SessionDict -> Maybe UserData
-getUserFromSessionId sid (SessionDict dict) =
-    Dict.get sid dict.sessions
-        |> Maybe.andThen (\{ loggedIn } -> loggedIn)
+getUserFromSessionId : SessionId -> SessionDict -> UserData
+getUserFromSessionId sid ((SessionDict dict) as ses) =
+    getUserIdFromSessionId sid ses
         |> Maybe.andThen (\userId -> UserIdDict.get userId dict.users)
+        |> Maybe.withDefault emptyUserData
 
 
 updateUserFromSessionId : SessionId -> SessionDict -> (UserData -> UserData) -> SessionDict
@@ -322,8 +326,22 @@ updateUserFromSessionId sid (SessionDict dict) updater =
         |> Maybe.map
             (\userId ->
                 { dict
-                    | users = UserIdDict.update userId (Maybe.map updater) dict.users
+                    | users =
+                        UserIdDict.update userId
+                            (\user ->
+                                user
+                                    |> Maybe.withDefault emptyUserData
+                                    |> updater
+                                    |> Just
+                            )
+                            dict.users
                 }
             )
         |> Maybe.withDefault dict
         |> SessionDict
+
+
+getUserIdFromSessionId : SessionId -> SessionDict -> Maybe UserId
+getUserIdFromSessionId sid (SessionDict dict) =
+    Dict.get sid dict.sessions
+        |> Maybe.andThen (\{ loggedIn } -> loggedIn)

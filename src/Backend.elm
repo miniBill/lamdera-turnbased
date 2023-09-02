@@ -15,7 +15,7 @@ import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBack
 import Types.EmailData as EmailData exposing (EmailData(..))
 import Types.Game as Game
 import Types.Session as Session
-import Types.SessionDict as SessionDict exposing (SessionDict)
+import Types.SessionDict as SessionDict exposing (SessionDict, UserData)
 import Types.Token exposing (Token(..))
 import Types.UserId as UserId
 
@@ -280,18 +280,20 @@ innerUpdateFromFrontend now sid cid msg model =
 
         TBCheckLogin ->
             ( model
-            , SessionDict.getSession sid model.sessions
-                |> Maybe.andThen .loggedIn
+            , SessionDict.getUserIdFromSessionId sid model.sessions
                 |> Maybe.map (\userId -> { userId = userId })
                 |> TFCheckedLogin
                 |> Lamdera.sendToFrontend sid
             )
 
         TBLoadFateCharacters ->
+            let
+                user : UserData
+                user =
+                    SessionDict.getUserFromSessionId sid model.sessions
+            in
             ( model
-            , SessionDict.getUserFromSessionId sid model.sessions
-                |> Maybe.map (.fate >> .characters)
-                |> Maybe.withDefault []
+            , user.fate.characters
                 |> TFLoadedFateCharacters
                 |> TFPage
                 |> Lamdera.sendToFrontend cid

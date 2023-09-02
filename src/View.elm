@@ -15,7 +15,7 @@ module View exposing
 -}
 
 import Browser
-import Element.WithContext as Element exposing (Color, alignBottom, el, fill, height, link, paragraph, rgb255, text, width)
+import Element.WithContext as Element exposing (Color, alignBottom, el, fill, height, link, paragraph, rgb255, scrollbarY, text, width)
 import Element.WithContext.Background as Background
 import Element.WithContext.Font as Font
 import Fonts
@@ -98,6 +98,7 @@ toBrowserDocument { shared, view } =
             , data.font
             , Font.color data.color
             , Background.color data.background
+            , scrollbarY
             ]
             (Theme.column
                 [ width fill
