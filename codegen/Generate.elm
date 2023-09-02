@@ -99,41 +99,48 @@ fontsFile (Directory { directories }) =
                 |> List.map
                     (\filename ->
                         let
+                            url : String
                             url =
                                 "/fonts/" ++ filename
 
-                            splat =
+                            find : List String -> Maybe String
+                            find options =
+                                options
+                                    |> List.Extra.find
+                                        (\option -> String.contains option filename)
+                                    |> Maybe.map String.toLower
+
+                            style : String
+                            style =
+                                find [ "Italic" ]
+                                    |> Maybe.withDefault "normal"
+
+                            weight : String
+                            weight =
+                                find
+                                    [ "SemiBold"
+                                    , "Ultra"
+                                    , "Black"
+                                    , "Medium"
+                                    ]
+                                    |> Maybe.withDefault
+                                        "normal"
+
+                            rawName : String
+                            rawName =
                                 filename
                                     |> String.split "."
                                     |> List.head
                                     |> Maybe.withDefault ""
                                     |> String.split "-"
-
-                            style =
-                                if List.member "Italic" splat then
-                                    "italic"
-
-                                else
-                                    "normal"
-
-                            weight =
-                                if List.member "SemiBold" splat then
-                                    "semibold"
-
-                                else if List.member "Ultra" splat then
-                                    "ultra"
-
-                                else
-                                    "normal"
-
-                            rawName =
-                                splat
                                     |> List.head
                                     |> Maybe.withDefault ""
 
+                            varName : String
                             varName =
                                 String.Extra.decapitalize rawName
 
+                            name : String
                             name =
                                 rawName
                                     |> String.Extra.humanize

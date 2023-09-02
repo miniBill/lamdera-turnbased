@@ -78,12 +78,12 @@ gothamFonts =
     [ { url = "/fonts/Gotham-Black.otf"
       , name = "Gotham"
       , style = "normal"
-      , weight = "normal"
+      , weight = "black"
       }
     , { url = "/fonts/Gotham-Medium.ttf"
       , name = "Gotham"
       , style = "normal"
-      , weight = "normal"
+      , weight = "medium"
       }
     , { url = "/fonts/Gotham-Ultra.otf"
       , name = "Gotham"
