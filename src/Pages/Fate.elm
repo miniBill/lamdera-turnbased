@@ -713,7 +713,7 @@ intToSkillLabel i =
             "Good (+3)"
 
         4 ->
-            "Greate (+4)"
+            "Great (+4)"
 
         5 ->
             "Superb (+5)"
