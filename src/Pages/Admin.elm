@@ -12,6 +12,7 @@ import Element.WithContext.Border as Border
 import Element.WithContext.Font as Font
 import Email.Html
 import EmailAddress
+import Env
 import FNV1a
 import Lamdera exposing (SessionId)
 import Layouts
@@ -59,7 +60,15 @@ init route () =
     ( Nothing
     , case Dict.get "key" route.query of
         Just key ->
-            Effect.sendToBackend <| TBLoginAsAdmin key
+            Effect.batch
+                [ Effect.sendToBackend <| TBLoginAsAdmin key
+                , case Env.mode of
+                    Env.Development ->
+                        Effect.none
+
+                    Env.Production ->
+                        Effect.replacePath Path.Admin
+                ]
 
         Nothing ->
             Effect.replacePath Path.Home_
