@@ -594,7 +594,7 @@ skillsBlock skills =
             skills
                 |> Dict.values
                 |> List.Extra.gatherEquals
-                |> List.map (\( _, others ) -> List.length others)
+                |> List.map (\( _, others ) -> List.length others + 1)
                 |> maxOrMaxPlusOne
 
         maxSkillLevel =

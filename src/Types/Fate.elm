@@ -86,21 +86,44 @@ type alias Skill =
 
 allSkills : List Skill
 allSkills =
-    [ "Academics"
+    [ "Academics" -- Lore
     , "Athletics"
     , "Contacts"
     , "Deceive"
     , "Empathy"
-    , "Engineering"
+    , "Engineering" -- Crafts
     , "Fight"
     , "Investigate"
     , "Notice"
     , "Physique"
-    , "Pilot"
+    , "Pilot" -- Drive
     , "Provoke"
     , "Rapport"
     , "Resources"
-    , "Security"
+    , "Security" -- Burglary
+    , "Shoot"
+    , "Stealth"
+    , "Will"
+    ]
+
+
+originalSkills : List String
+originalSkills =
+    [ "Athletics"
+    , "Burglary" -- Security
+    , "Contacts"
+    , "Crafts" -- Engineering
+    , "Deceive"
+    , "Drive" -- Pilot
+    , "Empathy"
+    , "Fight"
+    , "Investigate"
+    , "Lore" -- Academics
+    , "Notice"
+    , "Physique"
+    , "Provoke"
+    , "Rapport"
+    , "Resources"
     , "Shoot"
     , "Stealth"
     , "Will"
