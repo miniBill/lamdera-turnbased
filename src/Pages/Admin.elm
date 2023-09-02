@@ -26,6 +26,7 @@ import Shared
 import Shared.Model exposing (ViewKind(..))
 import String.Nonempty
 import Theme exposing (Element)
+import Theme.Fate
 import Time
 import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
 import Types.Fate as Fate
@@ -228,7 +229,10 @@ viewUser ( userId, userData ) =
 viewCharacter : Fate.Character -> Element Msg
 viewCharacter character =
     Theme.column [ width fill ] <|
-        [ image [ width <| px 50 ]
+        [ Theme.Fate.imageContain
+            [ width <| px 80
+            , height <| px 80
+            ]
             { description = "Avatar"
             , src = character.avatarUrl
             }

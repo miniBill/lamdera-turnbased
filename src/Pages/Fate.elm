@@ -20,7 +20,7 @@ import Set exposing (Set)
 import Shared
 import Shared.Model exposing (ViewKind(..))
 import Theme exposing (Attribute, Context, Element)
-import Theme.Fate exposing (grayLabel)
+import Theme.Fate exposing (grayLabel, imageContain)
 import Types.Fate as Fate exposing (Aspects, Character, Consequences, Skill)
 import Types.ServerData as ServerData exposing (ServerData(..))
 import View exposing (View)
@@ -313,22 +313,6 @@ viewAvatar avatarUrl =
             { src = avatarUrl
             , description = "Avatar"
             }
-
-
-imageContain :
-    List (Attribute msg)
-    -> { src : String, description : String }
-    -> Element msg
-imageContain attrs { src } =
-    el
-        ([ Theme.htmlStyle "background-image" <| "url(\"" ++ src ++ "\")"
-         , Theme.htmlStyle "background-position" "center"
-         , Theme.htmlStyle "background-repeat" "no-repeat"
-         , Theme.htmlStyle "background-size" "contain"
-         ]
-            ++ attrs
-        )
-        Element.none
 
 
 stuntsAndExtrasBlock : Character -> Element Character

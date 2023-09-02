@@ -1,4 +1,4 @@
-module Theme.Fate exposing (button, colors, grayLabel, titledBox)
+module Theme.Fate exposing (button, colors, grayLabel, imageContain, titledBox)
 
 import Element.WithContext as Element exposing (Color, alignBottom, alignTop, centerX, centerY, el, fill, height, padding, px, rgb, rgb255, row, shrink, text, width)
 import Element.WithContext.Background as Background
@@ -130,3 +130,19 @@ grayLabel content =
         , Theme.htmlStyle "text-transform" "uppercase"
         ]
         (text content)
+
+
+imageContain :
+    List (Attribute msg)
+    -> { src : String, description : String }
+    -> Element msg
+imageContain attrs { src } =
+    el
+        ([ Theme.htmlStyle "background-image" <| "url(\"" ++ src ++ "\")"
+         , Theme.htmlStyle "background-position" "center"
+         , Theme.htmlStyle "background-repeat" "no-repeat"
+         , Theme.htmlStyle "background-size" "contain"
+         ]
+            ++ attrs
+        )
+        Element.none
