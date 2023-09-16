@@ -4,17 +4,18 @@ import Dict exposing (Dict)
 import Env
 import Lamdera exposing (ClientId, SessionId)
 import Maybe.Extra
-import Set exposing (Set)
+import Set
 import Time
 import Types.Fate as Fate
-import Types.Game as Game exposing (Game)
 import Types.GameId exposing (GameId)
 import Types.GameIdDict as GameIdDict exposing (GameIdDict)
+import Types.GameType as GameType exposing (GameType)
 import Types.Session as Session exposing (Session)
 import Types.Token exposing (Token)
 import Types.TokenDict as TokenDict exposing (TokenDict)
 import Types.UserId as UserId exposing (UserId)
 import Types.UserIdDict as UserIdDict exposing (UserIdDict)
+import Types.UserIdSet as UserIdSet exposing (UserIdSet)
 import Types.Wanderhome as Wanderhome
 
 
@@ -42,7 +43,7 @@ emptyUserData =
 
 
 type alias Game =
-    { clients : Set ClientId
+    { users : UserIdSet
     , gameData : GameData
     }
 
@@ -55,7 +56,6 @@ type GameData
 type alias Client =
     { session : SessionId
     , lastSeen : Time.Posix
-    , playing : Maybe GameId
     }
 
 
@@ -105,7 +105,6 @@ seen now sessionId clientId (SessionDict dict) =
                 updateWithDefault clientId
                     { session = sessionId
                     , lastSeen = now
-                    , playing = Nothing
                     }
                     (\client -> { client | lastSeen = now })
                     dict.clients
@@ -125,41 +124,11 @@ disconnected now sessionId clientId (SessionDict dict) =
             { session
                 | clients = Set.filter (\c -> c /= clientId) session.clients
             }
-
-        maybeGameId : Maybe GameId
-        maybeGameId =
-            Dict.get clientId dict.clients
-                |> Maybe.andThen .playing
     in
     SessionDict
         { dict
             | sessions = Dict.insert sessionId newSession dict.sessions
             , clients = Dict.remove clientId dict.clients
-            , games =
-                case maybeGameId of
-                    Nothing ->
-                        dict.games
-
-                    Just gameId ->
-                        GameIdDict.update gameId
-                            (Maybe.andThen
-                                (\game ->
-                                    let
-                                        newClients : Set ClientId
-                                        newClients =
-                                            Set.remove clientId game.clients
-                                    in
-                                    if Set.isEmpty newClients then
-                                        Nothing
-
-                                    else
-                                        { game
-                                            | clients = newClients
-                                        }
-                                            |> Just
-                                )
-                            )
-                            dict.games
         }
 
 
@@ -245,19 +214,11 @@ isAdmin sessionId dict =
             False
 
 
-join : Game.Game -> ClientId -> GameId -> SessionDict -> SessionDict
-join gameType clientId gameId (SessionDict dict) =
+join : GameType -> UserId -> GameId -> SessionDict -> SessionDict
+join gameType userId gameId (SessionDict dict) =
     SessionDict
         { dict
-            | clients =
-                Dict.update clientId
-                    (Maybe.map
-                        (\client ->
-                            { client | playing = Just gameId }
-                        )
-                    )
-                    dict.clients
-            , games =
+            | games =
                 GameIdDict.update gameId
                     (\maybeGame ->
                         let
@@ -266,18 +227,18 @@ join gameType clientId gameId (SessionDict dict) =
                                 maybeGame
                                     |> Maybe.Extra.withDefaultLazy
                                         (\_ ->
-                                            { clients = Set.empty
+                                            { users = UserIdSet.empty
                                             , gameData =
                                                 case gameType of
-                                                    Game.Fate ->
+                                                    GameType.Fate ->
                                                         FateGameData Fate.emptyGameData
 
-                                                    Game.Wanderhome ->
+                                                    GameType.Wanderhome ->
                                                         WanderhomeGameData Wanderhome.emptyGameData
                                             }
                                         )
                         in
-                        Just { game | clients = Set.insert clientId game.clients }
+                        Just { game | users = UserIdSet.insert userId game.users }
                     )
                     dict.games
         }

@@ -13,7 +13,7 @@ import Task
 import Time
 import Types exposing (BackendModel, BackendMsg(..), InnerBackendMsg(..), ToBackend)
 import Types.EmailData as EmailData exposing (EmailData(..))
-import Types.Game as Game
+import Types.GameType as GameType
 import Types.Session as Session
 import Types.SessionDict as SessionDict exposing (SessionDict, UserData)
 import Types.Token exposing (Token(..))
@@ -212,11 +212,19 @@ innerUpdateFromFrontend :
 innerUpdateFromFrontend now sid cid msg model =
     case msg of
         TBJoin gameId ->
-            let
-                newSessions =
-                    SessionDict.join Game.Fate cid gameId model.sessions
-            in
-            ( { model | sessions = newSessions }, Cmd.none )
+            ( (SessionDict.getUserIdFromSessionId sid model.sessions
+                |> Maybe.map
+                    (\userId ->
+                        let
+                            newSessions =
+                                SessionDict.join GameType.Fate userId gameId model.sessions
+                        in
+                        { model | sessions = newSessions }
+                    )
+              )
+                |> Maybe.withDefault model
+            , Cmd.none
+            )
 
         TBPong ->
             ( model, Cmd.none )

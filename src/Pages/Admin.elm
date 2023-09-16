@@ -36,6 +36,7 @@ import Types.Session exposing (Session)
 import Types.SessionDict as SessionDict exposing (Game, SessionDict, UserData)
 import Types.UserId as UserId exposing (UserId)
 import Types.UserIdDict as UserIdDict
+import Types.UserIdSet as UserIdSet
 import View exposing (View)
 
 
@@ -154,7 +155,7 @@ viewGame ( gameId, game ) =
         , Border.width 1
         ]
         [ Theme.row [] [ text "Game", viewId <| GameId.toString gameId ]
-        , Theme.wrappedRow [] (List.map viewHashedId <| Set.toList game.clients)
+        , Theme.wrappedRow [] (List.map (viewUserId << Just) <| UserIdSet.toList game.users)
         ]
 
 

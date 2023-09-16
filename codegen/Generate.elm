@@ -11,6 +11,7 @@ import Gen.Types.GameId
 import Gen.Types.Token
 import Gen.Types.UserId
 import GenericDict
+import GenericSet
 import Json.Decode exposing (Decoder, Value)
 import List.Extra
 import Result.Extra
@@ -30,6 +31,7 @@ main =
                         (\input ->
                             [ Ok gameIdDictFile
                             , Ok userIdDictFile
+                            , Ok userIdSetFile
                             , Ok tokenDictFile
                             , fontsFile input
                             , imagesFile input
@@ -249,6 +251,21 @@ userIdDictFile =
         }
         |> GenericDict.withTypeName "UserIdDict"
         |> GenericDict.generateFile
+
+
+userIdSetFile : Elm.File
+userIdSetFile =
+    GenericSet.init
+        { valueType = Gen.Types.UserId.annotation_.userId
+        , namespace = [ "Types" ]
+        , toComparable =
+            \v ->
+                Gen.Types.UserId.toString v
+                    |> Elm.withType Annotation.string
+        }
+        |> GenericSet.withTypeName "UserIdSet"
+        |> GenericSet.generateFile
+
 
 
 gameIdDictFile : Elm.File
