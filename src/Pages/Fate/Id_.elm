@@ -1,4 +1,4 @@
-module Pages.Fate.Id_ exposing (Model, Msg, page, updateFromBackend)
+module Pages.Fate.Id_ exposing (Model(..), Msg, page, updateFromBackend)
 
 import Bridge exposing (ToBackend(..), ToFrontendPage(..))
 import Effect exposing (Effect)

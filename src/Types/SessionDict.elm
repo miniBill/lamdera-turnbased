@@ -1,4 +1,4 @@
-module Types.SessionDict exposing (Client, Game, GameData, SessionDict, UserData, addToken, cleanup, disconnected, empty, games, getUserFromSessionId, getUserIdFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin, updateUserFromSessionId, users)
+module Types.SessionDict exposing (Client, Game, GameData(..), SessionDict(..), UserData, addToken, cleanup, disconnected, empty, games, getUserFromSessionId, getUserIdFromSessionId, isAdmin, join, seen, sessions, toAdmin, tryLogin, updateUserFromSessionId, users)
 
 import Dict exposing (Dict)
 import Env
