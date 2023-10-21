@@ -349,6 +349,7 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
         will =
             Dict.get "Will" skills |> Maybe.withDefault 0
 
+        hr : Element msg
         hr =
             el
                 [ Border.color Theme.Fate.colors.disabled
@@ -357,6 +358,7 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
                 ]
                 Element.none
 
+        setFlip : comparable -> Set comparable -> Set comparable
         setFlip v s =
             if Set.member v s then
                 Set.remove v s
@@ -364,6 +366,7 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
             else
                 Set.insert v s
 
+        container : Element msg -> Element msg
         container =
             Theme.Fate.titledBox "Stress and Consequences" [ width fill, alignTop ]
     in

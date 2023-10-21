@@ -100,6 +100,7 @@ appendError now message model =
             Dict.update message
                 (\old ->
                     let
+                        oldCount : Int
                         oldCount =
                             Maybe.map .count old
                                 |> Maybe.withDefault 0
@@ -216,6 +217,7 @@ innerUpdateFromFrontend now sid cid msg model =
                 |> Maybe.map
                     (\userId ->
                         let
+                            newSessions : SessionDict
                             newSessions =
                                 SessionDict.join GameType.Fate userId gameId model.sessions
                         in
@@ -320,6 +322,7 @@ innerUpdateFromFrontend now sid cid msg model =
 tokenGenerator : Random.Generator Token
 tokenGenerator =
     let
+        wordGenerator : Random.Generator String
         wordGenerator =
             Random.int 0 (Diceware.listLength - 1)
                 |> Random.map Diceware.numberToWords
