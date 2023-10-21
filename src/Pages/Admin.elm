@@ -25,7 +25,7 @@ import Set
 import Shared
 import Shared.Model exposing (ViewKind(..))
 import String.Nonempty
-import Theme exposing (Element)
+import Theme exposing (Attribute, Element)
 import Theme.Fate
 import Time
 import Types.EmailData as EmailData exposing (EmailData, HtmlEmail)
@@ -223,9 +223,9 @@ viewUser ( userId, userData ) =
 viewCharacter : Fate.Character -> Element msg
 viewCharacter character =
     let
-        paragraph_ : String -> Element msg
-        paragraph_ line =
-            paragraph [ alignTop ] [ text line ]
+        paragraph_ : List (Attribute msg) -> String -> Element msg
+        paragraph_ attrs line =
+            paragraph (alignTop :: attrs) [ text line ]
     in
     Theme.column [ width fill ] <|
         [ Theme.row [ width fill ]
@@ -236,8 +236,8 @@ viewCharacter character =
                 { description = "Avatar"
                 , src = character.avatarUrl
                 }
-            , [ paragraph_ character.name
-              , paragraph_ character.aspects.highConcept
+            , [ paragraph_ [] character.name
+              , paragraph_ [] character.aspects.highConcept
               ]
                 |> Theme.column [ width fill ]
             ]
@@ -246,16 +246,25 @@ viewCharacter character =
             :: character.aspects.others
           )
             |> List.map
-                (\line ->
-                    paragraph
-                        [ alignTop
-                        , Border.width 1
-                        , Theme.padding
-                        ]
-                        [ text line ]
+                (paragraph_
+                    [ Border.width 1
+                    , Theme.padding
+                    ]
                 )
             |> List.Extra.greedyGroupsOf 2
             |> List.map (Theme.row [ alignTop, width fill ])
+            |> Theme.column
+                [ spacing <| Theme.rythm // 2
+                , alignTop
+                , width fill
+                ]
+        , character.stunts
+            |> List.map
+                (paragraph_
+                    [ Border.width 1
+                    , Theme.padding
+                    ]
+                )
             |> Theme.column
                 [ spacing <| Theme.rythm // 2
                 , alignTop
