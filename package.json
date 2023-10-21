@@ -3,5 +3,6 @@
     "elm-codegen": "^0.5.0",
     "elm-land": "^0.19.2",
     "elm-review": "^2.10.2"
-  }
+  },
+  "license": "MIT"
 }
