@@ -260,6 +260,7 @@ viewCharacter character =
                 , width fill
                 ]
         , character.stunts
+            |> List.filter (not << String.isEmpty)
             |> List.map
                 (paragraph_
                     [ Border.width 1
