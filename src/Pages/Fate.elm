@@ -398,13 +398,14 @@ stressAndConsequencesBlock ({ physicalStress, mentalStress, consequences, skills
 viewConsequence : Character -> Bool -> Int -> String -> Maybe String -> (Maybe String -> Consequences) -> Element Character
 viewConsequence character enabled points consequenceLabel value setter =
     let
+        tackButton : Element Character
         tackButton =
             el [ centerY ] <| stressCell tackParams
 
+        tackParams : { tack : Int, crossed : Bool, onPress : Maybe Character }
         tackParams =
             { tack = points
             , crossed = value /= Nothing
-            , enabled = enabled
             , onPress =
                 if enabled then
                     Just <|
@@ -423,6 +424,7 @@ viewConsequence character enabled points consequenceLabel value setter =
                     Nothing
             }
 
+        valueBox : Element Character
         valueBox =
             if enabled then
                 inputText
