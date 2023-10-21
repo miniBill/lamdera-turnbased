@@ -245,7 +245,15 @@ viewCharacter character =
         , (character.aspects.trouble
             :: character.aspects.others
           )
-            |> List.map paragraph_
+            |> List.map
+                (\line ->
+                    paragraph
+                        [ alignTop
+                        , Border.width 1
+                        , Theme.padding
+                        ]
+                        [ text line ]
+                )
             |> List.Extra.greedyGroupsOf 2
             |> List.map (Theme.row [ alignTop, width fill ])
             |> Theme.column
