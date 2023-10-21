@@ -245,6 +245,7 @@ viewCharacter character =
         , (character.aspects.trouble
             :: character.aspects.others
           )
+            |> List.filter (not << String.isEmpty)
             |> List.map
                 (paragraph_
                     [ Border.width 1
