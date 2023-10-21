@@ -248,7 +248,7 @@ viewCharacter character =
             |> List.map paragraph_
             |> List.Extra.greedyGroupsOf 2
             |> List.map (Theme.row [ alignTop, width fill ])
-            |> Theme.wrappedRow
+            |> Theme.column
                 [ spacing <| Theme.rythm // 2
                 , alignTop
                 , width fill
