@@ -149,18 +149,17 @@ body model =
             ]
             { label =
                 Theme.row [ width fill ]
-                    [ el
-                        [ Font.bold
-                        ]
+                    [ el [ Font.bold ]
                         (text "Characters")
-                    , if model.characters == Loaded [] then
-                        Theme.Fate.button [ alignRight ]
-                            { onPress = Just CreateCharacter
-                            , label = text "Create new"
-                            }
+                    , case model.characters of
+                        Loaded _ ->
+                            Theme.Fate.button [ alignRight ]
+                                { onPress = Just CreateCharacter
+                                , label = text "Create new"
+                                }
 
-                      else
-                        Element.none
+                        _ ->
+                            Element.none
                     ]
             , children =
                 case model.characters of
