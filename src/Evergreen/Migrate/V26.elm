@@ -374,16 +374,15 @@ migrate_Types_GameIdDict_GameIdDict migrate_v old =
     case old of
         Evergreen.V1.Types.GameIdDict.GameIdDict p0 ->
             p0
-                |> Dict.values
-                |> List.map
-                    (\( k, v ) -> ( migrate_Types_GameId_GameId k, migrate_v v ))
-                |> Evergreen.V26.Types.GameIdDict.fromList
+                |> Dict.map
+                    (\_ ( k, v ) -> ( migrate_Types_GameId_GameId k, migrate_v v ))
+                |> Evergreen.V26.Types.GameIdDict.GameIdDict
 
 
 migrate_Types_GameId_GameId : Evergreen.V1.Types.GameId.GameId -> Evergreen.V26.Types.GameId.GameId
 migrate_Types_GameId_GameId (Evergreen.V1.Types.GameId.GameId old) =
     old
-        |> Evergreen.V26.Types.GameId.fromString
+        |> Evergreen.V26.Types.GameId.GameId
 
 
 migrate_Types_ServerData_ServerData : (a_old -> a_new) -> Evergreen.V1.Types.ServerData.ServerData a_old -> Evergreen.V26.Types.ServerData.ServerData a_new
@@ -405,7 +404,7 @@ migrate_Types_SessionDict_Client old =
 
 migrate_Types_SessionDict_Game : Evergreen.V1.Types.SessionDict.Game -> Evergreen.V26.Types.SessionDict.Game
 migrate_Types_SessionDict_Game old =
-    { users = Evergreen.V26.Types.UserIdSet.empty
+    { users = Evergreen.V26.Types.UserIdSet.UserIdSet Dict.empty
     , gameData = old.gameData |> migrate_Types_SessionDict_GameData
     }
 
@@ -453,10 +452,9 @@ migrate_Types_TokenDict_TokenDict migrate_v old =
     case old of
         Evergreen.V1.Types.TokenDict.TokenDict p0 ->
             p0
-                |> Dict.values
-                |> List.map
-                    (\( k, v ) -> ( migrate_Types_Token_Token k, migrate_v v ))
-                |> Evergreen.V26.Types.TokenDict.fromList
+                |> Dict.map
+                    (\_ ( k, v ) -> ( migrate_Types_Token_Token k, migrate_v v ))
+                |> Evergreen.V26.Types.TokenDict.TokenDict
 
 
 migrate_Types_Token_Token : Evergreen.V1.Types.Token.Token -> Evergreen.V26.Types.Token.Token
@@ -471,17 +469,15 @@ migrate_Types_UserIdDict_UserIdDict migrate_v old =
     case old of
         Evergreen.V1.Types.UserIdDict.UserIdDict p0 ->
             p0
-                |> Dict.values
-                |> List.map
-                    (\( k, v ) -> ( migrate_Types_UserId_UserId k, migrate_v v ))
-                |> Evergreen.V26.Types.UserIdDict.fromList
+                |> Dict.map (\_ ( k, v ) -> ( migrate_Types_UserId_UserId k, migrate_v v ))
+                |> Evergreen.V26.Types.UserIdDict.UserIdDict
 
 
 migrate_Types_UserId_UserId : Evergreen.V1.Types.UserId.UserId -> Evergreen.V26.Types.UserId.UserId
 migrate_Types_UserId_UserId old =
     case old of
         Evergreen.V1.Types.UserId.UserId p0 ->
-            Evergreen.V26.Types.UserId.fromString p0
+            Evergreen.V26.Types.UserId.UserId p0
 
 
 migrate_Types_Wanderhome_GameData : Evergreen.V1.Types.Wanderhome.GameData -> Evergreen.V26.Types.Wanderhome.GameData
