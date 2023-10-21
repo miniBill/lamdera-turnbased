@@ -267,7 +267,6 @@ userIdSetFile =
         |> GenericSet.generateFile
 
 
-
 gameIdDictFile : Elm.File
 gameIdDictFile =
     GenericDict.init
